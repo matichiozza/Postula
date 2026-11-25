@@ -27,6 +27,7 @@ import rutas  # noqa: E402
 import recorrido  # noqa: E402
 import ventana_edge  # noqa: E402
 import cuenta as cuentas_bolsa  # noqa: E402  (alias: "cuenta" es el contador del recorrido)
+import fechas  # noqa: E402
 
 
 def cargar_postulador(carpeta):
@@ -44,9 +45,18 @@ DETALLE_JS = """async (url) => {
     const d = new DOMParser().parseFromString(html, 'text/html');
     const box = d.querySelector('[div-link="oferta"]');
     if (!box) return null;
-    const tags = [...box.querySelectorAll('.tag')].map(t => t.textContent.trim()).filter(Boolean);
+    // solo las etiquetas del principio (sueldo, contrato, jornada), no las "aptitudes" de abajo
+    const tags = [...box.querySelectorAll('.tag.base')].map(t => t.textContent.trim()).filter(Boolean);
     const partes = [];
+    let requisitos = [];
     for (const el of box.children) {
+        // la descripción termina donde empiezan los requerimientos, las aptitudes o el pie de la página
+        if (el.matches('p.fwB') && /requerimientos/i.test(el.textContent)) {
+            const ul = el.nextElementSibling;
+            if (ul && ul.matches('ul')) requisitos = [...ul.querySelectorAll('li')].map(li => li.textContent.trim()).filter(Boolean);
+            break;
+        }
+        if (el.matches('p.fwB, p.fc_aux, .posSticky_m')) break;
         if (el.matches('h2') || el.matches('.tag') || el.querySelector('.tag')) continue;
         const c = el.cloneNode(true);
         c.querySelectorAll('br').forEach(b => b.replaceWith('\\n'));
@@ -55,7 +65,10 @@ DETALLE_JS = """async (url) => {
         const t = c.textContent.split('\\n').map(l => l.trim()).join('\\n').replace(/\\n{3,}/g, '\\n\\n').trim();
         if (t) partes.push(t);
     }
-    return {tags, texto: partes.join('\\n\\n')};
+    const img = d.querySelector('img[src*="/logos/empresas/"], img[data-src*="/logos/empresas/"]');
+    const src = img ? (img.getAttribute('data-src') || img.getAttribute('src')) : '';
+    const logo = src ? new URL(src, 'https://ar.computrabajo.com').href : '';
+    return {tags, texto: partes.join('\\n\\n'), requisitos, logo};
 }"""
 
 
@@ -66,6 +79,7 @@ class Cancelado(Exception):
 class MotorComputrabajo:
     plataforma = "computrabajo"
     nombre = "Computrabajo"
+    perfil_dir = pc.PERFIL_DIR
 
     def __init__(self, emitir, solo_cuenta=False):
         self.emitir = emitir
@@ -78,6 +92,7 @@ class MotorComputrabajo:
         self.form_gid = None      # grupo cuyo formulario está abierto en la pestaña de formulario
         self.deshacer_pila = []   # [(gid, grupo, entradas previas del historial, posición)]
         self.pausado = False      # pausa del recorrido (tus decisiones se siguen atendiendo)
+        recorrido.iniciar_auto(self)
 
     # ------------------------------------------------------------------ comunicación
     def enviar_comando(self, nombre, datos):
@@ -129,10 +144,40 @@ class MotorComputrabajo:
         if estado == "descartado":
             self.desc.agregar(aviso)
 
+    def sincronizar_postulaciones(self, ct):
+        """Anota como "ya_postulado" lo que figura en "Mis postulaciones" de la web (también lo que
+        hiciste fuera de la app): así no aparece en "Para decidir", ni él ni sus repetidos."""
+        self.estado("Leyendo tus postulaciones...")
+        try:
+            todas, completo = ct.mis_postulaciones(
+                al_avanzar=lambda n: (self.estado(f"Leyendo tus postulaciones ({n})..."), self.atender()))
+        except Cancelado:
+            raise
+        except Exception as e:
+            print(f"[mis postulaciones] {e}")
+            todas, completo = {}, False
+        ahora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        nuevas = 0
+        for oid, p in todas.items():
+            if (self.historial.get(oid) or {}).get("estado") in (*pc.ESTADOS_POSTULADO, "descartado"):
+                continue
+            self.historial[oid] = {**p, "estado": "ya_postulado", "detalle": "Mis postulaciones", "fecha": ahora}
+            nuevas += 1
+        if nuevas:
+            pc.guardar_json(pc.HISTORIAL_FILE, self.historial)
+        print(f"[mis postulaciones] leídas {len(todas)}, nuevas en el historial {nuevas}, completo={completo}")
+        if not completo or not todas:
+            self.emitir("aviso", {"tipo": "error", "texto":
+                        "No pude leer todas tus postulaciones: puede aparecer algún aviso al que ya te postulaste."
+                        if todas or not completo else
+                        "No encontré postulaciones en tu cuenta. Si ya tenés, puede haber cambiado la página de Computrabajo."})
+
     def repetido_de_postulado(self, aviso):
         if not self.cfg["omitir_repetidos"]:
             return None
         for oid, h in self.historial.items():
+            if h.get("detalle") == "Mis postulaciones" and not h.get("empresa"):
+                continue      # la web no dice la empresa: sirve para saltear ESE aviso, no para buscar repetidos
             if (oid != aviso["id"] and h.get("estado") in pc.ESTADOS_POSTULADO
                     and pc.es_repetido(h, aviso, self.cfg["umbral_repetidos"])):
                 return h
@@ -141,8 +186,8 @@ class MotorComputrabajo:
     def item(self, gid):
         g = self.grupos[gid]
         a = g[0]
-        return {"gid": gid, "titulo": a["titulo"], "empresa": a["empresa"], "ubicacion": a.get("ubicacion", ""),
-                "url": a["url"], "busqueda": a.get("busqueda", ""),
+        return {"gid": gid, "titulo": a["titulo"], "empresa": a["empresa"], "publicado": a.get("publicado", ""), "antiguedad": a.get("antiguedad"),
+                "url": a["url"], "busqueda": a.get("busqueda", ""), "libre": bool(a.get("libre")),
                 "repetidos": [{"titulo": x["titulo"], "url": x["url"]} for x in g[1:]]}
 
     def agregar_con_preguntas(self, aviso, avisar=True):
@@ -151,9 +196,20 @@ class MotorComputrabajo:
         if orig:
             self.registrar(aviso, "repetido", {"de": orig.get("titulo")})
             return
+        aviso.pop("libre", None)
+        self._sumar_a_lista(aviso, avisar)
+
+    def agregar_libre(self, aviso):
+        """Suma un aviso sin revisar: lo postula el usuario o el modo Auto."""
+        aviso["libre"] = True
+        self._sumar_a_lista(aviso)
+
+    def _sumar_a_lista(self, aviso, avisar=True):
         if self.cfg["omitir_repetidos"]:
             for gid in self.orden:
-                if pc.es_repetido(self.grupos[gid][0], aviso, self.cfg["umbral_repetidos"]):
+                primero = self.grupos[gid][0]
+                if (bool(primero.get("libre")) == bool(aviso.get("libre"))
+                        and pc.es_repetido(primero, aviso, self.cfg["umbral_repetidos"])):
                     self.grupos[gid].append(aviso)
                     if avisar:
                         self.emitir("grupo_act", self.item(gid))
@@ -179,6 +235,36 @@ class MotorComputrabajo:
 
     def cmd_cambiar_busqueda(self, indice):
         recorrido.cmd_cambiar_busqueda(self, indice)
+
+    def cmd_recuperar(self, id):
+        recorrido.cmd_recuperar(self, id)
+
+    def guardar_historial(self):
+        pc.guardar_json(pc.HISTORIAL_FILE, self.historial)
+
+    def necesita_form(self, aviso):
+        return False                 # en Computrabajo no se sabe hasta abrir el link
+
+    def cmd_ordenar(self, activo):
+        recorrido.cmd_ordenar(self, activo)
+
+    def cmd_auto(self, activo):
+        recorrido.cmd_auto(self, activo)
+
+    def postular_libre(self, a):
+        """Abre el link de postulación (si no tiene preguntas, eso ya postula)."""
+        try:
+            res = self.ct.abrir_postulacion(a["id"])
+        except Exception as e:
+            res = "desconocido"
+            print(f"error de navegación: {e}")
+        if res in ("postulado", "ya_postulado"):
+            self.registrar(a, res)
+        elif res == "externo":
+            self.registrar(a, "externo", self.ct.page.url)
+        elif res != "preguntas":
+            self.registrar(a, "error", self.ct.page.url)
+        return {"postulado": "ok", "ya_postulado": "ya", "preguntas": "preg", "externo": "ext"}.get(res, "err")
 
     def cmd_detalle(self, gid):
         if gid not in self.grupos:
@@ -214,7 +300,7 @@ class MotorComputrabajo:
             else:
                 self.historial[oid] = entrada
             self.desc.quitar(oid)
-        pc.guardar_json(pc.HISTORIAL_FILE, self.historial)
+        self.guardar_historial()
         self.grupos[gid] = grupo
         self.orden.insert(min(pos, len(self.orden)), gid)
         self.emitir("deshecho", {"item": self.item(gid), "pos": self.orden.index(gid)})
@@ -226,7 +312,13 @@ class MotorComputrabajo:
         self.form_gid = None
         ct = pc.Computrabajo(self.pag_form)
         res = ct.abrir_postulacion(a["id"])
+        libre = bool(a.get("libre"))
         if res == "preguntas":
+            if libre:                    # resultó tener preguntas: pasa a "Con preguntas"
+                for x in self.grupos[gid]:
+                    x.pop("libre", None)
+                    self.registrar(x, "con_preguntas")
+                self.emitir("grupo_act", self.item(gid))
             preguntas = ct.leer_preguntas()
             # Se lee en cada formulario: así toma lo último que se guardó en "Tus datos".
             datos = perfil.cargar()
@@ -242,8 +334,15 @@ class MotorComputrabajo:
             grupo = self.quitar_grupo(gid)
             self.registrar(a, res)
             self.marcar_resto(grupo, a, "repetido")
-            texto = "Te postulaste (el aviso ya no tenía preguntas)." if res == "postulado" else "Ya estabas postulado."
-            self.emitir("grupo_quitado", {"gid": gid, "motivo": res, "titulo": a["titulo"], "texto": texto})
+            hecho = "✅ Te postulaste." if libre else "Te postulaste (el aviso ya no tenía preguntas)."
+            texto = hecho if res == "postulado" else "Ya estabas postulado."
+            self.emitir("grupo_quitado", {"gid": gid, "motivo": res, "titulo": a["titulo"], "texto": texto,
+                                          "postulacion": recorrido.postulacion(self, a)})
+        elif res == "externo":
+            self.quitar_grupo(gid)
+            self.registrar(a, "externo", self.pag_form.url)
+            self.emitir("grupo_quitado", {"gid": gid, "motivo": "externo", "titulo": a["titulo"],
+                                          "texto": "Este aviso se postula en otro sitio: abrilo en la web."})
         else:
             self.emitir("form_error", {"gid": gid, "texto":
                         f"No apareció el formulario (resultado: {res}). Probá abrir el aviso en el navegador."})
@@ -277,7 +376,8 @@ class MotorComputrabajo:
                                             "respuestas": {str(n): legible(i, *resp[i]) for n, i in enumerate(orden) if i in resp}})
             self.marcar_resto(grupo, a, "repetido")
             self.emitir("grupo_quitado", {"gid": gid, "motivo": "postulado", "titulo": a["titulo"],
-                                          "texto": "✅ Te postulaste.", "con_form": True})
+                                          "texto": "✅ Te postulaste.", "con_form": True,
+                                          "postulacion": recorrido.postulacion(self, a)})
         else:
             self.registrar(a, "con_preguntas", {"error_envio": url_final})
             self.emitir("form_error", {"gid": gid, "texto":
@@ -362,7 +462,7 @@ class MotorComputrabajo:
                 # Edge nace fuera de la pantalla (headless no sirve: Computrabajo lo bloquea con 403)
                 # y se minimiza enseguida; solo se muestra si hay que iniciar sesión.
                 self.ctx = p.chromium.launch_persistent_context(
-                    str(pc.PERFIL_DIR), channel="msedge", headless=False, viewport={"width": 1200, "height": 800},
+                    str(self.perfil_dir), channel="msedge", headless=False, viewport={"width": 1200, "height": 800},
                     args=["--window-position=-2400,0"])
                 try:
                     self._correr()
@@ -415,7 +515,9 @@ class MotorComputrabajo:
             return
         self.desc = descartes.iniciar(self.plataforma, mail, pc.CONFIG_FILE, self.historial)
         self.emitir("usuario", {"mail": self.desc.mail or "", "descartados": len(self.desc)})
+        self.sincronizar_postulaciones(ct)
 
+        self.ct = ct                     # pestaña principal: listado y modo Auto
         # pestañas auxiliares (por las dudas se vuelve a esconder Edge después de abrirlas)
         self.pag_consulta = self.ctx.new_page()
         self.ir(self.pag_consulta, pc.SITIO + "/")
@@ -427,21 +529,26 @@ class MotorComputrabajo:
         #    En cada aviso:
         #    - ya postulado / descartado / ya visto antes  -> se omite
         #    - con preguntas                              -> aparece en la lista para que decidas
-        #    - sin preguntas                              -> se postula solo
-        #    Entre aviso y aviso (y en las pausas) se atienden tus decisiones.
+        #    - sin revisar                                -> queda en la lista (lo postulás vos o Auto)
+        #    Entre aviso y aviso se atienden tus decisiones.
         urls = busquedas.lista(self.cfg)
         excl = [w.lower() for w in self.cfg["palabras_excluidas_titulo"]]
-        cuenta = {"ok": 0, "ya": 0, "preg": 0, "desc": 0, "omit": 0, "rep": 0, "ext": 0, "err": 0}
-        abiertos = [0]
+        cuenta = {"ok": 0, "ya": 0, "preg": 0, "desc": 0, "omit": 0, "rep": 0, "ext": 0, "err": 0, "libre": 0}
         self.emitir("grupos", {"items": []})
 
         def cargar(url, resumen):
-            encontrados = ct.listar(
-                url, self.cfg["max_paginas_listado"],
-                al_avanzar=lambda n, total: self.emitir("leyendo", {"pagina": n + 1, "avisos": total}),
-                esperar=lambda seg: self.atender(time.time() + seg))
+            unidos = {}
+            for u in busquedas.expandir(self.plataforma, url):          # un link por lugar elegido
+                for a in ct.listar(
+                        u, self.cfg["max_paginas_listado"],
+                        al_avanzar=lambda n, total: self.emitir("leyendo", {"pagina": n + 1, "avisos": len(unidos) + total}),
+                        esperar=lambda seg: self.atender(time.time() + seg)):
+                    unidos.setdefault(a["id"], a)
+            encontrados = list(unidos.values())
             for a in encontrados:
                 a["busqueda"] = resumen
+                a["publicado"] = fechas.desde_texto(a.get("fecha"))
+                a["antiguedad"] = fechas.antiguedad(a.get("fecha"))
             return encontrados
 
         def procesar(a):
@@ -451,8 +558,10 @@ class MotorComputrabajo:
                 return "desc", False
             if estado_previo in pc.ESTADOS_POSTULADO:
                 return "ya", False
+            if estado_previo == "repetido":
+                return "rep", False
             if estado_previo in pc.ESTADOS_FINALES or any(w in a["titulo"].lower() for w in excl):
-                return "omit", False                    # externo, repetido o palabra excluida
+                return "omit", False                    # externo o palabra excluida
             if estado_previo == "con_preguntas":
                 self.agregar_con_preguntas(a)           # ya sabemos que tiene preguntas: no se reabre
                 return "preg", False
@@ -460,28 +569,10 @@ class MotorComputrabajo:
             if orig:
                 self.registrar(a, "repetido", {"de": orig.get("titulo")})
                 return "rep", False
-            if abiertos[0] >= self.cfg["max_postulaciones_por_corrida"]:
-                self.emitir("aviso", {"tipo": "info", "texto":
-                            f"Llegué al máximo de {abiertos[0]} avisos abiertos por corrida (config.json). Corto el recorrido acá."})
-                return "corte"
-            abiertos[0] += 1
-            try:
-                res = ct.abrir_postulacion(a["id"])
-            except Exception as e:
-                res = "desconocido"
-                print(f"error de navegación: {e}")
-            if res in ("postulado", "ya_postulado"):
-                self.registrar(a, res)
-            elif res == "preguntas":
-                self.registrar(a, "con_preguntas")
-                self.agregar_con_preguntas(a)
-            elif res == "externo":
-                self.registrar(a, "externo", page.url)
-            else:
-                self.registrar(a, "error", page.url)
-            return {"postulado": "ok", "ya_postulado": "ya", "preguntas": "preg", "externo": "ext"}.get(res, "err"), True
+            self.agregar_libre(a)                       # no se abre: abrir el link ya postula
+            return "libre", False
 
         recorrido.recorrer(self, urls, cargar, procesar, cuenta)
 
-        # 5) quedan solo tus decisiones: atender hasta que se cierre la ventana
-        self.atender(float("inf"))
+        # 5) quedan tus decisiones (y Auto): atender hasta que se cierre la ventana
+        recorrido.quedar_atendiendo(self)

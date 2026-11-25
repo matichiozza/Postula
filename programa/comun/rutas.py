@@ -8,7 +8,7 @@ Dónde está cada cosa. El código y los datos del usuario van separados:
     ├─ datos/        TODO lo personal (un solo usuario): perfil.json (nombre, sueldo, zona),
     │                <bolsa>/{config.json, historial.json, descartes.json, perfil_edge/},
     │                python.txt y registros/ (logs)
-    └─ instalador/   fuentes de Setup.exe y Laburo IA.exe
+    └─ instalador/   fuentes de Setup.exe y Postulá.exe
 
 Para empezar de cero con otra cuenta alcanza con borrar datos/ (o usar la opción de Setup.exe).
 """

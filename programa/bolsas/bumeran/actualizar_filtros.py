@@ -60,6 +60,11 @@ def main():
 
         facetas = buscar([])
         categorias = [{"slug": a["idSemantico"], "nombre": a["name"]} for a in facetas.get("area", []) if a.get("idSemantico")]
+        for c in categorias:                      # subáreas de cada área (solo las que tienen avisos)
+            time.sleep(1.2)
+            subs = buscar([{"id": "area", "value": c["slug"]}]).get("subarea", [])
+            c["subareas"] = sorted(({"slug": s["idSemantico"].split("|")[-1], "nombre": s["name"]}
+                                    for s in subs if "|" in (s.get("idSemantico") or "")), key=lambda x: sin_tildes(x["nombre"]))
         provincias = []
         for prov in facetas.get("provincia", []):
             time.sleep(1.2)

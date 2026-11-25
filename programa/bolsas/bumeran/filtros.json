@@ -3,107 +3,983 @@
  "categorias": [
   {
    "slug": "abastecimiento-y-logistica",
-   "nombre": "Abastecimiento y Logística"
+   "nombre": "Abastecimiento y Logística",
+   "subareas": [
+    {
+     "slug": "abastecimiento",
+     "nombre": "Abastecimiento"
+    },
+    {
+     "slug": "almacen-deposito-expedicion",
+     "nombre": "Almacén / Depósito / Expedición"
+    },
+    {
+     "slug": "asistente-de-trafico",
+     "nombre": "Asistente de Tráfico"
+    },
+    {
+     "slug": "compras",
+     "nombre": "Compras"
+    },
+    {
+     "slug": "distribucion",
+     "nombre": "Distribución"
+    },
+    {
+     "slug": "logistica",
+     "nombre": "Logística"
+    },
+    {
+     "slug": "otra",
+     "nombre": "Otra"
+    },
+    {
+     "slug": "transporte",
+     "nombre": "Transporte"
+    }
+   ]
   },
   {
    "slug": "administracion-contabilidad-y-finanzas",
-   "nombre": "Administración, Contabilidad y Finanzas"
+   "nombre": "Administración, Contabilidad y Finanzas",
+   "subareas": [
+    {
+     "slug": "administracion",
+     "nombre": "Administración"
+    },
+    {
+     "slug": "analisis-de-riesgos",
+     "nombre": "Análisis de Riesgos"
+    },
+    {
+     "slug": "auditoria",
+     "nombre": "Auditoría"
+    },
+    {
+     "slug": "consultoria",
+     "nombre": "Consultoria"
+    },
+    {
+     "slug": "contabilidad",
+     "nombre": "Contabilidad"
+    },
+    {
+     "slug": "control-de-gestion",
+     "nombre": "Control de Gestión"
+    },
+    {
+     "slug": "corporate-finance-banca-inversion",
+     "nombre": "Corporate Finance / Banca Inversión"
+    },
+    {
+     "slug": "creditos-y-cobranzas",
+     "nombre": "Créditos y Cobranzas"
+    },
+    {
+     "slug": "cuentas-corrientes",
+     "nombre": "Cuentas Corrientes"
+    },
+    {
+     "slug": "evaluacion-economica",
+     "nombre": "Evaluación Económica"
+    },
+    {
+     "slug": "facturacion",
+     "nombre": "Facturación"
+    },
+    {
+     "slug": "finanzas",
+     "nombre": "Finanzas"
+    },
+    {
+     "slug": "impuestos",
+     "nombre": "Impuestos"
+    },
+    {
+     "slug": "inversiones-proyectos-de-inversion",
+     "nombre": "Inversiones / Proyectos de Inversión"
+    },
+    {
+     "slug": "operaciones",
+     "nombre": "Operaciones"
+    },
+    {
+     "slug": "organizacion-y-metodos",
+     "nombre": "Organización y Métodos"
+    },
+    {
+     "slug": "otra",
+     "nombre": "Otra"
+    },
+    {
+     "slug": "planeamiento-economico-financiero",
+     "nombre": "Planeamiento económico-financiero"
+    },
+    {
+     "slug": "tesoreria",
+     "nombre": "Tesorería"
+    }
+   ]
   },
   {
    "slug": "aduana-y-comercio-exterior",
-   "nombre": "Aduana y Comercio Exterior"
+   "nombre": "Aduana y Comercio Exterior",
+   "subareas": [
+    {
+     "slug": "apoderado-aduanal",
+     "nombre": "Apoderado Aduanal"
+    },
+    {
+     "slug": "compras-internacionales-importacion",
+     "nombre": "Compras Internacionales/Importación"
+    },
+    {
+     "slug": "consultorias-comercio-exterior",
+     "nombre": "Consultorías Comercio Exterior"
+    },
+    {
+     "slug": "otra",
+     "nombre": "Otra"
+    },
+    {
+     "slug": "ventas-internacionales-exportacion",
+     "nombre": "Ventas Internacionales/Exportación"
+    }
+   ]
   },
   {
    "slug": "atencion-al-cliente-call-center-y-telemarketing",
-   "nombre": "Atención al Cliente, Call Center y Telemarketing"
+   "nombre": "Atención al Cliente, Call Center y Telemarketing",
+   "subareas": [
+    {
+     "slug": "atencion-al-cliente",
+     "nombre": "Atención al Cliente"
+    },
+    {
+     "slug": "call-center",
+     "nombre": "Call Center"
+    },
+    {
+     "slug": "otra",
+     "nombre": "Otra"
+    },
+    {
+     "slug": "telemarketing",
+     "nombre": "Telemarketing"
+    }
+   ]
   },
   {
    "slug": "comercial-ventas-y-negocios",
-   "nombre": "Comercial, Ventas y Negocios"
+   "nombre": "Comercial, Ventas y Negocios",
+   "subareas": [
+    {
+     "slug": "comercial",
+     "nombre": "Comercial"
+    },
+    {
+     "slug": "comercio-exterior",
+     "nombre": "Comercio Exterior"
+    },
+    {
+     "slug": "desarrollo-de-negocios",
+     "nombre": "Desarrollo de Negocios"
+    },
+    {
+     "slug": "negocios-internacionales",
+     "nombre": "Negocios Internacionales"
+    },
+    {
+     "slug": "otra",
+     "nombre": "Otra"
+    },
+    {
+     "slug": "planeamiento-comercial",
+     "nombre": "Planeamiento comercial"
+    },
+    {
+     "slug": "ventas",
+     "nombre": "Ventas"
+    }
+   ]
   },
   {
    "slug": "comunicacion-relaciones-institucionales-y-publicas",
-   "nombre": "Comunicación, Relaciones Institucionales y Públicas"
+   "nombre": "Comunicación, Relaciones Institucionales y Públicas",
+   "subareas": [
+    {
+     "slug": "comunicacion",
+     "nombre": "Comunicacion"
+    },
+    {
+     "slug": "comunicaciones-externas",
+     "nombre": "Comunicaciones Externas"
+    },
+    {
+     "slug": "otra",
+     "nombre": "Otra"
+    },
+    {
+     "slug": "periodismo",
+     "nombre": "Periodismo"
+    },
+    {
+     "slug": "relaciones-institucionales-publicas",
+     "nombre": "Relaciones Institucionales/Publicas"
+    }
+   ]
   },
   {
    "slug": "departamento-tecnico",
-   "nombre": "Departamento Tecnico"
+   "nombre": "Departamento Tecnico",
+   "subareas": [
+    {
+     "slug": "gps-y-alarma-de-seguridad",
+     "nombre": "GPS y Alarma de Seguridad"
+    },
+    {
+     "slug": "otra",
+     "nombre": "Otra"
+    }
+   ]
   },
   {
    "slug": "diseno",
-   "nombre": "Diseño"
+   "nombre": "Diseño",
+   "subareas": [
+    {
+     "slug": "diseno",
+     "nombre": "Diseño"
+    },
+    {
+     "slug": "diseno-de-interiores-decoracion",
+     "nombre": "Diseño de Interiores / Decoración"
+    },
+    {
+     "slug": "diseno-grafico",
+     "nombre": "Diseño Gráfico"
+    },
+    {
+     "slug": "diseno-industrial",
+     "nombre": "Diseño Industrial"
+    },
+    {
+     "slug": "diseno-multimedia",
+     "nombre": "Diseño Multimedia"
+    },
+    {
+     "slug": "diseno-textil-e-indumentaria",
+     "nombre": "Diseño Textil e Indumentaria"
+    },
+    {
+     "slug": "otra",
+     "nombre": "Otra"
+    }
+   ]
   },
   {
    "slug": "educacion-docencia-e-investigacion",
-   "nombre": "Educación, Docencia e Investigación"
+   "nombre": "Educación, Docencia e Investigación",
+   "subareas": [
+    {
+     "slug": "bienestar-estudiantil",
+     "nombre": "Bienestar Estudiantil"
+    },
+    {
+     "slug": "educacion-especial",
+     "nombre": "Educación especial"
+    },
+    {
+     "slug": "educacion-docencia",
+     "nombre": "Educación/Docencia"
+    },
+    {
+     "slug": "idiomas",
+     "nombre": "Idiomas"
+    },
+    {
+     "slug": "investigacion-y-desarrollo",
+     "nombre": "Investigación y Desarrollo"
+    },
+    {
+     "slug": "otra",
+     "nombre": "Otra"
+    }
+   ]
   },
   {
    "slug": "enfermeria",
-   "nombre": "Enfermería"
+   "nombre": "Enfermería",
+   "subareas": [
+    {
+     "slug": "clinica-medica",
+     "nombre": "Clínica Médica"
+    },
+    {
+     "slug": "internacion-domiciliaria",
+     "nombre": "Internacion domiciliaria"
+    },
+    {
+     "slug": "maternidad",
+     "nombre": "Maternidad"
+    },
+    {
+     "slug": "otra",
+     "nombre": "Otra"
+    },
+    {
+     "slug": "terapia-intermedia-e-intensiva",
+     "nombre": "Terapia Intermedia e Intensiva"
+    }
+   ]
   },
   {
    "slug": "gastronomia-y-turismo",
-   "nombre": "Gastronomía y Turismo"
+   "nombre": "Gastronomía y Turismo",
+   "subareas": [
+    {
+     "slug": "camareros",
+     "nombre": "Camareros"
+    },
+    {
+     "slug": "gastronomia",
+     "nombre": "Gastronomia"
+    },
+    {
+     "slug": "hoteleria",
+     "nombre": "Hotelería"
+    },
+    {
+     "slug": "otra",
+     "nombre": "Otra"
+    },
+    {
+     "slug": "turismo",
+     "nombre": "Turismo"
+    }
+   ]
   },
   {
    "slug": "gerencia-y-direccion-general",
-   "nombre": "Gerencia y Dirección General"
+   "nombre": "Gerencia y Dirección General",
+   "subareas": [
+    {
+     "slug": "direccion",
+     "nombre": "Dirección"
+    },
+    {
+     "slug": "gerencia-direccion-general",
+     "nombre": "Gerencia / Dirección General"
+    },
+    {
+     "slug": "otra",
+     "nombre": "Otra"
+    }
+   ]
   },
   {
    "slug": "ingenieria-civil-y-construccion",
-   "nombre": "Ingeniería Civil y Construcción"
+   "nombre": "Ingeniería Civil y Construcción",
+   "subareas": [
+    {
+     "slug": "arquitectura",
+     "nombre": "Arquitectura"
+    },
+    {
+     "slug": "construccion",
+     "nombre": "Construcción"
+    },
+    {
+     "slug": "direccion-de-obra",
+     "nombre": "Dirección de Obra"
+    },
+    {
+     "slug": "ingenieria-civil",
+     "nombre": "Ingeniería Civil"
+    },
+    {
+     "slug": "operaciones",
+     "nombre": "Operaciones"
+    },
+    {
+     "slug": "otra",
+     "nombre": "Otra"
+    },
+    {
+     "slug": "seguridad-e-higiene",
+     "nombre": "Seguridad e Higiene"
+    }
+   ]
   },
   {
    "slug": "ingenierias",
-   "nombre": "Ingenierías"
+   "nombre": "Ingenierías",
+   "subareas": [
+    {
+     "slug": "ingenieria-automotriz",
+     "nombre": "Ingeniería  Automotriz"
+    },
+    {
+     "slug": "ingenieria-electrica-y-electronica",
+     "nombre": "Ingeniería  Eléctrica y Electrónica"
+    },
+    {
+     "slug": "ingenieria-industrial",
+     "nombre": "Ingeniería  Industrial"
+    },
+    {
+     "slug": "ingenieria-mecanica",
+     "nombre": "Ingeniería  Mecánica"
+    },
+    {
+     "slug": "ingenieria-metalurgica",
+     "nombre": "Ingeniería  Metalurgica"
+    },
+    {
+     "slug": "ingenieria-textil",
+     "nombre": "Ingeniería  Textil"
+    },
+    {
+     "slug": "ingenieria-agronoma",
+     "nombre": "Ingeniería Agrónoma"
+    },
+    {
+     "slug": "ingenieria-de-procesos",
+     "nombre": "Ingeniería de Procesos"
+    },
+    {
+     "slug": "ingenieria-de-producto",
+     "nombre": "Ingeniería de Producto"
+    },
+    {
+     "slug": "ingenieria-de-ventas",
+     "nombre": "Ingeniería de Ventas"
+    },
+    {
+     "slug": "ingenieria-electromecanica",
+     "nombre": "Ingeniería Electromecánica"
+    },
+    {
+     "slug": "ingenieria-en-alimentos",
+     "nombre": "Ingeniería en Alimentos"
+    },
+    {
+     "slug": "ingenieria-oficina-tecnica-proyecto",
+     "nombre": "Ingeniería Oficina Técnica / Proyecto"
+    },
+    {
+     "slug": "ingenieria-quimica",
+     "nombre": "Ingeniería Química"
+    },
+    {
+     "slug": "otra",
+     "nombre": "Otra"
+    },
+    {
+     "slug": "otras-ingenierias",
+     "nombre": "Otras Ingenierias"
+    }
+   ]
   },
   {
    "slug": "legales",
-   "nombre": "Legales"
+   "nombre": "Legales",
+   "subareas": [
+    {
+     "slug": "asesoria-legal-internacional",
+     "nombre": "Asesoría Legal Internacional"
+    },
+    {
+     "slug": "garantias",
+     "nombre": "Garantías"
+    },
+    {
+     "slug": "legal",
+     "nombre": "Legal"
+    },
+    {
+     "slug": "otra",
+     "nombre": "Otra"
+    }
+   ]
   },
   {
    "slug": "marketing-y-publicidad",
-   "nombre": "Marketing y Publicidad"
+   "nombre": "Marketing y Publicidad",
+   "subareas": [
+    {
+     "slug": "business-intelligence",
+     "nombre": "Business Intelligence"
+    },
+    {
+     "slug": "community-management",
+     "nombre": "Community Management"
+    },
+    {
+     "slug": "creatividad",
+     "nombre": "Creatividad"
+    },
+    {
+     "slug": "e-commerce",
+     "nombre": "E-commerce"
+    },
+    {
+     "slug": "marketing",
+     "nombre": "Marketing"
+    },
+    {
+     "slug": "media-planning",
+     "nombre": "Media Planning"
+    },
+    {
+     "slug": "multimedia",
+     "nombre": "Multimedia"
+    },
+    {
+     "slug": "otra",
+     "nombre": "Otra"
+    },
+    {
+     "slug": "producto",
+     "nombre": "Producto"
+    }
+   ]
   },
   {
    "slug": "mineria-petroleo-y-gas",
-   "nombre": "Minería, Petróleo y Gas"
+   "nombre": "Minería, Petróleo y Gas",
+   "subareas": [
+    {
+     "slug": "exploracion-minera-y-petroquimica",
+     "nombre": "Exploración Minera y Petroquimica"
+    },
+    {
+     "slug": "ingenieria-en-petroleo-y-petroquimica",
+     "nombre": "Ingeniería en Petróleo y Petroquímica"
+    },
+    {
+     "slug": "mineria-petroleo-gas",
+     "nombre": "Mineria/Petroleo/Gas"
+    },
+    {
+     "slug": "otra",
+     "nombre": "Otra"
+    },
+    {
+     "slug": "seguridad-industrial",
+     "nombre": "Seguridad Industrial"
+    }
+   ]
   },
   {
    "slug": "naviero-maritimo-portuario",
-   "nombre": "Naviero, Maritimo, Portuario"
+   "nombre": "Naviero, Maritimo, Portuario",
+   "subareas": [
+    {
+     "slug": "naviero-maritimo-portuario",
+     "nombre": "Naviero, Maritimo, Portuario"
+    },
+    {
+     "slug": "otra",
+     "nombre": "Otra"
+    }
+   ]
   },
   {
    "slug": "oficios-y-otros",
-   "nombre": "Oficios y Otros"
+   "nombre": "Oficios y Otros",
+   "subareas": [
+    {
+     "slug": "arte-y-cultura",
+     "nombre": "Arte y Cultura"
+    },
+    {
+     "slug": "back-office",
+     "nombre": "Back Office"
+    },
+    {
+     "slug": "cadeteria",
+     "nombre": "Cadetería"
+    },
+    {
+     "slug": "caja",
+     "nombre": "Caja"
+    },
+    {
+     "slug": "estetica-y-cuidado-personal",
+     "nombre": "Estética y Cuidado Personal"
+    },
+    {
+     "slug": "independientes",
+     "nombre": "Independientes"
+    },
+    {
+     "slug": "jovenes-profesionales",
+     "nombre": "Jóvenes Profesionales"
+    },
+    {
+     "slug": "mantenimiento-y-limpieza",
+     "nombre": "Mantenimiento y Limpieza"
+    },
+    {
+     "slug": "oficios-y-profesiones",
+     "nombre": "Oficios y Profesiones"
+    },
+    {
+     "slug": "otra",
+     "nombre": "Otra"
+    },
+    {
+     "slug": "otros",
+     "nombre": "Otros"
+    },
+    {
+     "slug": "pasantia-trainee",
+     "nombre": "Pasantía / Trainee"
+    },
+    {
+     "slug": "planeamiento",
+     "nombre": "Planeamiento"
+    },
+    {
+     "slug": "practicas-profesionales",
+     "nombre": "Prácticas Profesionales"
+    },
+    {
+     "slug": "promotoras-es",
+     "nombre": "Promotoras/es"
+    },
+    {
+     "slug": "seguridad",
+     "nombre": "Seguridad"
+    },
+    {
+     "slug": "servicios",
+     "nombre": "Servicios"
+    },
+    {
+     "slug": "trabajo-social",
+     "nombre": "Trabajo Social"
+    },
+    {
+     "slug": "transporte-de-pasajeros",
+     "nombre": "Transporte de pasajeros"
+    }
+   ]
   },
   {
    "slug": "produccion-y-manufactura",
-   "nombre": "Producción y Manufactura"
+   "nombre": "Producción y Manufactura",
+   "subareas": [
+    {
+     "slug": "calidad",
+     "nombre": "Calidad"
+    },
+    {
+     "slug": "mantenimiento",
+     "nombre": "Mantenimiento"
+    },
+    {
+     "slug": "otra",
+     "nombre": "Otra"
+    },
+    {
+     "slug": "produccion",
+     "nombre": "Producción"
+    },
+    {
+     "slug": "programacion-de-produccion",
+     "nombre": "Programación de producción"
+    }
+   ]
   },
   {
    "slug": "recursos-humanos-y-capacitacion",
-   "nombre": "Recursos Humanos y Capacitación"
+   "nombre": "Recursos Humanos y Capacitación",
+   "subareas": [
+    {
+     "slug": "administracion-de-personal",
+     "nombre": "Administración de Personal"
+    },
+    {
+     "slug": "capacitacion",
+     "nombre": "Capacitación"
+    },
+    {
+     "slug": "compensacion-y-planilla",
+     "nombre": "Compensación y Planilla"
+    },
+    {
+     "slug": "otra",
+     "nombre": "Otra"
+    },
+    {
+     "slug": "recursos-humanos",
+     "nombre": "Recursos Humanos"
+    },
+    {
+     "slug": "seleccion",
+     "nombre": "Selección"
+    }
+   ]
   },
   {
    "slug": "salud-medicina-y-farmacia",
-   "nombre": "Salud, Medicina y Farmacia"
+   "nombre": "Salud, Medicina y Farmacia",
+   "subareas": [
+    {
+     "slug": "anestesia-tecnicos",
+     "nombre": "Anestesia (técnicos)"
+    },
+    {
+     "slug": "auditoria-medica",
+     "nombre": "Auditoría Médica"
+    },
+    {
+     "slug": "bioquimica",
+     "nombre": "Bioquímica"
+    },
+    {
+     "slug": "cosmiatra-dermocosmiatria",
+     "nombre": "Cosmiatra / dermocosmiatría"
+    },
+    {
+     "slug": "diagnostico-por-imagenes",
+     "nombre": "Diagnóstico por imágenes"
+    },
+    {
+     "slug": "enfermeria",
+     "nombre": "Enfermería"
+    },
+    {
+     "slug": "esterilizacion",
+     "nombre": "Esterilización"
+    },
+    {
+     "slug": "farmaceutica",
+     "nombre": "Farmacéutica"
+    },
+    {
+     "slug": "farmacia-comercial",
+     "nombre": "Farmacia comercial"
+    },
+    {
+     "slug": "farmacia-hospitalaria",
+     "nombre": "Farmacia hospitalaria"
+    },
+    {
+     "slug": "farmacia-industrial",
+     "nombre": "Farmacia industrial"
+    },
+    {
+     "slug": "hoteleria-hospitalaria",
+     "nombre": "Hotelería Hospitalaria"
+    },
+    {
+     "slug": "instrumentacion-quirurgica",
+     "nombre": "Instrumentación quirúrgica"
+    },
+    {
+     "slug": "kinesiologia-terapia-ocupacional",
+     "nombre": "Kinesiología / terapia ocupacional"
+    },
+    {
+     "slug": "laboratorio",
+     "nombre": "Laboratorio"
+    },
+    {
+     "slug": "medicina",
+     "nombre": "Medicina"
+    },
+    {
+     "slug": "medicina-laboral",
+     "nombre": "Medicina Laboral"
+    },
+    {
+     "slug": "nutricion",
+     "nombre": "Nutrición"
+    },
+    {
+     "slug": "odontologia",
+     "nombre": "Odontología"
+    },
+    {
+     "slug": "otra",
+     "nombre": "Otra"
+    },
+    {
+     "slug": "otras-areas-tecnicas-en-salud",
+     "nombre": "Otras áreas técnicas en salud"
+    },
+    {
+     "slug": "otras-especialidades-medicas",
+     "nombre": "Otras Especialidades médicas"
+    },
+    {
+     "slug": "practicas-cardiologicas",
+     "nombre": "Prácticas cardiológicas"
+    },
+    {
+     "slug": "psicologia",
+     "nombre": "Psicología"
+    },
+    {
+     "slug": "quimica",
+     "nombre": "Química"
+    },
+    {
+     "slug": "salud",
+     "nombre": "Salud"
+    },
+    {
+     "slug": "traslados-choferes-camilleros",
+     "nombre": "Traslados (choferes - camilleros)"
+    },
+    {
+     "slug": "veterinaria",
+     "nombre": "Veterinaria"
+    }
+   ]
   },
   {
    "slug": "secretarias-y-recepcion",
-   "nombre": "Secretarias y Recepción"
+   "nombre": "Secretarias y Recepción",
+   "subareas": [
+    {
+     "slug": "asistente",
+     "nombre": "Asistente"
+    },
+    {
+     "slug": "otra",
+     "nombre": "Otra"
+    },
+    {
+     "slug": "recepcionista",
+     "nombre": "Recepcionista"
+    },
+    {
+     "slug": "secretaria",
+     "nombre": "Secretaria"
+    },
+    {
+     "slug": "telefonista",
+     "nombre": "Telefonista"
+    }
+   ]
   },
   {
    "slug": "seguros",
-   "nombre": "Seguros"
+   "nombre": "Seguros",
+   "subareas": [
+    {
+     "slug": "administracion-de-seguros",
+     "nombre": "Administracion de Seguros"
+    },
+    {
+     "slug": "otra",
+     "nombre": "Otra"
+    },
+    {
+     "slug": "seguros",
+     "nombre": "Seguros"
+    },
+    {
+     "slug": "tecnico-de-seguros",
+     "nombre": "Tecnico de Seguros"
+    },
+    {
+     "slug": "venta-de-seguros",
+     "nombre": "Venta de Seguros"
+    }
+   ]
   },
   {
    "slug": "sociologia-trabajo-social",
-   "nombre": "Sociología / Trabajo Social"
+   "nombre": "Sociología / Trabajo Social",
+   "subareas": [
+    {
+     "slug": "trabajo-social",
+     "nombre": "Trabajo social"
+    }
+   ]
   },
   {
    "slug": "tecnologia-sistemas-y-telecomunicaciones",
-   "nombre": "Tecnología, Sistemas y Telecomunicaciones"
+   "nombre": "Tecnología, Sistemas y Telecomunicaciones",
+   "subareas": [
+    {
+     "slug": "administracion-de-base-de-datos",
+     "nombre": "Administración de Base de Datos"
+    },
+    {
+     "slug": "analisis-de-datos",
+     "nombre": "Análisis de Datos"
+    },
+    {
+     "slug": "analisis-funcional",
+     "nombre": "Análisis Funcional"
+    },
+    {
+     "slug": "data-entry",
+     "nombre": "Data Entry"
+    },
+    {
+     "slug": "data-warehousing",
+     "nombre": "Data Warehousing"
+    },
+    {
+     "slug": "infraestructura",
+     "nombre": "Infraestructura"
+    },
+    {
+     "slug": "internet",
+     "nombre": "Internet"
+    },
+    {
+     "slug": "liderazgo-de-proyecto",
+     "nombre": "Liderazgo de Proyecto"
+    },
+    {
+     "slug": "otra",
+     "nombre": "Otra"
+    },
+    {
+     "slug": "programacion",
+     "nombre": "Programación"
+    },
+    {
+     "slug": "redes",
+     "nombre": "Redes"
+    },
+    {
+     "slug": "seguridad-informatica",
+     "nombre": "Seguridad Informática"
+    },
+    {
+     "slug": "sistemas",
+     "nombre": "Sistemas"
+    },
+    {
+     "slug": "soporte-tecnico",
+     "nombre": "Soporte Técnico"
+    },
+    {
+     "slug": "tecnologia-sistemas",
+     "nombre": "Tecnologia / Sistemas"
+    },
+    {
+     "slug": "tecnologias-de-la-informacion",
+     "nombre": "Tecnologías de la Información"
+    },
+    {
+     "slug": "telecomunicaciones",
+     "nombre": "Telecomunicaciones"
+    },
+    {
+     "slug": "testing-qa-qc",
+     "nombre": "Testing / QA / QC"
+    }
+   ]
   }
  ],
  "provincias": [

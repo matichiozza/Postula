@@ -1,5 +1,5 @@
 """
-Laburo IA: app de escritorio para los postuladores (ventana propia con pywebview; la interfaz
+Postulá: app de escritorio para los postuladores (ventana propia con pywebview; la interfaz
 está hecha en HTML en ui/). Por ahora tiene Computrabajo; las demás plataformas siguen con su
 script de consola.
 
@@ -22,6 +22,7 @@ sys.path.insert(0, str(APP))
 sys.path.insert(0, str(APP.parent / "comun"))   # módulos compartidos
 from motor_computrabajo import MotorComputrabajo  # noqa: E402
 from motor_jobint import MotorBumeran, MotorZonaJobs  # noqa: E402
+from motor_empleosit import MotorEmpleosIT  # noqa: E402
 import perfil  # noqa: E402
 import sueldo_neto  # noqa: E402
 import busquedas  # noqa: E402
@@ -30,7 +31,8 @@ import datos_usuario  # noqa: E402
 import descartes  # noqa: E402
 import cuenta  # noqa: E402
 
-MOTORES = {"computrabajo": MotorComputrabajo, "bumeran": MotorBumeran, "zonajobs": MotorZonaJobs}
+MOTORES = {"computrabajo": MotorComputrabajo, "bumeran": MotorBumeran, "zonajobs": MotorZonaJobs,
+           "empleosit": MotorEmpleosIT}
 LOG = rutas.registros() / "errores.log"
 ICONO = APP / "recursos" / "logo.ico"
 
@@ -121,6 +123,16 @@ class Api:
         self._hilo.start()
         return {"ok": True, "nombre": motor.nombre}
 
+    def cerrar_sesion(self, plataforma):
+        """Borra la sesión guardada de la bolsa (perfil de Edge). Historial, descartes y búsquedas quedan."""
+        if self._motor:
+            return {"ok": False, "error": "Volvé al menú antes de cerrar la sesión."}
+        if plataforma not in MOTORES:
+            return {"ok": False, "error": "Esa plataforma todavía no está en la app."}
+        if not cuenta.desvincular(plataforma):
+            return {"ok": False, "error": "No pude borrar la sesión: cerrá las ventanas de Edge de la app y probá de nuevo."}
+        return {"ok": True}
+
     def detener(self):
         """Corta la plataforma en curso (cierra su Edge) para volver al menú."""
         if self._motor:
@@ -144,11 +156,11 @@ class Api:
         except Exception as e:
             return {"ok": False, "error": str(e)}
 
-    def guardar_busqueda(self, plataforma, urls):
+    def guardar_busqueda(self, plataforma, urls, inactivas=None):
         if self._motor:
             return {"ok": False, "error": "Volvé al menú antes de cambiar las búsquedas."}
         try:
-            return busquedas.guardar(plataforma, urls)
+            return busquedas.guardar(plataforma, urls, inactivas)
         except Exception as e:
             return {"ok": False, "error": str(e)}
 
@@ -194,7 +206,7 @@ class Api:
 
     # ---- exportar / importar tus datos (nombre, sueldo, zona y avisos descartados)
     def _dialogo(self, tipo, **extra):
-        r = self._ventana.create_file_dialog(tipo, file_types=("Datos de Laburo IA (*.json)", "Todos los archivos (*.*)"), **extra)
+        r = self._ventana.create_file_dialog(tipo, file_types=("Datos de Postulá (*.json)", "Todos los archivos (*.*)"), **extra)
         if not r:
             return None
         return r if isinstance(r, str) else r[0]
@@ -202,7 +214,7 @@ class Api:
     def exportar(self):
         try:
             nombre = perfil.cargar()["nombre"]
-            sugerido = f"Laburo IA - datos de {nombre}.json" if nombre else "Laburo IA - mis datos.json"
+            sugerido = f"Postulá - datos de {nombre}.json" if nombre else "Postulá - mis datos.json"
             ruta = self._dialogo(webview.FileDialog.SAVE, save_filename=sugerido)
             if not ruta:
                 return {"ok": False, "cancelado": True}
@@ -272,12 +284,12 @@ class Api:
 
 
 def identidad_windows():
-    """Que Windows muestre la app como "Laburo IA" (con su logo) y no como Python: con un
+    """Que Windows muestre la app como "Postulá" (con su logo) y no como Python: con un
     AppUserModelID propio, la barra de tareas no la agrupa con python/pythonw y usa el ícono
     de la ventana."""
     try:
         import ctypes
-        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("LaburoIA.App")
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("Postula.App")
     except Exception:
         pass
 
@@ -287,8 +299,8 @@ def main():
     identidad_windows()
     api = Api()
     ventana = webview.create_window(
-        "Laburo IA", str(APP / "ui" / "index.html"), js_api=api,
-        width=1280, height=820, min_size=(900, 600), background_color="#0e1116")
+        "Postulá", str(APP / "ui" / "index.html"), js_api=api,
+        width=1280, height=820, min_size=(900, 600), background_color="#0e1116", maximized=True)
     api._ventana = ventana
     webview.start(icon=str(ICONO))   # ícono de la ventana y de la barra de tareas
     api._cerrar()

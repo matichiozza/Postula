@@ -1,0 +1,400 @@
+{
+ "relevado": "25-11-2026",
+ "categorias": [
+  {
+   "slug": "1081",
+   "nombre": "Administrador de Base de Datos/DBA"
+  },
+  {
+   "slug": "1035",
+   "nombre": "Administrador de Infraestructura"
+  },
+  {
+   "slug": "1036",
+   "nombre": "Administrador de Redes"
+  },
+  {
+   "slug": "1037",
+   "nombre": "Administrador de Servidores"
+  },
+  {
+   "slug": "1038",
+   "nombre": "Administrador de Sistemas/SysAdmin"
+  },
+  {
+   "slug": "1047",
+   "nombre": "Administrador Middleware"
+  },
+  {
+   "slug": "1084",
+   "nombre": "Analista Big Data/Data Science"
+  },
+  {
+   "slug": "1042",
+   "nombre": "Analista de Procesos/Negocios"
+  },
+  {
+   "slug": "1044",
+   "nombre": "Analista de Sistemas"
+  },
+  {
+   "slug": "1040",
+   "nombre": "Analista Funcional"
+  },
+  {
+   "slug": "1041",
+   "nombre": "Analista Técnico"
+  },
+  {
+   "slug": "1039",
+   "nombre": "Analista/Consultor BI"
+  },
+  {
+   "slug": "1080",
+   "nombre": "Analista/Consultor SAP"
+  },
+  {
+   "slug": "1045",
+   "nombre": "Arquitecto de Sistemas"
+  },
+  {
+   "slug": "1068",
+   "nombre": "Ciberseguridad / Seguridad Informática"
+  },
+  {
+   "slug": "1074",
+   "nombre": "Comercial y Ventas IT"
+  },
+  {
+   "slug": "1087",
+   "nombre": "Community Manager"
+  },
+  {
+   "slug": "1046",
+   "nombre": "Consultor/Auditor"
+  },
+  {
+   "slug": "1085",
+   "nombre": "Data Analytics"
+  },
+  {
+   "slug": "1130",
+   "nombre": "DataOps"
+  },
+  {
+   "slug": "1049",
+   "nombre": "Desarrollador .NET"
+  },
+  {
+   "slug": "1091",
+   "nombre": "Desarrollador ABAP"
+  },
+  {
+   "slug": "1107",
+   "nombre": "Desarrollador Android"
+  },
+  {
+   "slug": "1094",
+   "nombre": "Desarrollador Angular"
+  },
+  {
+   "slug": "1050",
+   "nombre": "Desarrollador ASP"
+  },
+  {
+   "slug": "1105",
+   "nombre": "Desarrollador Backend"
+  },
+  {
+   "slug": "1051",
+   "nombre": "Desarrollador C"
+  },
+  {
+   "slug": "1052",
+   "nombre": "Desarrollador C#"
+  },
+  {
+   "slug": "1053",
+   "nombre": "Desarrollador C++"
+  },
+  {
+   "slug": "1054",
+   "nombre": "Desarrollador Cobol"
+  },
+  {
+   "slug": "1117",
+   "nombre": "Desarrollador de Blockchain"
+  },
+  {
+   "slug": "1127",
+   "nombre": "Desarrollador de Microservicios/API"
+  },
+  {
+   "slug": "1092",
+   "nombre": "Desarrollador Delphi"
+  },
+  {
+   "slug": "1100",
+   "nombre": "Desarrollador Drupal"
+  },
+  {
+   "slug": "1114",
+   "nombre": "Desarrollador Dynamics"
+  },
+  {
+   "slug": "1110",
+   "nombre": "Desarrollador Flutter"
+  },
+  {
+   "slug": "1104",
+   "nombre": "Desarrollador Frontend"
+  },
+  {
+   "slug": "1089",
+   "nombre": "Desarrollador Full Stack"
+  },
+  {
+   "slug": "1090",
+   "nombre": "Desarrollador Genexus"
+  },
+  {
+   "slug": "1108",
+   "nombre": "Desarrollador Golang"
+  },
+  {
+   "slug": "1119",
+   "nombre": "Desarrollador HTML/CSS"
+  },
+  {
+   "slug": "1106",
+   "nombre": "Desarrollador iOS"
+  },
+  {
+   "slug": "1055",
+   "nombre": "Desarrollador J2EE"
+  },
+  {
+   "slug": "1056",
+   "nombre": "Desarrollador Java"
+  },
+  {
+   "slug": "1057",
+   "nombre": "Desarrollador JavaScript"
+  },
+  {
+   "slug": "1131",
+   "nombre": "Desarrollador Microestrategy"
+  },
+  {
+   "slug": "1058",
+   "nombre": "Desarrollador Mobile"
+  },
+  {
+   "slug": "1102",
+   "nombre": "Desarrollador Node.js"
+  },
+  {
+   "slug": "1059",
+   "nombre": "Desarrollador Oracle PL/SQL"
+  },
+  {
+   "slug": "1099",
+   "nombre": "Desarrollador Peoplenet"
+  },
+  {
+   "slug": "1060",
+   "nombre": "Desarrollador PHP"
+  },
+  {
+   "slug": "1097",
+   "nombre": "Desarrollador PowerCenter"
+  },
+  {
+   "slug": "1095",
+   "nombre": "Desarrollador Python"
+  },
+  {
+   "slug": "1098",
+   "nombre": "Desarrollador Qlikview"
+  },
+  {
+   "slug": "1093",
+   "nombre": "Desarrollador React"
+  },
+  {
+   "slug": "1077",
+   "nombre": "Desarrollador Ruby"
+  },
+  {
+   "slug": "1079",
+   "nombre": "Desarrollador Sharepoint"
+  },
+  {
+   "slug": "1096",
+   "nombre": "Desarrollador Shopify"
+  },
+  {
+   "slug": "1128",
+   "nombre": "Desarrollador Smalltalk"
+  },
+  {
+   "slug": "1076",
+   "nombre": "Desarrollador SOA"
+  },
+  {
+   "slug": "1061",
+   "nombre": "Desarrollador SQL"
+  },
+  {
+   "slug": "1062",
+   "nombre": "Desarrollador Visual BASIC"
+  },
+  {
+   "slug": "1078",
+   "nombre": "Desarrollador WEB"
+  },
+  {
+   "slug": "1115",
+   "nombre": "Desarrollador Wordpress"
+  },
+  {
+   "slug": "1111",
+   "nombre": "DevOps"
+  },
+  {
+   "slug": "1129",
+   "nombre": "DevSecOps"
+  },
+  {
+   "slug": "1083",
+   "nombre": "Diseñador/a UX UI"
+  },
+  {
+   "slug": "1063",
+   "nombre": "Diseñador/a Web"
+  },
+  {
+   "slug": "1109",
+   "nombre": "Docente"
+  },
+  {
+   "slug": "1072",
+   "nombre": "Gerente de Sistemas/CTO"
+  },
+  {
+   "slug": "1118",
+   "nombre": "Implementador de Software"
+  },
+  {
+   "slug": "1101",
+   "nombre": "Líder de QA"
+  },
+  {
+   "slug": "1065",
+   "nombre": "Líder Técnico"
+  },
+  {
+   "slug": "1086",
+   "nombre": "Machine Learning/AI"
+  },
+  {
+   "slug": "1082",
+   "nombre": "Marketing Digital"
+  },
+  {
+   "slug": "1075",
+   "nombre": "Otros"
+  },
+  {
+   "slug": "1048",
+   "nombre": "Otros Desarrollador"
+  },
+  {
+   "slug": "1073",
+   "nombre": "Otros Sistemas/Tecnología"
+  },
+  {
+   "slug": "1088",
+   "nombre": "Product Manager/Owner"
+  },
+  {
+   "slug": "1067",
+   "nombre": "Project Manager"
+  },
+  {
+   "slug": "1112",
+   "nombre": "QA Engineer"
+  },
+  {
+   "slug": "1064",
+   "nombre": "RRHH/Recruiter IT"
+  },
+  {
+   "slug": "1116",
+   "nombre": "Scrum Master"
+  },
+  {
+   "slug": "1069",
+   "nombre": "Soporte de Aplicaciones"
+  },
+  {
+   "slug": "1070",
+   "nombre": "Soporte Help Desk"
+  },
+  {
+   "slug": "1071",
+   "nombre": "Soporte Técnico"
+  },
+  {
+   "slug": "1043",
+   "nombre": "Tester/Analista QA"
+  },
+  {
+   "slug": "1120",
+   "nombre": "Técnico de Campo"
+  }
+ ],
+ "provincias": [
+  {
+   "sem": "Bahia Blanca",
+   "nombre": "Bahia Blanca, Buenos Aires",
+   "ciudades": []
+  },
+  {
+   "sem": "Ciudad Autónoma de Buenos Aires (CABA)",
+   "nombre": "Ciudad Autónoma de Buenos Aires (CABA), Buenos Aires",
+   "ciudades": []
+  },
+  {
+   "sem": "Cordoba",
+   "nombre": "Cordoba, Córdoba",
+   "ciudades": []
+  },
+  {
+   "sem": "Ensenada",
+   "nombre": "Ensenada, Buenos Aires",
+   "ciudades": []
+  },
+  {
+   "sem": "Garin",
+   "nombre": "Garin, Buenos Aires",
+   "ciudades": []
+  },
+  {
+   "sem": "Pilar",
+   "nombre": "Pilar, Buenos Aires",
+   "ciudades": []
+  },
+  {
+   "sem": "Quilmes",
+   "nombre": "Quilmes, Buenos Aires",
+   "ciudades": []
+  },
+  {
+   "sem": "Rosario",
+   "nombre": "Rosario, Santa Fe",
+   "ciudades": []
+  }
+ ],
+ "varias_categorias": true
+}

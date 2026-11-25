@@ -3,16 +3,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Laburo IA</title>
+  <title>Postulá</title>
   <link rel="stylesheet" href="estilo.css">
   <link rel="icon" href="logo.svg">
 </head>
 <body>
 <!-- fondo animado compartido por el menú y Ajustes: degradé suave con los colores de la bolsa elegida -->
-<div class="fondo" aria-hidden="true"><i class="mancha m1"></i><i class="mancha m2"></i><i class="mancha m3"></i></div>
+<div class="fondo" aria-hidden="true"><canvas id="fondo-lienzo"></canvas></div>
 
 <!-- ============================================================ menú -->
 <section id="inicio" class="pantalla activa">
+  <div class="marca-app"><img src="logo.svg" alt=""><span>Postulá</span></div>
   <button class="btn-ajustes" id="btn-ajustes">
     <svg class="ic" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
     Ajustes
@@ -40,7 +41,7 @@
 <section id="ajustes" class="pantalla">
   <div class="ajustes-caja">
     <div class="ajustes-cab">
-      <button class="btn chico" id="btn-volver"><span>← Volver</span></button>
+      <button type="button" class="lateral-volver" id="btn-volver" aria-label="Volver"><svg class="ic" viewBox="0 0 24 24"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button>
       <h1>Ajustes</h1>
     </div>
 
@@ -59,7 +60,7 @@
         </label>
         <label class="campo">
           <span>Sueldo bruto pretendido</span>
-          <span class="campo-caja"><span class="prefijo">$</span><input id="d-sueldo" inputmode="numeric" autocomplete="off" placeholder="1.800.000"></span>
+          <span class="campo-caja"><span class="prefijo">$</span><input id="d-sueldo" inputmode="numeric" autocomplete="off" placeholder="1.500.000"></span>
           <span class="neto" id="d-neto"></span>
         </label>
         <label class="campo">
@@ -124,6 +125,19 @@
         <span>Para decidir</span>
         <span class="badge" id="l-cant">0</span>
       </div>
+      <div class="pastilla" role="tablist">
+        <button type="button" role="tab" id="tab-libres"><span class="nom">Sin preguntas</span><span class="n">0</span></button>
+        <button type="button" role="tab" id="tab-preg"><span class="nom">Con preguntas</span><span class="n">0</span></button>
+      </div>
+      <button type="button" class="auto-fila" id="btn-auto" role="switch" aria-checked="false">
+        <span class="llave"></span>
+        <span class="auto-txt"><b>Auto</b><small id="auto-estado"></small></span>
+        <kbd>A</kbd>
+      </button>
+      <button type="button" class="orden oculto" id="btn-orden" aria-pressed="false">
+        <svg class="ic" viewBox="0 0 24 24"><path d="M3 6h13M3 12h9M3 18h5"/><path d="M18 9v10M15 16l3 3 3-3"/></svg>
+        <span></span>
+      </button>
       <ol class="lista" id="lista"></ol>
       <div class="lista-vacia" id="lista-vacia"></div>
     </aside>
@@ -134,21 +148,43 @@
 
   <aside class="registro" id="registro">
     <div class="registro-cab">
-      <strong>Registro del recorrido</strong>
-      <span class="tenue"><kbd>L</kbd> cerrar</span>
+      <button type="button" class="lateral-volver" aria-label="Volver"><svg class="ic" viewBox="0 0 24 24"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button>
+      <div><strong>Registro del recorrido</strong></div>
     </div>
     <ol id="registro-lista"></ol>
   </aside>
 
-  <aside class="registro" id="historial">
+  <aside class="registro" id="lateral-nuevas">
     <div class="registro-cab">
+      <button type="button" class="lateral-volver" aria-label="Volver"><svg class="ic" viewBox="0 0 24 24"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button>
       <div>
-        <strong>Postulaciones con tus respuestas</strong>
-        <div class="tenue" style="font-size: 12px">Los avisos con formulario a los que te postulaste respondiendo las preguntas.</div>
+        <strong>Nuevas postulaciones</strong>
+        <div class="tenue sub" id="lateral-nuevas-sub">Las que hiciste en este recorrido.</div>
       </div>
-      <span class="tenue"><kbd>H</kbd> cerrar</span>
     </div>
-    <ol id="historial-lista"></ol>
+    <ol id="lateral-nuevas-lista"></ol>
+  </aside>
+
+  <aside class="registro" id="lateral-rep">
+    <div class="registro-cab">
+      <button type="button" class="lateral-volver" aria-label="Volver"><svg class="ic" viewBox="0 0 24 24"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button>
+      <div>
+        <strong>Repetidos</strong>
+        <div class="tenue sub" id="lateral-rep-sub">Salteados porque repiten uno al que ya te postulaste.</div>
+      </div>
+    </div>
+    <ol id="lateral-rep-lista"></ol>
+  </aside>
+
+  <aside class="registro" id="lateral-desc">
+    <div class="registro-cab">
+      <button type="button" class="lateral-volver" aria-label="Volver"><svg class="ic" viewBox="0 0 24 24"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg></button>
+      <div>
+        <strong>Descartados por vos</strong>
+        <div class="tenue sub" id="lateral-desc-sub"></div>
+      </div>
+    </div>
+    <ol id="lateral-desc-lista"></ol>
   </aside>
 </section>
 
@@ -156,5 +192,6 @@
 <div class="velo" id="velo"><div class="velo-caja" id="velo-caja"></div></div>
 
 <script src="app.js"></script>
+<script src="fondo.js"></script>
 </body>
 </html>

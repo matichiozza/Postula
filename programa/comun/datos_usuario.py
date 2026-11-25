@@ -4,7 +4,7 @@ Exportar, importar y borrar los datos del usuario (Ajustes de la app).
 Exportar/importar sirve para pasarlos a una instalación nueva (o a otra PC).
 
 El archivo es un JSON legible:
-    {"app": "Laburo IA", "tipo": "datos-de-usuario", "version": 1, "exportado": "2026-11-24 18:30",
+    {"app": "Postulá", "tipo": "datos-de-usuario", "version": 1, "exportado": "2026-11-24 18:30",
      "nombre": "...", "sueldo": N o null, "zona": "...",
      "descartes": {"computrabajo": {"<id>": {titulo, empresa, url, motivo, fecha}}, "bumeran": {...}, ...},
      "busquedas": {"computrabajo": ["<link>", ...], "bumeran": [...], ...}}
@@ -39,7 +39,7 @@ def exportar(destino):
             urls = []
         if urls:
             busq[plataforma] = urls
-    datos = {"app": "Laburo IA", "tipo": TIPO, "version": 1, "exportado": datetime.now().strftime("%Y-%m-%d %H:%M"),
+    datos = {"app": "Postulá", "tipo": TIPO, "version": 1, "exportado": datetime.now().strftime("%Y-%m-%d %H:%M"),
              **p, "descartes": desc, "busquedas": busq}
     destino = Path(destino)
     destino.write_text(json.dumps(datos, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -52,9 +52,9 @@ def leer(origen):
     try:
         datos = json.loads(Path(origen).read_text(encoding="utf-8"))
     except (OSError, ValueError):
-        raise ValueError("No pude leer ese archivo. ¿Es el que exportaste desde Laburo IA?")
+        raise ValueError("No pude leer ese archivo. ¿Es el que exportaste desde Postulá?")
     if not isinstance(datos, dict) or datos.get("tipo") != TIPO:
-        raise ValueError("Ese archivo no es una exportación de datos de Laburo IA.")
+        raise ValueError("Ese archivo no es una exportación de datos de Postulá.")
     if not isinstance(datos.get("descartes", {}), dict):
         raise ValueError("El archivo está incompleto (los descartes no tienen el formato esperado).")
     if not isinstance(datos.get("busquedas", {}), dict):            # los exportados antes del 24-11-2026 no la traen

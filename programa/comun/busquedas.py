@@ -17,8 +17,8 @@ PLATAFORMAS = {
                 "ejemplo": "https://www.bumeran.com.ar/empleos.html"},
     "zonajobs": {"nombre": "ZonaJobs", "hosts": ("www.zonajobs.com.ar", "zonajobs.com.ar"), "quitar": ("page",),
                  "ejemplo": "https://www.zonajobs.com.ar/empleos.html"},
-    "empleosit": {"nombre": "EmpleosIT", "hosts": ("www.empleosit.com.ar", "empleosit.com.ar"), "quitar": ("page",),
-                  "ejemplo": "https://www.empleosit.com.ar/search-results-jobs/"},
+    "empleosit": {"nombre": "EmpleosIT", "hosts": ("www.empleosit.com.ar", "empleosit.com.ar"), "quitar": ("page", "searchId"),
+                  "ejemplo": "https://www.empleosit.com.ar/search-results-jobs/?action=search&listing_type%5Bequal%5D=Job"},
 }
 
 
@@ -57,13 +57,82 @@ def slug(texto):
     return "-".join("".join(c if c.isalnum() else " " for c in t).split())
 
 
+# ------------------------------------------------------------------ varias localidades en una búsqueda
+# Ninguna bolsa combina bien varios lugares en un link: se guarda el link del primero más
+# "lugares=prov~ciudad;prov~ciudad" (es de la app) y al recorrer se busca cada uno y se unen (expandir).
+def _separar(url):
+    """-> (link sin "lugares", [{"provincia", "ciudad"}])."""
+    partes = urlsplit(url)
+    consulta = parse_qsl(partes.query, keep_blank_values=True)
+    texto = ";".join(v for k, v in consulta if k == "lugares")
+    if not texto:
+        return url, []
+    lugares = [dict(zip(("provincia", "ciudad"), t.partition("~")[::2])) for t in texto.split(";") if t]
+    resto = urlencode([(k, v) for k, v in consulta if k != "lugares"])
+    return urlunsplit((partes.scheme, partes.netloc, partes.path, resto, "")), lugares
+
+
 def armar(plataforma, datos):
+    """Como _armar_uno, y además admite datos["lugares"] = [{"provincia", "ciudad"}] (vacío = todo el país)."""
+    if datos.get("lugares") is None:
+        return _armar_uno(plataforma, datos)
+    lugares = list({(x.get("provincia") or "", x.get("ciudad") or ""): None for x in datos["lugares"] if x.get("provincia")})
+    armados = [_armar_uno(plataforma, {**datos, "provincia": p, "ciudad": c}) for p, c in lugares or [("", "")]]
+    malo = next((a for a in armados if not a["ok"]), None)
+    if malo:
+        return malo
+    url = armados[0]["url"]
+    if len(lugares) > 1:
+        url += ("&" if "?" in url else "?") + urlencode({"lugares": ";".join(f"{p}~{c}" for p, c in lugares)})
+    return {"ok": True, "url": url, "resumen": resumen(url)}
+
+
+def expandir(plataforma, url):
+    """Los links que hay que recorrer para una búsqueda guardada (uno por lugar)."""
+    base, lugares = _separar(url)
+    if not lugares:
+        return [url]
+    campos = _desarmar_uno(plataforma, base)
+    if not campos:
+        return [base]
+    armados = [_armar_uno(plataforma, {**campos, **lugar}) for lugar in lugares]
+    return [a["url"] for a in armados if a["ok"]] or [base]
+
+
+def _nombre_lugar(plataforma, lugar):
+    if lugar["provincia"] == REMOTO["sem"]:
+        return "Remoto"
+    p = next((x for x in (filtros(plataforma) or {}).get("provincias", []) if x["sem"] == lugar["provincia"]), None)
+    if not p:
+        return lugar["provincia"]
+    c = next((x for x in p["ciudades"] if x["sem"] == lugar["ciudad"]), None)
+    return (c or p)["nombre"].replace(" (CABA)", "")
+
+
+def resumen(url):
+    """Texto legible de la búsqueda: "qué — dónde"."""
+    base, lugares = _separar(url)
+    texto = _resumen_uno(base)
+    if not lugares:
+        return texto
+    host = urlsplit(url).netloc.lower()
+    plataforma = next((k for k, v in PLATAFORMAS.items() if host in v["hosts"]), None)
+    if not plataforma:
+        return texto
+    nombres = [_nombre_lugar(plataforma, x) for x in lugares]
+    donde = " + ".join(nombres) if len(nombres) <= 2 else f"{len(nombres)} lugares"
+    return f"{texto.split(' — ')[0]} — {donde}"
+
+
+def _armar_uno(plataforma, datos):
     """datos: {puesto, categoria (slug), provincia (sem), ciudad (sem)} -> {ok, url, resumen} o {ok: False, error}."""
     f = filtros(plataforma)
     if not f:
         return {"ok": False, "error": "Esta plataforma no tiene listas para armar la búsqueda."}
     if plataforma in JOBINT:
         return _armar_jobint(plataforma, f, datos)
+    if plataforma == "empleosit":
+        return _armar_empleosit(f, datos)
     puesto = slug(datos.get("puesto"))
     cat = datos.get("categoria") or ""
     prov = datos.get("provincia") or ""
@@ -125,13 +194,34 @@ def _armar_jobint(plataforma, f, datos):
             lugar = f"en-{prov}/{ciudad}/"
     if not (puesto or cat or lugar or remoto):
         return {"ok": False, "error": "Elegí al menos una categoría, un puesto o un lugar."}
+    subareas = list(dict.fromkeys(datos.get("subareas") or []))
+    if subareas and not set(subareas) <= {s["slug"] for s in _subareas_de(f, cat)}:
+        return {"ok": False, "error": "Subárea desconocida."}
     nombre = "empleos" + (f"-area-{cat}" if cat else "") + ("-modalidad-remoto" if remoto else "") + \
              (f"-busqueda-{puesto}" if puesto else "") + ".html"
-    url = f"{SITIOS[plataforma]}/{lugar}{nombre}"
+    url = f"{SITIOS[plataforma]}/{lugar}{nombre}" + ("?" + urlencode({"subareas": ",".join(subareas)}) if subareas else "")
     return {"ok": True, "url": url, "resumen": resumen(url)}
 
 
-def _leer_jobint(plataforma, camino):
+def _subareas_de(f, categoria):
+    return next((c.get("subareas") or [] for c in f["categorias"] if c["slug"] == categoria), [])
+
+
+def _subareas_en_link(consulta):
+    """"subareas=a,b" -> ["a", "b"]; None si el link trae otros parámetros (no se arma con las listas)."""
+    q = parse_qsl(consulta)
+    if any(k != "subareas" for k, _ in q):
+        return None
+    return [s for _, v in q for s in v.split(",") if s]
+
+
+def _nombres_subareas(f, categoria, subareas):
+    nombres = {s["slug"]: s["nombre"] for s in _subareas_de(f, categoria)}
+    elegidas = [nombres.get(s, s.replace("-", " ").title()) for s in subareas]
+    return ", ".join(elegidas) if len(elegidas) <= 2 else f"{len(elegidas)} subáreas"
+
+
+def _leer_jobint(plataforma, camino, consulta=""):
     """Inverso de _armar_jobint: el camino del link -> (puesto, categoría, lugar) legibles, o None."""
     import re
     f = filtros(plataforma)
@@ -168,7 +258,70 @@ def _leer_jobint(plataforma, camino):
         if not cat:
             return None
     puesto = (m.group("kw") or "").replace("-", " ")
+    subareas = _subareas_en_link(consulta)
+    if subareas and m.group("area"):
+        cat = f"{cat}: {_nombres_subareas(f, m.group('area'), subareas)}"
     return puesto, cat, lugar
+
+
+# ------------------------------------------------------------------ EmpleosIT (SmartJobBoard)
+# El buscador es un GET a /search-results-jobs/ (verificado 25-11-2026): keywords[all_words],
+# JobCategory[multi_like][]=<id>, JobType[multi_like][]=1242 (remoto) y Location_City[multi_like_and][].
+# No filtra por provincia: en las listas "Dónde" son las ciudades con avisos.
+EIT_BASE = "https://www.empleosit.com.ar/search-results-jobs/"
+EIT_FIJOS = [("action", "search"), ("listing_type[equal]", "Job"), ("view", "list"), ("listings_per_page", "100")]
+EIT_PALABRA, EIT_CATEGORIA = "keywords[all_words]", "JobCategory[multi_like][]"
+EIT_TIPO, EIT_REMOTO, EIT_CIUDAD = "JobType[multi_like][]", "1242", "Location_City[multi_like_and][]"
+
+
+def _armar_empleosit(f, datos):
+    puesto = " ".join((datos.get("puesto") or "").split())
+    cats = list(dict.fromkeys(datos.get("subareas") or ([datos["categoria"]] if datos.get("categoria") else [])))
+    lugar = datos.get("provincia") or ""
+    if not set(cats) <= {c["slug"] for c in f["categorias"]}:
+        return {"ok": False, "error": "Categoría desconocida."}
+    consulta = list(EIT_FIJOS)
+    if puesto:
+        consulta.append((EIT_PALABRA, puesto))
+    consulta += [(EIT_CATEGORIA, c) for c in cats]            # la web suma los avisos de todas
+    if lugar == REMOTO["sem"]:
+        consulta.append((EIT_TIPO, EIT_REMOTO))
+    elif lugar:
+        if lugar not in {p["sem"] for p in f["provincias"]}:
+            return {"ok": False, "error": "Ciudad desconocida."}
+        consulta.append((EIT_CIUDAD, lugar))
+    if not (puesto or cats or lugar):
+        return {"ok": False, "error": "Elegí al menos una categoría, un puesto o un lugar."}
+    url = EIT_BASE + "?" + urlencode(consulta)
+    return {"ok": True, "url": url, "resumen": resumen(url)}
+
+
+def _desarmar_empleosit(consulta):
+    f = filtros("empleosit")
+    q = dict(parse_qsl(consulta))
+    if not f or set(q) - {k for k, _ in EIT_FIJOS} - {EIT_PALABRA, EIT_CATEGORIA, EIT_TIPO, EIT_CIUDAD}:
+        return None
+    cats = [v for k, v in parse_qsl(consulta) if k == EIT_CATEGORIA]
+    ciudad = q.get(EIT_CIUDAD, "")
+    remoto = q.get(EIT_TIPO) == EIT_REMOTO
+    if not set(cats) <= {c["slug"] for c in f["categorias"]} or (q.get(EIT_TIPO) and not remoto) \
+            or (ciudad and (remoto or ciudad not in {p["sem"] for p in f["provincias"]})):
+        return None
+    return {"categoria": "", "subareas": cats, "provincia": REMOTO["sem"] if remoto else ciudad, "ciudad": "",
+            "puesto": q.get(EIT_PALABRA, "")}
+
+
+def _leer_empleosit(consulta):
+    c = _desarmar_empleosit(consulta)
+    if c is None:
+        return None
+    f = filtros("empleosit")
+    nombres = {x["slug"]: x["nombre"] for x in f["categorias"]}
+    elegidas = [nombres[s] for s in c["subareas"]]
+    cat = ", ".join(elegidas) if len(elegidas) <= 2 else f"{len(elegidas)} categorías"
+    lugar = "Remoto" if c["provincia"] == REMOTO["sem"] else \
+        {p["sem"]: p["nombre"] for p in f["provincias"]}.get(c["provincia"], "")
+    return c["puesto"], cat, lugar
 
 
 def _leer_computrabajo(camino):
@@ -204,7 +357,7 @@ def _leer_computrabajo(camino):
     return puesto, cat, lugar
 
 
-def resumen(url):
+def _resumen_uno(url):
     """Texto legible de la búsqueda, sacado del link (ej.: 'Empleos de informatica y telecom en capital federal')."""
     partes = urlsplit(url)
     host = partes.netloc.lower()
@@ -217,9 +370,16 @@ def resumen(url):
     for plat in JOBINT:
         if host in PLATAFORMAS[plat]["hosts"]:
             try:
-                leido = _leer_jobint(plat, partes.path)
+                leido = _leer_jobint(plat, partes.path, partes.query)
             except Exception:
                 leido = None
+    if host in PLATAFORMAS["empleosit"]["hosts"]:
+        try:
+            leido = _leer_empleosit(partes.query)
+        except Exception:
+            leido = None
+        if not leido:
+            return "Búsqueda de EmpleosIT"
     if leido:
         puesto, cat, lugar = leido
         que = " · ".join(x for x in (f"“{puesto}”" if puesto else "", cat) if x) or "Todos los empleos"
@@ -236,6 +396,12 @@ def resumen(url):
 
 
 def lista(cfg):
+    """Las búsquedas ACTIVAS de un config (las que se recorren)."""
+    apagadas = set(cfg.get("urls_inactivas") or [])
+    return [u for u in todas(cfg) if u not in apagadas]
+
+
+def todas(cfg):
     """Los links de un config ya cargado (sirve tanto si tiene la lista como si tiene uno solo)."""
     urls = cfg.get("urls_busqueda")
     if not isinstance(urls, list) or not urls:
@@ -245,23 +411,36 @@ def lista(cfg):
 
 def leer(plataforma):
     cfg = json.loads(_config(plataforma).read_text(encoding="utf-8")) if _config(plataforma).exists() else {}
-    return {"busquedas": [{"url": u, "resumen": resumen(u), "campos": desarmar(plataforma, u)} for u in lista(cfg)],
+    activas = set(lista(cfg))
+    return {"busquedas": [{"url": u, "resumen": resumen(u), "campos": desarmar(plataforma, u), "activa": u in activas}
+                          for u in todas(cfg)],
             "ejemplo": PLATAFORMAS[plataforma]["ejemplo"]}
 
 
 def desarmar(plataforma, url):
+    """Link guardado -> campos del editor (con "lugares"), o None si no se puede editar con las listas."""
+    base, lugares = _separar(url)
+    campos = _desarmar_uno(plataforma, base)
+    if campos:
+        campos["lugares"] = lugares or ([{"provincia": campos["provincia"], "ciudad": campos["ciudad"]}] if campos["provincia"] else [])
+    return campos
+
+
+def _desarmar_uno(plataforma, url):
     """Inverso de armar(): link -> {"categoria", "provincia", "ciudad", "puesto"} con los mismos
     valores que usan las listas del editor, o None si el link no se puede editar con las listas
     (por ejemplo, uno pegado a mano con otros filtros). Lo usa el editor de búsquedas para abrir
     una búsqueda guardada y cambiarla."""
     try:
         partes = urlsplit(url)
+        if plataforma == "empleosit":
+            return _desarmar_empleosit(partes.query)
+        if plataforma in JOBINT:
+            return _desarmar_jobint(plataforma, partes.path, partes.query)
         if partes.query:
             return None
         if plataforma == "computrabajo":
             return _desarmar_computrabajo(partes.path)
-        if plataforma in JOBINT:
-            return _desarmar_jobint(plataforma, partes.path)
     except Exception:
         return None
     return None
@@ -300,19 +479,22 @@ def _desarmar_computrabajo(camino):
     return {"categoria": cat, "provincia": prov, "ciudad": ciudad, "puesto": puesto}
 
 
-def _desarmar_jobint(plataforma, camino):
+def _desarmar_jobint(plataforma, camino, consulta=""):
     import re
     f = filtros(plataforma)
     if not f:
         return None
     partes = [p for p in unquote(camino).strip("/").split("/") if p]
-    if not partes:
+    subareas = _subareas_en_link(consulta)
+    if not partes or subareas is None:
         return None
     m = re.fullmatch(r"empleos(?:-area-(?P<area>.+?))?(?P<remoto>-modalidad-remoto)?(?:-busqueda-(?P<kw>.+))?\.html", partes[-1])
     if not m:
         return None
     cat = m.group("area") or ""
     if cat and cat not in {c["slug"] for c in f["categorias"]}:
+        return None
+    if subareas and not set(subareas) <= {s["slug"] for s in _subareas_de(f, cat)}:
         return None
     lugar = partes[:-1]
     prov = ciudad = ""
@@ -330,7 +512,8 @@ def _desarmar_jobint(plataforma, camino):
             return None
     elif m.group("remoto"):
         prov = REMOTO["sem"]
-    return {"categoria": cat, "provincia": prov, "ciudad": ciudad, "puesto": (m.group("kw") or "").replace("-", " ")}
+    return {"categoria": cat, "subareas": subareas, "provincia": prov, "ciudad": ciudad,
+            "puesto": (m.group("kw") or "").replace("-", " ")}
 
 
 def validar(plataforma, url):
@@ -352,14 +535,24 @@ def validar(plataforma, url):
     if plataforma in JOBINT and not partes.path.endswith(".html"):
         return None, "Pegá el link de una lista de avisos (termina en .html, por ejemplo …/empleos-area-…html)."
     consulta = [(k, v) for k, v in parse_qsl(partes.query, keep_blank_values=True) if k not in info["quitar"]]
+    if plataforma == "empleosit":
+        if "/search-results-jobs" not in partes.path:
+            return None, "Pegá el link de una lista de resultados de EmpleosIT (…/search-results-jobs/?…)."
+        # "searchId" es una búsqueda guardada en tu sesión del navegador: sin los filtros no sirve
+        if any(k == "searchId" for k, _ in parse_qsl(partes.query)) and not any(
+                k.startswith(("keywords", "JobCategory", "Job", "Location", "Posted", "Employment")) for k, _ in consulta):
+            return None, "Ese link no trae los filtros. Hacé la búsqueda con el botón «Buscar» y copiá el link de la primera página."
+        propios = {k for k, _ in consulta}
+        consulta += [(k, v) for k, v in EIT_FIJOS if k not in propios]
     host = partes.netloc.lower()
-    if plataforma in JOBINT and not host.startswith("www."):
+    if plataforma in ("empleosit",) + JOBINT and not host.startswith("www."):
         host = "www." + host                       # bumeran.com.ar -> www.bumeran.com.ar (el sitio redirige igual)
     return urlunsplit(("https", host, partes.path, urlencode(consulta), "")), None
 
 
-def guardar(plataforma, urls):
-    """urls: lista de links (los vacíos se ignoran, los repetidos se guardan una vez)."""
+def guardar(plataforma, urls, inactivas=None):
+    """urls: lista de links (los vacíos se ignoran, los repetidos se guardan una vez). inactivas: los
+    que quedan guardados pero no se recorren (None = no cambiar cuáles están apagados)."""
     if isinstance(urls, str):
         urls = [urls]
     limpias = []
@@ -374,8 +567,14 @@ def guardar(plataforma, urls):
     # sin búsquedas también se puede guardar (el usuario quitó todas): el menú pide "Elegir qué buscar"
     archivo = _config(plataforma)
     cfg = json.loads(archivo.read_text(encoding="utf-8")) if archivo.exists() else {}
+    if inactivas is None:
+        apagadas = set(cfg.get("urls_inactivas") or [])
+    else:
+        apagadas = {validar(plataforma, u)[0] for u in inactivas}
     cfg["urls_busqueda"] = limpias
-    cfg["url_busqueda"] = limpias[0]
+    cfg["urls_inactivas"] = [u for u in limpias if u in apagadas]
+    # None (y no borrar la clave) si no queda ninguna: así no vuelve la búsqueda de fábrica del script
+    cfg["url_busqueda"] = next((u for u in limpias if u not in apagadas), None)
     archivo.write_text(json.dumps(cfg, ensure_ascii=False, indent=2), encoding="utf-8")
     return {"ok": True, **leer(plataforma)}
 
@@ -392,7 +591,7 @@ def probar(plataforma, url):
     import shutil
     import tempfile
     from playwright.sync_api import sync_playwright
-    perfil = tempfile.mkdtemp(prefix="laburo-probar-")
+    perfil = tempfile.mkdtemp(prefix="postula-probar-")
     try:
         with sync_playwright() as p:
             ctx = p.chromium.launch_persistent_context(perfil, channel="msedge", headless=False,
@@ -437,4 +636,7 @@ def _contar_avisos(plataforma, page, url):
             return int(resp.value.json().get("total") or 0)
         except Exception:
             return 0
+    if plataforma == "empleosit":
+        page.goto(url, wait_until="domcontentloaded", timeout=90000)
+        return page.locator('.listing-title a[href*="/display-job/"]').count()
     raise ValueError("Todavía no sé probar links de esta plataforma.")

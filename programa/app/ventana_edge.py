@@ -44,7 +44,7 @@ def _pid(m, page):
     """Proceso de Edge de este motor (se averigua una vez)."""
     if getattr(m, "_edge_pid", None):
         return m._edge_pid
-    marca = "laburoia-" + uuid.uuid4().hex[:10]
+    marca = "postula-" + uuid.uuid4().hex[:10]
     try:
         previo = page.title()
         page.evaluate("t => { document.title = t; }", marca)

@@ -50,7 +50,7 @@ URL_POSTULAR = CANDIDATO + "/match/?oi={oi}&p=57&idb=1&d=32"
 
 DEFAULT_CONFIG = {
     "url_busqueda": SITIO + "/empleos-de-informatica-y-telecom-en-capital-federal",
-    "salario_pretendido": 1800000,
+    "salario_pretendido": None,
     "pausa_min_seg": 2,
     "pausa_max_seg": 4,
     "max_postulaciones_por_corrida": 150,
@@ -139,6 +139,29 @@ def texto_pagina(page):
 
 
 # ----------------------------------------------------------------- Computrabajo
+# Lee en paralelo varias páginas de "Mis postulaciones". Por página: lista de avisos, o null si falló
+# (error HTTP o la sesión no llevó a la lista).
+MIS_POSTULACIONES_JS = """async (paginas) => Promise.all(paginas.map(async (n) => {
+    try {
+        const res = await fetch('/candidate/match?p=' + n, {credentials: 'include'});
+        if (!res.ok || !new URL(res.url).pathname.startsWith('/candidate/match')) return null;
+        const d = new DOMParser().parseFromString(await res.text(), 'text/html');
+        const texto = (e) => (e ? e.textContent : '').replace(/\\s+/g, ' ').trim();
+        return [...d.querySelectorAll('[data-match]')].map((it) => {
+            const ver = it.querySelector('[data-shortcut-see-offer]');
+            const url = ver ? ver.getAttribute('data-shortcut-see-offer').split(/[#?]/)[0] : '';
+            const id = (url.match(/[0-9A-F]{32}$/i) || [''])[0].toUpperCase();
+            const emp = it.querySelector('h1 ~ p');
+            // la empresa es el texto suelto del primer párrafo (después vienen las estrellas)
+            const suelto = emp && [...emp.childNodes].find((c) => c.nodeType === 3 && c.textContent.trim());
+            return {id, url, titulo: texto(it.querySelector('h1')), empresa: texto(suelto || (emp && emp.querySelector('a')))};
+        }).filter((x) => x.id);
+    } catch (e) {
+        return null;
+    }
+}))"""
+
+
 class Computrabajo:
     def __init__(self, page):
         self.page = page
@@ -180,6 +203,34 @@ class Computrabajo:
         except Exception:
             return None
 
+    def mis_postulaciones(self, al_avanzar=None, max_paginas=300):
+        """Todo lo que figura en "Mis postulaciones" (/candidate/match): {id del aviso: {titulo,
+        empresa, url}}. SOLO LEE: pide las páginas con fetch, no hace clic en nada (cada ítem tiene
+        un "Eliminar la postulación"). -> (postulaciones, completo)."""
+        if not self.page.url.startswith(CANDIDATO + "/"):
+            self.page.goto(CANDIDATO + "/candidate/match", wait_until="domcontentloaded")
+        todas, pagina, completo = {}, 1, True
+        while pagina <= max_paginas:
+            numeros = list(range(pagina, pagina + 4))
+            resultados = self.page.evaluate(MIS_POSTULACIONES_JS, numeros)
+            hay_nuevas = False
+            for n, r in zip(numeros, resultados):
+                if r is None:                       # esa página falló: se reintenta una vez
+                    r = self.page.evaluate(MIS_POSTULACIONES_JS, [n])[0]
+                if r is None:
+                    completo = False
+                    continue
+                for it in r:
+                    if it["id"] not in todas:
+                        hay_nuevas = True
+                        todas[it["id"]] = {k: it[k] for k in ("titulo", "empresa", "url")}
+            if al_avanzar:
+                al_avanzar(len(todas))
+            if not hay_nuevas:                      # se terminaron las páginas (o no se pueden leer)
+                break
+            pagina += 4
+        return todas, completo
+
     def listar(self, url, max_paginas, al_avanzar=None, esperar=time.sleep):
         """Recorre el listado página por página (?p=N) y devuelve los avisos.
         al_avanzar(pagina, avisos_hasta_ahora) y esperar(segundos) los usa la app para mostrar el
@@ -203,7 +254,8 @@ class Computrabajo:
                 return {id: a.dataset.id, titulo: link ? link.innerText.trim() : '',
                         url: link ? link.href.split('#')[0] : '',
                         empresa: emp ? emp.innerText.trim() : (ps[0] || ''),
-                        ubicacion: ps[1] || ''};
+                        ubicacion: ps[1] || '',
+                        fecha: ((a.querySelector('p.fc_aux') || {}).textContent || '').trim()};
             })""")
             nuevos = [i for i in items if i["id"] and i["id"] not in vistos]
             if not nuevos:

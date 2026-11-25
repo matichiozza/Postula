@@ -1,110 +1,67 @@
-# Laburo IA: postuladores automáticos de empleo
+# Postulá: app para postularse a avisos de empleo
 
-Documento para que otra persona u otro chat de IA entienda el proyecto completo y pueda seguir trabajando sin perder nada. **Actualizado el 24-11-2026** (búsquedas de Computrabajo armadas desde listas). Si sos un chat nuevo, leé primero **"Cómo trabajar con el usuario"** y **"Pendientes"**.
+Documento para que otra persona u otro chat de IA entienda el proyecto y pueda seguir sin perder nada. **Actualizado el 25-11-2026 (versión 1.2.5).** Si sos un chat nuevo, leé primero **"Cómo trabajar con el usuario"**, **"Cómo funciona hoy"** y **"Pendientes"**. Las secciones por bolsa y el historial de versiones tienen el detalle; **si algo viejo contradice a "Cómo funciona hoy" o a una versión más nueva, vale lo nuevo**.
+
+Repositorio: https://github.com/matichiozza/Postula (público). La app se llamaba "Laburo IA" hasta la 1.2.3.
 
 ## Qué es
 
-Herramientas para postularse automáticamente a avisos de empleo en Argentina:
+App de escritorio para Windows (**Postulá**) más los scripts de consola de cada bolsa, para postularse a avisos de empleo en Argentina.
 
-| Carpeta | Bolsa | Cómo funciona por dentro | En la app de escritorio |
-|---|---|---|---|
-| `computrabajo/` | ar.computrabajo.com | HTML + formularios ASP.NET (plataforma Redarbor) | **Sí** |
-| `bumeran/` | bumeran.com.ar | API JSON interna (plataforma Jobint/Navent) | **Sí** (24-11-2026) |
-| `zonajobs/` | zonajobs.com.ar | La misma API que Bumeran, con otro `x-site-id` | **Sí** (24-11-2026) |
-| `empleosit/` | empleosit.com.ar | HTML + formulario AJAX (plataforma SmartJobBoard) | No (consola) |
+| Bolsa | Cómo funciona por dentro | Motor de la app |
+|---|---|---|
+| ar.computrabajo.com | HTML + formularios ASP.NET (Redarbor) | `app/motor_computrabajo.py` |
+| bumeran.com.ar | API JSON interna (Jobint/Navent) | `app/motor_jobint.py` |
+| zonajobs.com.ar | La misma API que Bumeran, con otro `x-site-id` | `app/motor_jobint.py` |
+| empleosit.com.ar | HTML + formulario AJAX (SmartJobBoard) | `app/motor_empleosit.py` |
 
-Hay dos formas de usarlo:
-- **App de escritorio "Laburo IA"** (`programa/app/`, `Laburo IA.exe` en la raíz, con el logo): interfaz visual, todo con el teclado. **Por ahora solo Computrabajo.** Es donde se está trabajando.
-- **Scripts de consola** (`programa/bolsas/<bolsa>/postulador.py`): uno por bolsa, se corren a mano con `python postulador.py` desde su carpeta (ya no hay accesos directos "Postular en…"; pedido del usuario).
+## Cómo funciona hoy
 
-## Estado actual (24-11-2026)
-
-- **La app de Computrabajo está en uso real y funciona:** login, recorrido aviso por aviso con postulación automática, formularios de preguntas, descartes, varias búsquedas, Edge escondido. El usuario la usó varias veces (por ejemplo, una corrida con 35 postulaciones nuevas).
-- Los 4 scripts de consola funcionan (verificados en vivo entre el 19 y el 22-11-2026).
-- **Bumeran y ZonaJobs ya están en la app** (24-11-2026, `app/motor_jobint.py`). Probados contra el sitio real con postulación SIMULADA (sin sesión: el usuario había reinstalado de cero). **Falta la primera prueba real con la sesión del usuario** (iniciar sesión y postularse a unos pocos avisos).
-- Próximo paso: EmpleosIT a la app.
-
----
+- **El recorrido no postula.** Lee las búsquedas activas y deja los avisos en dos listas: *Sin preguntas* (en Computrabajo y EmpleosIT, *Sin revisar*: no se sabe si hay preguntas hasta abrir) y *Con preguntas*.
+- **Auto** arranca **apagado** en cada recorrido. Activado postula de a uno con pausas (`recorrido.paso_auto`), solo la primera lista, sin tocar los restaurados.
+- Al empezar, cada motor lee **las postulaciones de la cuenta** y las anota en el historial (`ya_postulado`).
+- En Computrabajo, **abrir el link de postulación de un aviso sin preguntas ya postula**. En EmpleosIT abrir el formulario no postula: postula el envío. En Jobint se postula por API.
+- Cabecera: contadores Nuevas postulaciones, Ya postulados, Para decidir, Repetidos y Descartados por vos; tres de ellos abren una barra lateral.
+- Búsquedas: activas e inactivas, subáreas (Jobint) o varias categorías (EmpleosIT), varias localidades y remoto.
 
 ## Cómo trabajar con el usuario (importante)
 
-- **Idioma:** todo en **español rioplatense** (vos, "postulate", etc.), incluidos los mensajes cortos entre pasos. El usuario lo pidió explícitamente. Los comentarios del código también están en español.
-- **Prioridad de la app:** que las decisiones se tomen **rápido y con el teclado** (flechas, letras, Enter, Esc). Interfaz clara, sin términos confusos.
-- **Probar antes de dar algo por terminado**, pero **solo lo necesario** ("no hace falta que pruebes todo"). Contar qué se probó y qué no.
-- **Nunca postularse a avisos reales para probar.** En Computrabajo **abrir el link de postulación de un aviso sin preguntas ya te postula**. Para probar se usan:
-  - motores con `abrir_postulacion`/`postular` simulados (monkeypatch) y copias de `datos/` en una carpeta temporal;
-  - la ventana real de la app fuera de la pantalla (`x=-3000`) con `evaluate_js`, haciendo **copia de seguridad** de cualquier archivo real que se toque y restaurándolo al final;
-  - Edge headless (`channel="msedge"`) contra `app/ui/index.html` con estado inyectado, para capturas de pantalla.
-- **El perfil de Edge (`perfil_edge/`) no se puede usar mientras la app está abierta.** Antes de probar algo con la sesión real, pedirle al usuario que cierre la app. Si hace falta que inicie sesión, pedírselo.
-- **Decisiones del usuario que no hay que revertir:**
-  - Los descartes son **solo locales** (`datos/<bolsa>/descartes.json`). **No usar "Ocultar aviso" de Computrabajo** ni nada que cambie la cuenta en la web.
-  - `n` = descartar **para siempre** (no existe "no por ahora").
-  - En ZonaJobs, `omitir_duplicados_de_bumeran` queda en `false`.
-- **No evadir anti-bots.** Si un sitio bloquea (Cloudflare, captchas que se repiten), no se usan técnicas para esquivarlo. Por eso **Indeed quedó descartado** (su verificación entraba en loop). LinkedIn se investigó pero no se implementó (sus términos prohíben la automatización y el riesgo para la cuenta es alto). Automatizar puede ir contra los términos de estos sitios: por eso hay pausas aleatorias y un máximo por corrida.
-- **Privacidad:** `perfil_edge/` (sesiones), los tokens y las cookies no se comparten ni se mandan a ningún servicio externo.
+- **Idioma:** español rioplatense, incluidos los mensajes cortos y los comentarios del código.
+- **Cada cambio a la app sube la versión** (`const VERSION` en `app/ui/app.js`) y se anota abajo, en "Versiones de la app".
+- **No agregar atajos de teclado nuevos** (pedido del 25-11-2026). Los que hay quedan.
+- Para decisiones de diseño, el usuario prefiere ver **varias propuestas en un artefacto** y elegir por letra.
+- **Probar antes de dar algo por terminado**, solo lo necesario, y contar qué se probó y qué no.
+- **Nunca postularse a avisos reales para probar.** Usar motores simulados, o la sesión real en solo lectura con los envíos bloqueados (`ctx.route`), escribiendo en una carpeta temporal.
+- **El perfil de Edge no se puede usar con la app abierta:** pedir que la cierre.
+- **Decisiones que no hay que revertir:** los descartes son solo locales (no usar "Ocultar aviso" de Computrabajo); `n` = descartar para siempre; en ZonaJobs `omitir_duplicados_de_bumeran` queda en `false`; en el menú, tocar una bolsa solo la elige.
+- **No evadir anti-bots.** Si un sitio bloquea o pide captcha, se frena y se avisa. Indeed y LinkedIn quedaron descartados por eso y por sus términos.
+- **Privacidad:** `programa/datos/` (sesiones, tokens, perfil) nunca va al repositorio ni a servicios externos.
 
----
+## Instalar
 
-## Instalar en otro equipo
-
-1. Copiar la carpeta **`Laburo IA`** completa (`Setup.exe` y `programa/`; `Laburo IA.exe` no hace falta, lo vuelve a crear Setup). Todo lo personal está en **`programa/datos/`**: descartes, historiales y config de cada bolsa, y `perfil.json` (nombre, sueldo y zona). Para un usuario nuevo, no copiar `datos/` (o usar la opción "Borrarlos" de Setup).
-   - **Forma recomendada (24-11-2026): Exportar / Importar desde la app.** En la instalación vieja, "Exportar" (`E`) guarda un `.json` con nombre, sueldo, zona y avisos descartados; en la nueva, "Importar" (`I`) los trae. Ver "Exportar e importar tus datos" más abajo.
-2. **Las sesiones (`datos/<bolsa>/perfil_edge/`) no sirven en otra PC:** Edge cifra las cookies con la cuenta de Windows de cada equipo. Hay que iniciar sesión de nuevo en cada bolsa (la app abre Edge en el login y sigue sola).
-3. Doble clic en **`Setup.exe`** (24-11-2026; reemplaza a `instalar.bat`). Es un **asistente con ventana nativa de Windows** (WinForms): Bienvenida → Opciones → Instalando (barra de progreso y detalle) → Listo ("Abrir Laburo IA ahora"). Instala **en el lugar** (no copia archivos) y necesita `programa/` al lado. Pasos:
-   1. Busca Python ≥ 3.9 (`py -3`, `python`, `%LOCALAPPDATA%\Programs\Python\Python3*`, `%ProgramFiles%\Python3*`; descarta el alias de Microsoft Store). Si no hay, pregunta y lo instala (3.12 con winget; sin winget, el instalador de python.org).
-   2. `pip install playwright pywebview` (sin `--upgrade`, para no cambiar versiones que andan) y verifica que se importen.
-   3. Verifica Microsoft Edge (si falta, solo avisa).
-   4. Anota el python.exe en **`datos/python.txt`** (lo usa `Laburo IA.exe`). Borra los viejos accesos "Postular en <Bolsa>.lnk" si quedaron.
-   5. **Desempaqueta `Laburo IA.exe` en la raíz** (viaja adentro de `Setup.exe` como recurso `LaburoIA.exe`; si ya estaba, lo reemplaza) y, si se tilda en Opciones, crea un acceso "Laburo IA" en el escritorio. Pedido del usuario (24-11-2026): antes de instalar, la raíz tiene solo `Setup.exe` y `programa/`, para no confundir cuál abrir.
-   6. Si se tilda "Borrarlos" (aparece solo si hay datos de un usuario anterior): borra de `datos/<bolsa>/` `perfil_edge/`, `historial.json`, `descartes.json` y `config.json` (búsquedas), y `datos/perfil.json` (pide confirmación y recuerda exportar antes desde Ajustes). Es lo mismo que "Empezar de cero" de la app. Se hace **antes** de guardar el nombre nuevo.
-   - **Pide el nombre** ("¿Cómo te llamás?", obligatorio; se precarga si ya había uno) y lo guarda en `datos/perfil.json` usando `comun/perfil.py` (corre Python con el nombre en la variable de entorno `LABURO_NOMBRE`, para no lidiar con comillas). La app saluda con "¡Hey <primer nombre>, postulate!". Modo silencioso: `/nombre "Mati"`.
-   - **No pregunta el sueldo** (pedido del usuario): en una instalación nueva la app muestra sueldo y zona vacíos hasta que se completan en "Tus datos" (o se importan).
-   - **Ya no crea accesos "Postular en <Bolsa>"** (pedido del usuario): los scripts de consola se corren a mano si hace falta (`python postulador.py` en `programa/bolsas/<bolsa>/`).
-   - Detalle de cada instalación en `datos/registros/setup.log`.
-4. **`Setup.exe` se compila** con `programa/instalador/compilar.bat` (primero compila el lanzador en `%TEMP%` y lo mete adentro de Setup.exe con `/resource:...,LaburoIA.exe`; en la raíz solo queda Setup.exe) (usa el `csc.exe` de .NET Framework 4 que trae Windows: solo C# 5, nada de `out _`, `$"..."` ni `?.`). Fuentes: `instalador/Setup.cs` y `instalador/Lanzador.cs`. Íconos: `Laburo IA.exe` usa `app/recursos/logo.ico` (el maletín); **`Setup.exe` usa `instalador/setup.ico`** (una caja abierta con una flecha verde que entra, para no confundirlo con la app; fuente `setup.svg`). El asistente muestra el logo de la app embebido (`logo.png`). Para probar sin clics: `Setup.exe /silencioso [/borrar] [/escritorio]`, y `Setup.exe /capturas <carpeta>` guarda una imagen de cada pantalla sin instalar (la ventana aparece un instante en pantalla). **Desde Git Bash no pasar `/silencioso` ni `/capturas`**: los convierte en rutas y abre el asistente normal; usar PowerShell. El asistente escala a mano según los DPI (`P()`/`Z()`): el escalado automático de WinForms estiraba los textos con pantallas al 125 %.
-   - `Laburo IA.exe` (lanzador): lee `programa/datos/python.txt`, abre `pythonw app.py` en `programa/app/` (con `PYTHONDONTWRITEBYTECODE=1`) y termina. Si falta `python.txt` dice "ejecutá Setup.exe". No tiene rutas fijas: si se mueve la carpeta sigue andando.
-   - Sin firma digital: si se pasan por internet, Windows SmartScreen puede advertir la primera vez ("Más información" → "Ejecutar de todas formas").
-5. Versiones: playwright 1.65.2, pywebview 6.2.1, pythonnet 3.2.1. En esta PC el Python es `%LOCALAPPDATA%\Programs\Python\Python312\` (el 3.14 que mencionaban versiones viejas de este documento ya no está). Ante la duda, mirar `datos/python.txt`.
-
----
+1. Ejecutar **`Setup.exe`** (asistente WinForms: Bienvenida → Opciones → Instalando → Listo). Instala en **`%LOCALAPPDATA%\Programs\Postulá`** (cambiable; no usar `C:\Program Files`: la app escribe sus datos adentro). Copia `programa/` y `Setup.exe`, y si el destino no tiene datos trae los que haya junto al instalador. Reinstalar encima no pisa los datos.
+2. Pasos: Python ≥ 3.9 (ofrece instalar 3.12) → `pip install playwright pywebview` → verifica Edge → copia → anota `datos/python.txt` → desempaqueta `Postulá.exe` → acceso en el menú Inicio y, opcional, en el escritorio. Detalle en `datos/registros/setup.log`.
+3. Sin ventanas: `Setup.exe /silencioso [/destino C:\carpeta] [/nombre "X"] [/borrar] [/escritorio] [/sinmenu]`; `/capturas <carpeta>` guarda las pantallas. Desde Git Bash no pasar esos parámetros (los convierte en rutas).
+4. Compilar: `programa/instalador/compilar.bat` (usa `csc.exe` de .NET Framework 4: solo C# 5). El lanzador viaja dentro de `Setup.exe`. `Setup.exe` usa `instalador/setup.ico`; `Postulá.exe`, `app/recursos/logo.ico`.
+5. Las sesiones (`perfil_edge/`) no sirven en otra PC: hay que volver a iniciar sesión.
+6. **Detrás de un proxy que pide autenticación de Windows, `pip` falla con 407.** Se resolvió bajando las ruedas de PyPI con PowerShell (`-ProxyUseDefaultCredentials`) e instalando con `pip install --user --no-index --find-links`.
 
 ## Estructura de archivos
 
-Pedido del usuario (24-11-2026): en la raíz **solo** tres cosas, y adentro de `programa/` el **código separado de los datos**, sin archivos sueltos que hagan ruido.
-
 ```
-Laburo IA/
-├─ Setup.exe                      instalador (asistente de Windows; ícono de caja)
-├─ Laburo IA.exe                  el ejecutable de la app (ícono del maletín). NO viene suelto: lo crea Setup.exe al instalar
+Postulá/
+├─ Setup.exe                 instalador
+├─ Postulá.exe               lo crea Setup.exe
 └─ programa/
-   ├─ CONTEXTO.md                 este documento
-   ├─ app/                        la app de escritorio
-   │  ├─ app.py                   ventana pywebview + API para la interfaz
-   │  ├─ motor_computrabajo.py    lógica de Computrabajo para la app (hilo aparte)
-   │  ├─ recursos/                logo.svg (original), logo.ico (ventana, barra de tareas, .exe), logo.png (asistente)
-   │  └─ ui/                      index.html, estilo.css, app.js, logo.svg (copia: pywebview solo sirve ui/), logos/ (logos originales de las 4 bolsas: <bolsa>.svg/png y <bolsa>-icono.*)
-   ├─ bolsas/<bolsa>/             código de cada bolsa (computrabajo, bumeran, zonajobs, empleosit)
-   │  ├─ postulador.py            script de consola (la app reutiliza el de computrabajo)
-   │  └─ filtros.json, actualizar_filtros.py   (solo computrabajo) categorías, provincias y ciudades
-   ├─ comun/                      módulos compartidos
-   │  ├─ rutas.py                 dónde está cada cosa (todos los demás lo usan; no hay rutas armadas a mano)
-   │  ├─ busquedas.py             links de búsqueda de cada plataforma (y armarlos desde listas)
-   │  ├─ descartes.py             descartes por usuario
-   │  ├─ perfil.py                sueldo y zona: leer, guardar, detectar preguntas
-   │  └─ sueldo_neto.py           bruto -> neto estimado (Argentina)
-   ├─ datos/                      TODO lo personal (borrar esta carpeta = empezar de cero)
-   │  ├─ perfil.json              {"nombre": "...", "sueldo": N o null, "zona": "..."} (antes "Sueldo bruto pretendido.txt")
-   │  ├─ python.txt               el Python que usa Laburo IA.exe (lo escribe Setup.exe)
-   │  ├─ <bolsa>/config.json      búsquedas, pausas, máximos, mail_usuario (solo para mostrar), etc.
-   │  ├─ <bolsa>/descartes.json   avisos descartados para siempre (antes datos/usuarios/<mail>/<bolsa>.json)
-   │  ├─ <bolsa>/historial.json   estado de cada aviso procesado
-   │  ├─ <bolsa>/perfil_edge/     sesión de Edge (PRIVADO, no sirve en otra PC)
-   │  └─ registros/               app.log (lo que imprime el motor, se pisa al abrir), errores.log (último error fatal), setup.log
-   └─ instalador/                 Setup.cs, Lanzador.cs, compilar.bat (CRLF), setup.svg/.ico
+   ├─ CONTEXTO.md
+   ├─ app/                   app.py, recorrido.py, motor_*.py, ventana_edge.py, recursos/, ui/ (index.html, estilo.css, app.js, fondo.js)
+   ├─ bolsas/<bolsa>/        postulador.py (consola; la app lo reutiliza), filtros.json, actualizar_filtros.py
+   ├─ comun/                 rutas, busquedas, descartes, perfil, cuenta, fechas, datos_usuario, sueldo_neto
+   ├─ datos/                 TODO lo personal (no se sube): perfil.json, python.txt, <bolsa>/{config,cuenta,descartes,historial}.json y perfil_edge/, registros/
+   └─ instalador/            Setup.cs, Lanzador.cs, compilar.bat, setup.svg/.ico
 ```
 
-- Los módulos se importan agregando `programa/comun` a `sys.path` (`app.py`, `motor_computrabajo.py` y cada `postulador.py`). La app y los scripts ponen `sys.dont_write_bytecode = True` para que no aparezcan carpetas `__pycache__`.
-- Si se agrega un archivo nuevo, va en el lugar que le corresponde según esta tabla (código en `app/`, `bolsas/` o `comun/`; datos en `datos/`), con la ruta sacada de `rutas.py`.
+Los módulos comunes se importan agregando `programa/comun` a `sys.path`. Las rutas salen de `rutas.py`.
 
 ---
 
@@ -153,7 +110,7 @@ Los scripts y la app los importan agregando la raíz a `sys.path`.
 ## App de escritorio (`app/`)
 
 ### Tecnología
-- **pywebview** (ventana propia con WebView2, título "Laburo IA", 1280×820, mínimo 900×600) + interfaz HTML/CSS/JS en `app/ui/` (sin frameworks, íconos SVG en línea, tema oscuro y claro según Windows).
+- **pywebview** (ventana propia con WebView2, título "Postulá", 1280×820, mínimo 900×600) + interfaz HTML/CSS/JS en `app/ui/` (sin frameworks, íconos SVG en línea, tema oscuro y claro según Windows).
 - Se abre con `pythonw.exe app.py` (sin consola). **`redirigir_salida()`** manda `stdout` y `stderr` a `datos/registros/app.log` en UTF-8. Es obligatorio: con pythonw la salida es cp1252 y un `print` con emoji tiraba la app (pasó el 22-11-2026).
 - Errores fatales: se muestran en la app y quedan en `datos/registros/errores.log`.
 
@@ -167,28 +124,13 @@ Los scripts y la app los importan agregando la raíz a `sys.path`.
 - Comandos: `pausa`, `detalle`, `descartar`, `deshacer`, `abrir_form`, `enviar`.
 - Eventos: `estado`, `login`, `login_ok`, `usuario` (mail si se leyó, y cantidad de descartados), `busqueda`, `leyendo`, `listado`, `grupos`, `grupo_nuevo`, `grupo_act`, `grupo_quitado`, `deshecho`, `progreso`, `pausa`, `detalle`, `form`, `form_error`, `aviso` (cartel), `fase1_fin`, `fatal`.
 
-### Flujo de una corrida (`_correr`)
-1. **Edge escondido:** se lanza con `--window-position=-2400,0` (fuera de la pantalla; **headless no sirve: Computrabajo devuelve 403**) y `ventana(page, mostrar=False)` lo manda fuera de la pantalla por CDP y lo **oculta con Windows** (`app/ventana_edge.py`, `ShowWindow(SW_HIDE)`): no aparece ni en pantalla ni en la barra de tareas ni en Alt+Tab. Las ventanas de *este* Edge se encuentran poniéndole a la pestaña un título único y tomando su proceso; `repasar()` (llamado al inicio de `atender`) oculta cualquier ventana nueva de ese proceso. Para el login se vuelve a mostrar. Si no encuentra la ventana, minimiza como antes.
-2. **Login:** abre `/candidate/home`. Si no está logueado, emite `login`, **muestra Edge** (en 80,40, adelante) y espera revisando **todas las pestañas** (`logueado()`): si alguna está en `/candidate/` listo; si alguna está en una página de login (`secure.*`, `/account/` o un sitio que no es Computrabajo, como Google) espera; si no, abre `/candidate/home` para confirmar. Después vuelve a esconder Edge. Los cambios de URL quedan en `app.log` como `[login] …`.
-3. **Mail** (`ct.mail()` desde `/configuration`; si no, `config.json`; si no, se pide en la interfaz) → `descartes.iniciar`.
-4. Abre las pestañas de consulta y formulario y vuelve a esconder Edge (`bring_to_front` lo des-minimiza, pero queda fuera de la pantalla).
-5. **Búsqueda por búsqueda** (`busquedas.lista(cfg)`): emite `busqueda`, lee el listado (`leyendo` por página, `listado {total, en_otras}`) y recorre sus avisos. Un aviso que ya salió en una búsqueda anterior de la misma corrida no se repite. Si una búsqueda no trae avisos, avisa.
-6. **Un solo recorrido, aviso por aviso** (contadores entre paréntesis):
-   - en `descartes.json` (o `descartado` en el historial) → se saltea (`desc`);
-   - ya postulado según el historial → (`ya`);
-   - otro estado final (`externo`, `repetido`) o palabra excluida del título → (`omit`);
-   - `con_preguntas` en el historial → va a "Para decidir" **sin volver a abrirlo** (`preg`; ver "Pendientes": puede estar desactualizado);
-   - repite uno ya postulado (`es_repetido`) → se registra `repetido` (`rep`);
-   - si no: **abre el link de postulación** → `postulado` (`ok`), `ya_postulado` (`ya`), `preguntas` (va a "Para decidir", `preg`), `externo` (`ext`) o error (`err`, se reintenta en otra corrida);
-   - pausa aleatoria entre `pausa_min_seg` y `pausa_max_seg` (hoy 2–4 s) **solo después de abrir un link**; con 2 errores seguidos la pausa se duplica (hasta ×8) y se avisa;
-   - tope `max_postulaciones_por_corrida` (links abiertos);
-   - `progreso` en cada aviso.
-7. `fase1_fin` y queda atendiendo las decisiones del usuario hasta que vuelva al menú o cierre.
+### Flujo de una corrida
+Ver "Cómo funciona hoy". El recorrido de las búsquedas es común (`recorrido.recorrer`): cada motor pone `cargar(url, resumen)` y `procesar(aviso)`, que solo clasifica, y `postular_libre(aviso)` para Auto. Una búsqueda con varios lugares se expande en varios links (`busquedas.expandir`) y se unen los resultados.
 
 ### Logo e identidad en Windows (24-11-2026)
 - Logo: maletín blanco (el trabajo) con un destello amarillo (la IA) sobre un cuadrado verde redondeado. Original en `app/recursos/logo.svg`; `logo.ico` (16 a 256 px, entradas PNG) y `logo.png` se generan renderizando el SVG con Edge.
 - En el menú y la cabecera reemplaza a la vieja "L" (`img.logo`). Hay una copia en `app/ui/logo.svg` porque pywebview sirve la interfaz solo desde `ui/` (`../recursos/` no carga).
-- Ventana y barra de tareas: `webview.start(icon=logo.ico)` y, antes de crear la ventana, `SetCurrentProcessExplicitAppUserModelID("LaburoIA.App")` (`identidad_windows()` en `app.py`). Sin eso Windows mostraba el ícono de Python y agrupaba la app con pythonw.
+- Ventana y barra de tareas: `webview.start(icon=logo.ico)` y, antes de crear la ventana, `SetCurrentProcessExplicitAppUserModelID("Postula.App")` (`identidad_windows()` en `app.py`). Sin eso Windows mostraba el ícono de Python y agrupaba la app con pythonw.
 
 ### Interfaz
 - **Menú** (diseño "F · minimalista centrado", elegido por el usuario el 24-11-2026 entre 7 propuestas; las propuestas están en el artefacto https://claude.ai/artifact/4vJyJp1vrN4ZCrqQoM4YzA). Siempre en tema oscuro:
@@ -350,9 +292,9 @@ Se compararon 10 búsquedas armadas por la app (`busquedas.armar` + `Computrabaj
 - Detalle para pruebas: el buscador de la web sugiere con `ul.autocomplete li[data-autocomplete-item-selectable-url]`; el primer clic tras abrir un Edge nuevo a veces no responde (cartel de la primera visita). El interruptor "Remoto" lleva a `data-url` de `#remote`.
 
 ### Exportar e importar tus datos (`comun/datos_usuario.py`, 24-11-2026)
-- Para reinstalar de cero sin perder nada. En **Ajustes**, tarjeta "Copia de tus datos": **Exportar** (`E`) abre el diálogo "Guardar como" de Windows (sugiere `Laburo IA - datos de <nombre>.json`) y **Importar** (`I`) el de "Abrir". Diálogos de pywebview (`create_file_dialog`, `webview.FileDialog.SAVE/OPEN`).
+- Para reinstalar de cero sin perder nada. En **Ajustes**, tarjeta "Copia de tus datos": **Exportar** (`E`) abre el diálogo "Guardar como" de Windows (sugiere `Postulá - datos de <nombre>.json`) y **Importar** (`I`) el de "Abrir". Diálogos de pywebview (`create_file_dialog`, `webview.FileDialog.SAVE/OPEN`).
 - **Probado por el usuario el 24-11-2026:** exportó, reinstaló con "Borrarlos" (Setup.exe) e importó: volvieron nombre, sueldo, zona y los 89 descartes de Computrabajo.
-- El archivo: `{"app": "Laburo IA", "tipo": "datos-de-usuario", "version": 1, "exportado": "...", "nombre", "sueldo", "zona", "descartes": {"computrabajo": {...}, "bumeran": {...}}}, "busquedas": {"computrabajo": ["<link>", …], …}}`. **Las búsquedas viajan desde el 24-11-2026** (pedido del usuario).
+- El archivo: `{"app": "Postulá", "tipo": "datos-de-usuario", "version": 1, "exportado": "...", "nombre", "sueldo", "zona", "descartes": {"computrabajo": {...}, "bumeran": {...}}}, "busquedas": {"computrabajo": ["<link>", …], …}}`. **Las búsquedas viajan desde el 24-11-2026** (pedido del usuario).
 - **Importar reemplaza** nombre, sueldo y zona (solo los que vienen completos) y **suma** los descartes y las **búsquedas** a los que haya (no borra; importar dos veces no duplica; una búsqueda que no es válida para su bolsa se ignora). Rechaza archivos que no tengan `"tipo": "datos-de-usuario"`; los exportados antes de que viajaran las búsquedas se importan igual. No se puede con una plataforma corriendo.
 - No viajan: sesiones de Edge (no sirven en otra PC) e historiales.
 - Probado el 24-11-2026 sobre copias: 89 descartes de Computrabajo + nombre, sueldo y zona exportados e importados en un `datos/` vacío; un aviso importado se saltea al iniciar.
@@ -441,14 +383,12 @@ Plataforma **SmartJobBoard** (PHP, HTML clásico, jQuery). Sin Cloudflare ni ant
 
 ## Pendientes e ideas
 
-1. **Avisos "con preguntas" desactualizados (Computrabajo, importante).** El historial guarda `con_preguntas` para los avisos pendientes de decidir y la app los pone en "Para decidir" **sin volver a abrirlos**. Si el usuario se postuló por fuera de la app (directo en la web), la app igual se lo muestra como pendiente. No hay doble postulación (al apretar `S`, Computrabajo responde "Ya te postulaste" y la app lo saca), pero apretar `N` lo anotaría como descartado. **Arreglo propuesto:** al empezar cada corrida, leer "Mis postulaciones" de Computrabajo (área del candidato) y tomar esos IDs como ya postulados. Falta investigar esa página con la sesión real (URL, estructura de cada ítem, dónde está el ID del aviso, paginación), con la app cerrada. La alternativa (reabrir cada `con_preguntas`) suma unos 10 minutos por corrida.
-2. **Llevar EmpleosIT a la app** (Bumeran y ZonaJobs ya están: `motor_jobint.py`). Hacer la primera corrida real de Bumeran y ZonaJobs con la sesión del usuario.
-3. **Varias búsquedas en las consolas de Bumeran, ZonaJobs y EmpleosIT:** hoy usan solo `url_busqueda`. Usar `busquedas.lista(cfg)` como en Computrabajo.
-4. **Limpiar la descripción de los avisos de Computrabajo:** al final se cuela texto de la página que no es del aviso ("Avísame con ofertas similares", "Denunciar empleo", "Gracias por ayudarnos…"). Se le ofreció al usuario y no respondió todavía.
-5. **Actualizar los valores de `sueldo_neto.py`** cuando cambien (tope ANSES mensual; deducciones y escala de Ganancias semestrales).
-6. Respuestas predefinidas para preguntas frecuentes (disponibilidad, presencialidad, inglés…).
-7. (Hecho en la app el 24-11-2026: Bumeran y ZonaJobs detectan repetidos como Computrabajo. Los scripts de consola de Bumeran/ZonaJobs todavía no.)
-8. (Hecho el 24-11-2026: las búsquedas viajan al exportar/importar.)
+1. **Barra de título azul:** el usuario la quiere gris oscuro. En Windows 10 una app no puede cambiarla (tiene activado el color de énfasis). Opciones ofrecidas, sin respuesta: desactivarlo en Windows, o ventana sin marco con barra propia.
+2. **Pruebas reales que faltan:** postulación desde la app en Bumeran y ZonaJobs; formulario con preguntas en EmpleosIT (la postulación sin preguntas ya funcionó); paginación de "Mis Postulaciones" de EmpleosIT con más de una página.
+3. Bumeran informa como máximo 250 postulaciones. El 25-11-2026 su búsqueda devolvió HTTP 503 un rato (se resolvió solo).
+4. Los scripts de consola no entienden `lugares` (recorren el primero) y los de Bumeran, ZonaJobs y EmpleosIT usan solo la primera búsqueda.
+5. Actualizar `sueldo_neto.py` cuando cambien los valores (tope ANSES mensual; Ganancias semestral).
+6. Ideas: respuestas predefinidas para preguntas frecuentes.
 
 ---
 
@@ -465,6 +405,41 @@ Plataforma **SmartJobBoard** (PHP, HTML clásico, jQuery). Sin Cloudflare ni ant
 - **1.0.6** (24-11-2026): Edge de los motores **oculto del todo** (ni en pantalla ni en la barra de tareas), en vez de minimizado: `app/ventana_edge.py`. Sigue siendo el mismo Edge con ventana (para los sitios no cambia nada). Al abrir puede aparecer un instante en la barra de tareas hasta que se oculta.
 - **1.0.7** (24-11-2026): (1) El selector de búsqueda andaba bien; lo que confundía es que los avisos ya revisados en otras corridas se saltean al instante, y en las búsquedas del usuario (Informática en Catamarca: 50 avisos, SQL en Chubut: 20) **no había ninguno nuevo**, así que al cambiar ambas terminaban en un segundo sin decir nada. Ahora `busqueda_fin` trae `total` y `abiertos` (avisos nuevos) y la interfaz avisa: «X: no hay avisos nuevos (los N ya los habías revisado)», «Vuelvo a X donde la dejaste (12 de 48)»; el final dice «Listo · sin avisos nuevos». (2) EmpleosIT no se puede elegir: gris, etiqueta «Próximamente», al tocarlo solo avisa y las flechas la saltean. (3) **No se puede empezar sin nombre, sueldo bruto y zona** (Empezar deshabilitado + aviso «Para empezar, completá … en Ajustes →»; `Api.iniciar` también lo rechaza).
 
+- **1.0.8** (25-11-2026): **el recorrido ya no postula solo.** La columna "Para decidir" tiene una pastilla con dos listas (`← →`): **Sin preguntas** (en Computrabajo se llama **Sin revisar**, porque no se sabe si tienen preguntas hasta abrir el link, y abrirlo ya postula) y **Con preguntas**. En la primera hay un interruptor **Auto** (`A`), **desactivado al empezar cada recorrido** (pedido del usuario): activado, postula uno por uno con las pausas de siempre; desactivado, el usuario se postula de a uno con `S`. Si uno resulta tener preguntas pasa a la otra lista. El recorrido solo lee y clasifica (`agregar_libre`, items con `libre: true`); Auto está en `recorrido.py` (`paso_auto`, `quedar_atendiendo`, comando `auto`) y cada motor pone `postular_libre`. `max_postulaciones_por_corrida` ahora limita solo a Auto (las manuales no cuentan). Los avisos de la primera lista no se anotan en el historial hasta que se actúa sobre ellos. **Reemplaza lo que dicen más arriba "Flujo de una corrida" y los motores sobre postular durante el recorrido** (los scripts de consola no cambiaron). Probado con la bolsa simulada y la interfaz en Edge headless; **falta la prueba real**.
+- **1.0.9** (25-11-2026): (1) Cabecera: contadores **Repetidos** (nuevo) y **Descartados por vos** separados; externos, omitidos, errores y "de la otra bolsa" ya no suman en la cabecera (quedan en el registro, `L`). Al terminar ya no dice "N para decidir" arriba. (2) **Computrabajo lee "Mis postulaciones" al empezar** (resuelve el pendiente 1): `Computrabajo.mis_postulaciones()` pide con `fetch` las páginas `/candidate/match?p=N` (10 por página; ítem `[data-match]`, link del aviso en `[data-shortcut-see-offer]`, el ID son los últimos 32 hex; **solo lectura**: cada ítem tiene "Eliminar la postulación"). `sincronizar_postulaciones` las anota en el historial como `ya_postulado` (`detalle: "Mis postulaciones"`), sin pisar `postulado` ni `descartado`. En muchas la web no muestra la empresa: esas se excluyen por ID pero no se usan para detectar repetidos. Probado con la cuenta real en solo lectura (293 leídas; la lista "Sin revisar" bajó de 107 a unos 40).
+- **1.1.0** (25-11-2026): (1) **Logo de la empresa** en el aviso (Computrabajo: `img` de `/logos/empresas/` en la ficha; Jobint: `logoURL`), con la inicial si no hay. (2) **Descripción ordenada** (`descripcion()` en `app.js`: subtítulos, viñetas, "Etiqueta: valor") y sección **Requerimientos** al final solo si la bolsa los informa (`requisitos` en el evento `detalle`; Computrabajo: lista bajo "Requerimientos", y ya no se cuela el pie de la página, pendiente 4 resuelto; Jobint: `ficha.requisitos`, experiencia en meses). En Jobint la descripción se lee de `ficha.descripcion` (antes `detalle`, que viene vacío). (3) Clic en el contador **Descartados por vos** o `D`: barra lateral con "Restaurar" y "Ver en la web" (comando `recuperar`, en `recorrido.cmd_recuperar`). Un restaurado vuelve a su lista pero **Auto no se postula a él**. (4) Todo vale para Computrabajo, Bumeran y ZonaJobs. Probado con avisos públicos y bolsas simuladas; **Bumeran y ZonaJobs siguen sin prueba con sesión real**.
+- **1.1.1** (25-11-2026): Bumeran y ZonaJobs anotan "Mis postulaciones" en el historial (`sincronizar_postulaciones`, con título y empresa que trae la API) para detectar también republicaciones; `postulador.py` de cada una tiene `mis_postulaciones()` (`ids_ya_postulados` la usa). En Jobint, avisos sin empresa o **"Confidencial"** nunca se toman como repetidos. **Probado con las sesiones reales, en solo lectura y con Auto apagado** (login automático, 207 avisos en Tecnología/CABA en cada una; Bumeran 250 postulaciones leídas, que es el máximo de la API; ZonaJobs 44). **Falta la primera postulación real** en esas dos bolsas.
+- **1.1.2** (25-11-2026): si el servidor de la bolsa no responde (Bumeran devolvió HTTP 503 en la búsqueda), se reintenta dos veces, se dice que la bolsa no está respondiendo (antes mandaba a revisar la búsqueda) y se avisa si no se pudieron leer las postulaciones (antes seguía en silencio).
+
+- **1.1.3** (25-11-2026): (1) La lista y la cabecera del aviso muestran **cuándo se publicó** en vez de la ubicación (`comun/fechas.py`; Computrabajo: `p.fc_aux` del listado; Jobint: `fechaPublicacion`). (2) Bumeran/ZonaJobs **cuentan y recorren solo los avisos propios** (los de la otra bolsa se filtran en `cargar`). (3) Los contadores **Nuevas postulaciones**, **Repetidos** y **Descartados por vos** abren una barra lateral; todas se cierran con la flecha o `Esc`. (4) **Se quitaron los atajos `D` y `H`** y el panel "Con tus respuestas" (las respuestas del recorrido actual se ven en Nuevas postulaciones). **Decisión del usuario: no agregar más atajos de teclado.** (5) En el menú, tocar la bolsa solo la elige (se empieza con el botón). (6) Bolsa elegida, Empezar y cuenta en blanco/gris/negro. (7) **Cerrar sesión** en el menú de cuenta (`api.cerrar_sesion`).
+
+- **1.1.4** (25-11-2026): al terminar el recorrido aparece **Ordenar por fecha de publicación** (más recientes primero; Auto sigue ese orden; campo `antiguedad` en minutos, `fechas.antiguedad`). Se quitó del menú la nota de avisos descartados y de Ajustes el detalle por bolsa; el "← Volver" de Ajustes es una flecha redonda.
+
+- **1.1.5** (25-11-2026): fondo del menú y Ajustes = diseño **A "Corrientes"** elegido por el usuario (artefacto https://claude.ai/artifact/LshWXGTxXD3kr5bE5d41MK), con movimiento visible, en `ui/fondo.js` (canvas; reemplaza las manchas CSS). La velocidad es `VELOCIDAD_FONDO`.
+
+- **1.1.6** (25-11-2026): velocidad del fondo en **0.6** (elegida por el usuario).
+
+- **1.1.7** (25-11-2026): (1) Se pueden borrar todas las búsquedas (antes `list index out of range`). (2) Cada búsqueda se puede **activar/desactivar** (`urls_inactivas` en `config.json`; `busquedas.lista` devuelve solo las activas, `todas` todas). (3) El editor ya no se achica al pegar un link. (4) **EmpleosIT en la app** (`app/motor_empleosit.py`, hereda de Computrabajo): listas desde `bolsas/empleosit/filtros.json` (`actualizar_filtros.py`; la web no filtra por provincia, solo ciudad), logo, fecha, descripción (no informa requisitos), "Sin revisar" como Computrabajo (abrir el formulario no postula; postula el envío). **Falta**: leer "Mis postulaciones" y probar con la sesión real.
+
+- **1.1.8** (25-11-2026): EmpleosIT lee **Mis Postulaciones** (`/system/applications/view/?page=N`, tabla; solo lectura) al empezar. Probado con la sesión real en solo lectura: login automático, 86 avisos en CABA, formularios con preguntas de texto bien leídos, CV preseleccionado. **Falta la primera postulación real** desde la app (con y sin preguntas).
+
+- **1.1.9** (25-11-2026): **subáreas** en el editor. Bumeran/ZonaJobs: varias subáreas por búsqueda (`?subareas=a,b` en el link; es de la app: `filtros_de_url` lo saca y `buscar_todos` busca cada una y une, porque la API las toma como "y"); listas en `filtros.json` (`categorias[].subareas`). EmpleosIT: no tiene subáreas, se pueden tildar **varias categorías** (la web las suma). Computrabajo no tiene.
+
+- **1.1.9**, además: **varias localidades (y remoto) por búsqueda** en las cuatro bolsas. Se guarda el link del primer lugar más `lugares=prov~ciudad;...` (es de la app); `busquedas.expandir` da un link por lugar y cada motor une los resultados. Los scripts de consola recorren solo el primero.
+
+- 25-11-2026: el usuario **confirmó una postulación real en EmpleosIT** desde la app: funcionó.
+
+- **1.2.0** (25-11-2026): editor de búsquedas con el diseño **A "Compacto"** elegido por el usuario (artefacto https://claude.ai/artifact/S4STJsnkj4EK2PYRKbe6uA): renglones con desplegable y buscador (categoría, subáreas, dónde con ciudades dentro de cada provincia), interruptor arriba a la derecha, sin verde. `Esc` cierra primero el desplegable.
+
+- **1.2.1** (25-11-2026): la ventana **abre maximizada** (`maximized=True`; al restaurarla queda en 1280x820). Pedido del usuario.
+
+- **1.2.2** (25-11-2026): el saludo dice **"¡Che <nombre>, postulate!"** (antes "Hey"). Cambiado también el texto en `Setup.cs`, sin recompilar `Setup.exe`.
+
+- **1.2.3** (25-11-2026): logo nuevo, **E "Piloto automático" en blanco** (artefacto https://claude.ai/artifact/KfaTjh9go669nWdMnnhfMQ): `recursos/logo.{svg,png,ico}` y `ui/logo.svg`; se ve arriba a la izquierda del menú. **Pendiente:** el nombre de la app al lado del logo (el usuario quiere elegirlo entre ideas) y el color de la barra de título.
+
+- **1.2.4** (25-11-2026): **la app se llama "Postulá"** (antes "Laburo IA"; elegido por el usuario): textos, `Postulá.exe`, instalador, carpeta del proyecto y nombre al lado del logo en el menú. Las exportaciones de datos viejas se siguen importando. El repositorio de GitHub conserva el nombre anterior.
+
+- **1.2.5** (25-11-2026): **Setup instala en `%LOCALAPPDATA%\Programs\Postulá`** (antes en el lugar), copia el programa, trae los datos y crea el acceso en el menú Inicio. README y este documento actualizados; subido a https://github.com/matichiozza/Postula.
 
 ## Lecciones técnicas (para no repetir errores)
 

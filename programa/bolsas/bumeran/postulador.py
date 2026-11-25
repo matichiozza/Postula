@@ -40,7 +40,7 @@ SITIO = "https://www.bumeran.com.ar"
 
 DEFAULT_CONFIG = {
     "url_busqueda": SITIO + "/en-buenos-aires/capital-federal/empleos-area-tecnologia-sistemas-y-telecomunicaciones.html",
-    "salario_pretendido": 1800000,
+    "salario_pretendido": None,
     "pausa_min_seg": 4,
     "pausa_max_seg": 9,
     "max_postulaciones_por_corrida": 150,
@@ -126,14 +126,38 @@ class Bumeran:
 
     def filtros_de_url(self, url):
         """Abre la URL del listado y captura el body de búsqueda que arma la propia web."""
+        # "?subareas=a,b" es de la app (la web solo deja una por link): se saca y se anota en el body
+        url, _, consulta = url.partition("?")
+        subareas = [s for k, _, v in (p.partition("=") for p in consulta.split("&")) if k == "subareas"
+                    for s in v.replace("%2C", ",").split(",") if s]
         with self.page.expect_request(lambda r: "api/avisos/searchV2" in r.url, timeout=60000) as req:
             self.page.goto(url, wait_until="domcontentloaded")
-        return json.loads(req.value.post_data)
+        body = json.loads(req.value.post_data)
+        if subareas:
+            body["_subareas"] = subareas
+        return body
 
     def buscar_todos(self, body):
+        subareas = body.get("_subareas")
+        if subareas:
+            # La API toma dos subáreas juntas como "y" (0 avisos): se busca cada una y se unen.
+            body = {k: v for k, v in body.items() if k != "_subareas"}
+            area = next((f["value"] for f in body.get("filtros", []) if f["id"] == "area"), None)
+            if not area:
+                raise RuntimeError("La búsqueda tiene subáreas pero no categoría.")
+            otros = [f for f in body["filtros"] if f["id"] != "subarea"]
+            unidos = {}
+            for s in subareas:
+                for a in self.buscar_todos({**body, "filtros": otros + [{"id": "subarea", "value": f"{area}|{s}"}]}):
+                    unidos.setdefault(a["id"], a)
+            return list(unidos.values())
         avisos, pagina = [], 0
         while True:
-            st, d = self.api(f"/api/avisos/searchV2?pageSize=100&page={pagina}&sort=RECIENTES", "POST", body)
+            for espera in (5, 10, None):         # 502/503/504: el servidor no responde; dos reintentos
+                st, d = self.api(f"/api/avisos/searchV2?pageSize=100&page={pagina}&sort=RECIENTES", "POST", body)
+                if st not in (502, 503, 504) or espera is None:
+                    break
+                time.sleep(espera)
             if st != 200 or not isinstance(d, dict):
                 raise RuntimeError(f"Error en búsqueda (HTTP {st}): {str(d)[:200]}")
             contenido = d.get("content") or []
@@ -151,20 +175,24 @@ class Bumeran:
         return unicos
 
     def ids_ya_postulados(self, al_avanzar=None):
-        """IDs de avisos a los que ya te postulaste (sección 'Mis postulaciones').
+        try:
+            return set(self.mis_postulaciones(al_avanzar))
+        except Exception:
+            print("   (no pude leer 'Mis postulaciones'; sigo igual, uso el estado que trae cada aviso)")
+            return set()
+
+    def mis_postulaciones(self, al_avanzar=None):
+        """{avisoId: {titulo, empresa}} de la sección 'Mis postulaciones'. Solo lee.
         La API devuelve como máximo 30 por página y tarda unos 5 s en cada una, así que después de
         la primera (que dice el 'total') se piden las demás todas juntas, de a tandas de 8.
         al_avanzar(leidas, total) se llama después de cada tanda."""
         ruta = "/api/candidates/postulaciones?pageSize=30&page={}&sort=fechaPostulacion"
-        try:
-            st, d = self.api(ruta.format(0))
-        except Exception:
-            print("   (no pude leer 'Mis postulaciones'; sigo igual, uso el estado que trae cada aviso)")
-            return set()
+        st, d = self.api(ruta.format(0))
         if st != 200 or not isinstance(d, dict):
-            return set()
+            raise RuntimeError(f"No pude leer 'Mis postulaciones' (HTTP {st})")
         contenido = d.get("content") or []
-        ids = {x.get("avisoId") for x in contenido}
+        datos = lambda x: {"titulo": x.get("titulo") or "", "empresa": x.get("empresa") or ""}
+        todas = {x.get("avisoId"): datos(x) for x in contenido}
         total = d.get("total") or 0
         tam = len(contenido) or 30
         paginas = list(range(1, min(200, -(-total // tam))))
@@ -183,11 +211,11 @@ class Bumeran:
                     pag = json.loads(texto) if st == 200 and texto else {}
                 except json.JSONDecodeError:
                     pag = {}
-                ids.update(x.get("avisoId") for x in (pag.get("content") or []))
+                todas.update((x.get("avisoId"), datos(x)) for x in (pag.get("content") or []))
             if al_avanzar:
                 al_avanzar(min(total, tam * (paginas[min(i + 8, len(paginas)) - 1] + 1)), total)
-        ids.discard(None)
-        return ids
+        todas.pop(None, None)
+        return todas
 
     def ficha(self, id_aviso):
         """Ficha del aviso. Si ya estás postulado, '_postulacion' trae fecha/estado de esa postulación."""

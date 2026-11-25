@@ -43,7 +43,7 @@ URL_FORM = SITIO + "/apply-now/?listing_id={lid}&ajaxRelocate=1"
 DEFAULT_CONFIG = {
     "url_busqueda": SITIO + "/search-results-jobs/?action=search&view=list&listings_per_page=100"
                     "&Location_City%5Bmulti_like_and%5D%5B%5D=Ciudad%20Aut%C3%B3noma%20de%20Buenos%20Aires%20%28CABA%29",
-    "salario_pretendido": 1800000,
+    "salario_pretendido": None,
     "pausa_min_seg": 4,
     "pausa_max_seg": 9,
     "max_postulaciones_por_corrida": 150,
@@ -175,7 +175,7 @@ class EmpleosIT:
         except Exception:
             return None
 
-    def listar(self, url, max_paginas):
+    def listar(self, url, max_paginas, al_avanzar=None, esperar=time.sleep):
         avisos, vistos = [], set()
         sep = "&" if "?" in url else "?"
         for n in range(1, max_paginas + 1):
@@ -185,7 +185,11 @@ class EmpleosIT:
                 const emp = box ? box.querySelector('.company-ico a, .company-ico') : null;
                 const loc = box ? box.querySelector('.location-ico') : null;
                 const m = a.href.match(/display-job\\/(\\d+)/);
+                const caja = a.closest('.listing-section');
+                const logo = caja ? caja.querySelector('.right-side img') : null;
+                const fecha = caja ? caja.querySelector('.posted-ico') : null;
                 return {id: m ? m[1] : null, titulo: a.innerText.trim(), url: a.href.split('?')[0],
+                        logo: logo ? logo.src : '', fecha: fecha ? fecha.textContent.trim() : '',
                         empresa: emp ? emp.innerText.trim() : '', ubicacion: loc ? loc.innerText.trim() : ''};
             })""")
             nuevos = [i for i in items if i["id"] and i["id"] not in vistos]
@@ -195,7 +199,11 @@ class EmpleosIT:
                 vistos.add(i["id"])
                 avisos.append(i)
             print(f"   página {n}: {len(nuevos)} avisos")
-            time.sleep(random.uniform(1.5, 3))
+            if al_avanzar:
+                al_avanzar(n, len(avisos))
+            if len(items) < 100:                 # última página
+                break
+            esperar(random.uniform(1.5, 3))
         return avisos
 
     def abrir_form(self, lid):

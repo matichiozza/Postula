@@ -1,4 +1,4 @@
-// "Laburo IA.exe": el ejecutable de la raíz. Abre la app (programa\app\app.py) con el pythonw que
+// "Postulá.exe": el ejecutable de la raíz. Abre la app (programa\app\app.py) con el pythonw que
 // dejó anotado Setup.exe en programa\datos\python.txt. No usa rutas fijas: si se mueve la carpeta, sigue andando.
 // Se compila con compilar.bat (csc de .NET Framework, viene con Windows).
 using System;
@@ -7,9 +7,9 @@ using System.IO;
 using System.Reflection;
 using System.Windows.Forms;
 
-[assembly: AssemblyTitle("Laburo IA")]
-[assembly: AssemblyProduct("Laburo IA")]
-[assembly: AssemblyDescription("Laburo IA - app de postulaciones")]
+[assembly: AssemblyTitle("Postulá")]
+[assembly: AssemblyProduct("Postulá")]
+[assembly: AssemblyDescription("Postulá - app de postulaciones")]
 [assembly: AssemblyVersion("1.0.0.0")]
 
 static class Lanzador
@@ -22,15 +22,15 @@ static class Lanzador
         string appDir = Path.Combine(prog, "app");
         if (!File.Exists(Path.Combine(appDir, "app.py")))
         {
-            Avisar("No encuentro la carpeta \"programa\" al lado de Laburo IA.exe.\n\n" +
-                   "Laburo IA.exe, Setup.exe y la carpeta programa tienen que estar juntos.");
+            Avisar("No encuentro la carpeta \"programa\" al lado de Postulá.exe.\n\n" +
+                   "Postulá.exe, Setup.exe y la carpeta programa tienen que estar juntos.");
             return;
         }
         string pythonw = Python.Pythonw(prog);
         if (pythonw == null)
         {
-            Avisar("Laburo IA todavía no está instalado en esta computadora.\n\n" +
-                   "Ejecutá Setup.exe (está en esta misma carpeta) y después volvé a abrir Laburo IA.");
+            Avisar("Postulá todavía no está instalado en esta computadora.\n\n" +
+                   "Ejecutá Setup.exe (está en esta misma carpeta) y después volvé a abrir Postulá.");
             return;
         }
         try
@@ -41,13 +41,13 @@ static class Lanzador
         }
         catch (Exception e)
         {
-            Avisar("No pude abrir Laburo IA:\n" + e.Message + "\n\nProbá ejecutar Setup.exe de nuevo.");
+            Avisar("No pude abrir Postulá:\n" + e.Message + "\n\nProbá ejecutar Setup.exe de nuevo.");
         }
     }
 
     static void Avisar(string texto)
     {
-        MessageBox.Show(texto, "Laburo IA", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        MessageBox.Show(texto, "Postulá", MessageBoxButtons.OK, MessageBoxIcon.Information);
     }
 }
 

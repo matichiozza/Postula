@@ -1,17 +1,19 @@
-// Setup.exe: instalador de Laburo IA con la ventana clásica de Windows (asistente de 4 pasos).
+// Setup.exe: instalador de Postulá con la ventana clásica de Windows (asistente de 4 pasos).
 //   Bienvenida -> Opciones -> Instalando -> Listo
-// Instala en el lugar (la carpeta donde está Setup.exe): prepara la PC y desempaqueta "Laburo IA.exe"
+// Instala en %LOCALAPPDATA%\Programs\Postulá (los programas del usuario: no pide ser administrador,
+// y la app guarda sus datos adentro, cosa que en C:\Program Files no se puede). La carpeta se puede
+// cambiar. Copia programa\, trae los datos que haya junto a Setup.exe y desempaqueta "Postulá.exe"
 // (que viaja adentro de Setup.exe) en esa misma carpeta. Antes de instalar, la raíz solo tiene Setup.exe y programa\.
 //   1. Python >= 3.9 (si no hay, ofrece instalar 3.12 con winget o con el instalador de python.org)
 //   2. pip install playwright pywebview
 //   3. Verifica Microsoft Edge
-//   4. Anota el Python en programa\datos\python.txt (lo usa Laburo IA.exe)
-//   5. Desempaqueta Laburo IA.exe en la raíz y, opcional, acceso directo en el escritorio
+//   4. Anota el Python en programa\datos\python.txt (lo usa Postulá.exe)
+//   5. Desempaqueta Postulá.exe en la raíz y, opcional, acceso directo en el escritorio
 //   6. Opcional: borra los datos de un usuario anterior (programa\datos: sesiones, historiales, sueldo y zona)
 // NO pregunta el sueldo: se completa en la app ("Tus datos para los formularios").
 //
 // Línea de comandos (para pruebas):
-//   Setup.exe /silencioso [/nombre "Mati"] [/borrar] [/escritorio]   instala sin ventanas; el detalle queda en programa\datos\registros\setup.log
+//   Setup.exe /silencioso [/destino C:\carpeta] [/nombre "Mati"] [/borrar] [/escritorio] [/sinmenu]   instala sin ventanas; el detalle queda en programa\datos\registros\setup.log
 //   Setup.exe /capturas <carpeta>                   guarda una imagen de cada pantalla (no instala nada)
 // Se compila con compilar.bat.
 using System;
@@ -28,15 +30,21 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
-[assembly: AssemblyTitle("Instalador de Laburo IA")]
-[assembly: AssemblyProduct("Laburo IA")]
+[assembly: AssemblyTitle("Instalador de Postulá")]
+[assembly: AssemblyProduct("Postulá")]
 [assembly: AssemblyVersion("1.0.0.0")]
 
 // ============================================================================ lógica de instalación
 class Instalacion
 {
-    public readonly string Raiz, Prog, Datos, LogFile;
-    public bool CrearEscritorio, BorrarDatos;
+    public readonly string Origen;                 // la carpeta donde está Setup.exe
+    public string Destino;                         // donde queda instalado
+    public string Raiz { get { return Destino; } }
+    public string Prog { get { return Path.Combine(Destino, "programa"); } }
+    public string Datos { get { return Path.Combine(Prog, "datos"); } }
+    string OrigenDatos { get { return Path.Combine(Origen, "programa", "datos"); } }
+    public string LogFile { get { return Path.Combine(Datos, "registros", "setup.log"); } }
+    public bool CrearEscritorio, BorrarDatos, SinMenu;
     public string Nombre = "";   // para saludar en el menú de la app ("¡Hey Mati, postulate!")
     public Action<string> Log = delegate { };
     public Action<int, string> Paso = delegate { };
@@ -46,20 +54,44 @@ class Instalacion
         new[] { "bumeran", "Bumeran" }, new[] { "zonajobs", "ZonaJobs" },
         new[] { "computrabajo", "Computrabajo" }, new[] { "empleosit", "EmpleosIT" } };
 
-    public Instalacion(string raiz)
+    public Instalacion(string origen)
     {
-        Raiz = raiz.TrimEnd('\\');
-        Prog = Path.Combine(Raiz, "programa");
-        Datos = Path.Combine(Prog, "datos");
-        LogFile = Path.Combine(Datos, "registros", "setup.log");
+        Origen = origen.TrimEnd('\\');
+        Destino = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Programs", "Postulá");
     }
 
-    public bool ProgramaPresente() { return File.Exists(Path.Combine(Prog, "app", "app.py")); }
+    public bool ProgramaPresente() { return File.Exists(Path.Combine(Origen, "programa", "app", "app.py")); }
+
+    bool EnElLugar() { return string.Equals(Path.GetFullPath(Origen).TrimEnd('\\'), Path.GetFullPath(Destino).TrimEnd('\\'), StringComparison.OrdinalIgnoreCase); }
+
+    static bool HayDatos(string datos)
+    {
+        if (File.Exists(Path.Combine(datos, "perfil.json"))) return true;
+        return Bolsas.Any(b => new[] { "config.json", "historial.json", "descartes.json" }.Any(n => File.Exists(Path.Combine(datos, b[0], n)))
+                               || Directory.Exists(Path.Combine(datos, b[0], "perfil_edge")));
+    }
+
+    /// Los datos que va a usar la instalación: los del destino si ya hay; si no, los que se van a traer.
+    string DatosVigentes() { return HayDatos(Datos) ? Datos : OrigenDatos; }
+
+    /// Copia una carpeta pisando lo que haya (no borra nada del destino). `salvo`: subcarpetas que no se copian.
+    static void Copiar(string de, string a, params string[] salvo)
+    {
+        Directory.CreateDirectory(a);
+        foreach (var archivo in Directory.GetFiles(de)) File.Copy(archivo, Path.Combine(a, Path.GetFileName(archivo)), true);
+        foreach (var carpeta in Directory.GetDirectories(de))
+        {
+            string nombre = Path.GetFileName(carpeta);
+            if (salvo.Contains(nombre, StringComparer.OrdinalIgnoreCase) || nombre == "__pycache__") continue;
+            Copiar(carpeta, Path.Combine(a, nombre), salvo);
+        }
+    }
 
     /// Datos de un usuario anterior que se pueden borrar (rutas relativas a programa\datos\).
     public List<string> DatosPrevios()
     {
         var l = new List<string>();
+        string Datos = DatosVigentes();
         foreach (var b in Bolsas)
         {
             if (Directory.Exists(Path.Combine(Datos, b[0], "perfil_edge"))) l.Add(b[0] + "\\perfil_edge");
@@ -76,7 +108,7 @@ class Instalacion
     {
         try
         {
-            string t = File.ReadAllText(Path.Combine(Datos, "perfil.json"), Encoding.UTF8);
+            string t = File.ReadAllText(Path.Combine(DatosVigentes(), "perfil.json"), Encoding.UTF8);
             var m = System.Text.RegularExpressions.Regex.Match(t, "\"nombre\"\\s*:\\s*\"((?:[^\"\\\\]|\\\\.)*)\"");
             return m.Success ? System.Text.RegularExpressions.Regex.Unescape(m.Groups[1].Value) : "";
         }
@@ -148,7 +180,7 @@ class Instalacion
 
     string InstalarPython()
     {
-        if (!Preguntar("No encontré Python 3.9 o superior en esta computadora, y Laburo IA lo necesita.\n\n¿Instalo Python 3.12 ahora? (solo para tu usuario)"))
+        if (!Preguntar("No encontré Python 3.9 o superior en esta computadora, y Postulá lo necesita.\n\n¿Instalo Python 3.12 ahora? (solo para tu usuario)"))
             return null;
         Escribir("Instalando Python 3.12 con winget...");
         try { Correr("winget", "install -e --id Python.Python.3.12 --scope user --accept-package-agreements --accept-source-agreements", 900); }
@@ -182,15 +214,15 @@ class Instalacion
         Marshal.FinalReleaseComObject(sh);
     }
 
-    /// Desempaqueta "Laburo IA.exe" (recurso LaburoIA.exe de este Setup) en la raíz. Si ya estaba,
+    /// Desempaqueta "Postulá.exe" (recurso Postula.exe de este Setup) en la raíz. Si ya estaba,
     /// lo reemplaza (así una versión nueva de Setup también actualiza el lanzador). null = salió bien.
     static string ExtraerLanzador(string destino)
     {
         try
         {
-            using (var s = Assembly.GetExecutingAssembly().GetManifestResourceStream("LaburoIA.exe"))
+            using (var s = Assembly.GetExecutingAssembly().GetManifestResourceStream("Postula.exe"))
             {
-                if (s == null) return "Este Setup.exe está incompleto (no trae Laburo IA.exe adentro). Volvé a compilarlo.";
+                if (s == null) return "Este Setup.exe está incompleto (no trae Postulá.exe adentro). Volvé a compilarlo.";
                 string tmp = destino + ".nuevo";
                 using (var f = File.Create(tmp)) s.CopyTo(f);
                 if (File.Exists(destino)) File.Delete(destino);
@@ -200,7 +232,7 @@ class Instalacion
         }
         catch (Exception e)
         {
-            return "No pude crear Laburo IA.exe en la carpeta del programa (" + e.Message + "). Si la app está abierta, cerrala y volvé a ejecutar Setup.exe.";
+            return "No pude crear Postulá.exe en la carpeta del programa (" + e.Message + "). Si la app está abierta, cerrala y volvé a ejecutar Setup.exe.";
         }
     }
 
@@ -208,8 +240,9 @@ class Instalacion
     /// Devuelve null si salió bien, o el mensaje de error.
     public string Ejecutar()
     {
-        try { Directory.CreateDirectory(Path.GetDirectoryName(LogFile)); File.WriteAllText(LogFile, "", Encoding.UTF8); } catch { }
-        Escribir("Instalando Laburo IA en " + Raiz);
+        try { Directory.CreateDirectory(Path.GetDirectoryName(LogFile)); File.WriteAllText(LogFile, "", Encoding.UTF8); }
+        catch (Exception e) { return "No puedo escribir en " + Destino + " (" + e.Message + "). Elegí otra carpeta."; }
+        Escribir("Instalando Postulá en " + Destino);
 
         Paso(1, "Buscando Python...");
         string py = BuscarPython() ?? InstalarPython();
@@ -230,18 +263,35 @@ class Instalacion
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"Microsoft\Edge\Application\msedge.exe"),
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"Microsoft\Edge\Application\msedge.exe") };
         string edge = edges.FirstOrDefault(File.Exists);
-        if (edge == null) Escribir("ATENCIÓN: no encontré Microsoft Edge. Laburo IA lo usa para entrar a las bolsas de trabajo: instalalo desde https://www.microsoft.com/edge");
+        if (edge == null) Escribir("ATENCIÓN: no encontré Microsoft Edge. Postulá lo usa para entrar a las bolsas de trabajo: instalalo desde https://www.microsoft.com/edge");
         else Escribir("Edge: " + edge);
 
-        Paso(4, "Preparando el programa...");
+        Paso(4, "Copiando y preparando el programa...");
         if (BorrarDatos)   // primero se borra lo del usuario anterior, después se guarda lo nuevo (nombre)
         {
             foreach (var d in DatosPrevios())
             {
-                string ruta = Path.Combine(Datos, d);
-                if (Directory.Exists(ruta)) Directory.Delete(ruta, true); else File.Delete(ruta);
+                string ruta = Path.Combine(Datos, d);       // solo en el destino: lo de la carpeta de origen no se toca
+                if (Directory.Exists(ruta)) Directory.Delete(ruta, true);
+                else if (File.Exists(ruta)) File.Delete(ruta);
+                else continue;
                 Escribir("Borrado: programa\\datos\\" + d);
             }
+        }
+        if (!EnElLugar())
+        {
+            try
+            {
+                Copiar(Path.Combine(Origen, "programa"), Prog, "datos");
+                File.Copy(Assembly.GetExecutingAssembly().Location, Path.Combine(Destino, "Setup.exe"), true);
+                Escribir("Programa copiado a " + Destino);
+                if (!BorrarDatos && !HayDatos(Datos) && HayDatos(OrigenDatos))
+                {
+                    Copiar(OrigenDatos, Datos, "registros");
+                    Escribir("Traje tus datos (búsquedas, historial, descartes y sesiones) desde la carpeta de Setup.exe.");
+                }
+            }
+            catch (Exception e) { return "No pude copiar el programa (" + e.Message + "). Si Postulá está abierta, cerrala y volvé a ejecutar Setup.exe."; }
         }
         Directory.CreateDirectory(Datos);
         File.WriteAllText(Path.Combine(Datos, "python.txt"), py, new UTF8Encoding(false));
@@ -249,9 +299,9 @@ class Instalacion
         {
             // Se guarda con el mismo código de la app (comun\perfil.py), así el formato es uno solo.
             // El nombre viaja en una variable de entorno: así no hay problemas con comillas o tildes.
-            var entorno = new Dictionary<string, string> { { "LABURO_NOMBRE", Nombre.Trim() } };
+            var entorno = new Dictionary<string, string> { { "POSTULA_NOMBRE", Nombre.Trim() } };
             string codigo = "\"import os, sys; sys.path.insert(0, os.path.join(os.getcwd(), 'comun')); import perfil; " +
-                            "perfil.guardar(nombre=os.environ['LABURO_NOMBRE'])\"";
+                            "perfil.guardar(nombre=os.environ['POSTULA_NOMBRE'])\"";
             string cwd = Environment.CurrentDirectory;
             Environment.CurrentDirectory = Prog;
             int rn;
@@ -260,7 +310,7 @@ class Instalacion
             if (rn != 0) return "No pude guardar tu nombre en programa\\datos\\perfil.json.";
             Escribir("Nombre guardado: " + Nombre.Trim());
         }
-        Escribir("Python anotado en programa\\datos\\python.txt (lo usa Laburo IA.exe).");
+        Escribir("Python anotado en programa\\datos\\python.txt (lo usa Postulá.exe).");
         // Los accesos "Postular en <Bolsa>" de versiones anteriores ya no se usan: se borran si quedaron.
         foreach (var b in Bolsas)
         {
@@ -268,16 +318,22 @@ class Instalacion
             if (File.Exists(viejo)) File.Delete(viejo);
         }
 
-        Paso(5, "Creando Laburo IA.exe y los accesos directos...");
+        Paso(5, "Creando Postulá.exe y los accesos directos...");
         // El lanzador viaja empaquetado dentro de Setup.exe y recién acá aparece en la raíz.
-        string exe = Path.Combine(Raiz, "Laburo IA.exe");
+        string exe = Path.Combine(Raiz, "Postulá.exe");
         string error = ExtraerLanzador(exe);
         if (error != null) return error;
-        Escribir("Laburo IA.exe listo en " + Raiz);
+        Escribir("Postulá.exe listo en " + Raiz);
+        if (!SinMenu)
+        {
+            AccesoDirecto(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Programs), "Postulá.lnk"),
+                          exe, "", Raiz, exe, "Postulá - app de postulaciones");
+            Escribir("Acceso en el menú Inicio.");
+        }
         if (CrearEscritorio)
         {
-            AccesoDirecto(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "Laburo IA.lnk"),
-                          exe, "", Raiz, exe, "Laburo IA - app de postulaciones");
+            AccesoDirecto(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "Postulá.lnk"),
+                          exe, "", Raiz, exe, "Postulá - app de postulaciones");
             Escribir("Acceso directo en el escritorio.");
         }
 
@@ -313,7 +369,7 @@ class Asistente : Form
         SuspendLayout();
         AutoScaleMode = AutoScaleMode.None;   // se escala a mano (P/Z): el automático estiraba los textos con pantallas al 125 %
         using (var g = CreateGraphics()) k = g.DpiX / 96F;
-        Text = "Instalar Laburo IA";
+        Text = "Instalar Postulá";
         Font = new Font("Segoe UI", 9F);
         FormBorderStyle = FormBorderStyle.FixedDialog;
         MaximizeBox = false;
@@ -346,8 +402,8 @@ class Asistente : Form
 
         // ---- 0: bienvenida
         Label tmpTit, tmpTxt;
-        paginas[0] = PaginaConBanda("Te damos la bienvenida a Laburo IA",
-            "Este asistente prepara la computadora para usar Laburo IA, la app que se postula sola a los avisos de empleo y te deja decidir los que tienen preguntas.\n\n" +
+        paginas[0] = PaginaConBanda("Te damos la bienvenida a Postulá",
+            "Este asistente prepara la computadora para usar Postulá, la app que se postula sola a los avisos de empleo y te deja decidir los que tienen preguntas.\n\n" +
             "Va a instalar lo que haga falta (Python y dos librerías) y dejar listo el programa. Puede tardar unos minutos y necesita internet.\n\n" +
             "Hacé clic en Siguiente para continuar.", out tmpTit, out tmpTxt);
 
@@ -356,10 +412,23 @@ class Asistente : Form
         p1.Controls.Add(new Label { Text = "¿Cómo te llamás?", Location = P(30, 14), AutoSize = true, Font = new Font("Segoe UI", 9F, FontStyle.Bold) });
         txtNombre = new TextBox { Text = ins.NombreGuardado(), Location = P(30, 35), Size = Z(250, 23), MaxLength = 60 };
         p1.Controls.Add(txtNombre);
-        p1.Controls.Add(new Label { Text = "Para saludarte en la app (\"¡Hey Mati, postulate!\"). Para cambiarlo, volvé a ejecutar Setup.exe.",
+        p1.Controls.Add(new Label { Text = "Para saludarte en la app (\"¡Che Mati, postulate!\"). Para cambiarlo, volvé a ejecutar Setup.exe.",
                                     Location = P(290, 38), Size = Z(290, 34), ForeColor = SystemColors.GrayText });
-        p1.Controls.Add(new Label { Text = "Laburo IA se va a instalar en esta carpeta:", Location = P(30, 76), AutoSize = true });
-        p1.Controls.Add(new TextBox { Text = ins.Raiz, ReadOnly = true, Location = P(30, 96), Size = Z(540, 23), TabStop = false });
+        p1.Controls.Add(new Label { Text = "Postulá se va a instalar en esta carpeta:", Location = P(30, 76), AutoSize = true });
+        var txtDestino = new TextBox { Text = ins.Destino, ReadOnly = true, Location = P(30, 96), Size = Z(450, 23), TabStop = false };
+        var bExaminar = new Button { Text = "E&xaminar...", Location = P(488, 95), Size = Z(82, 25) };
+        bExaminar.Click += (s, e) =>
+        {
+            using (var d = new FolderBrowserDialog { Description = "Elegí dónde instalar Postulá" })
+            {
+                if (d.ShowDialog(this) != DialogResult.OK) return;
+                string c = d.SelectedPath.TrimEnd('\\');
+                if (!string.Equals(Path.GetFileName(c), "Postulá", StringComparison.OrdinalIgnoreCase)) c = Path.Combine(c, "Postulá");
+                ins.Destino = txtDestino.Text = c;
+            }
+        };
+        p1.Controls.Add(txtDestino);
+        p1.Controls.Add(bExaminar);
         chkEscritorio = new CheckBox { Text = "Crear un acceso directo en el &escritorio", Location = P(30, 130), AutoSize = true };
         p1.Controls.Add(chkEscritorio);
         var previos = ins.DatosPrevios();
@@ -389,8 +458,8 @@ class Asistente : Form
         paginas[2] = p2;
 
         // ---- 3: listo
-        paginas[3] = PaginaConBanda("Laburo IA quedó instalado", "", out finTitulo, out finTexto);
-        chkAbrir = new CheckBox { Text = "&Abrir Laburo IA ahora", Checked = true, AutoSize = true, Location = P(186, 300), BackColor = Color.White };
+        paginas[3] = PaginaConBanda("Postulá quedó instalado", "", out finTitulo, out finTexto);
+        chkAbrir = new CheckBox { Text = "&Abrir Postulá ahora", Checked = true, AutoSize = true, Location = P(186, 300), BackColor = Color.White };
         paginas[3].Controls.Add(chkAbrir);
 
         Controls.AddRange(new Control[] { cabecera, linea, sep, bAtras, bSiguiente, bCancelar });
@@ -430,8 +499,8 @@ class Asistente : Form
         for (int k = 0; k < paginas.Length; k++) paginas[k].Visible = k == i;
         bool banda = i == 0 || i == 3;
         cabecera.Visible = linea.Visible = !banda;
-        if (i == 1) { cabTitulo.Text = "Opciones de instalación"; cabSub.Text = "Elegí cómo querés dejar instalado Laburo IA."; }
-        if (i == 2) { cabTitulo.Text = "Instalando"; cabSub.Text = "Esperá mientras se prepara Laburo IA en esta computadora."; }
+        if (i == 1) { cabTitulo.Text = "Opciones de instalación"; cabSub.Text = "Elegí cómo querés dejar instalado Postulá."; }
+        if (i == 2) { cabTitulo.Text = "Instalando"; cabSub.Text = "Esperá mientras se prepara Postulá en esta computadora."; }
         bAtras.Visible = i == 1;
         bSiguiente.Text = i == 1 ? "&Instalar" : i == 3 ? "&Finalizar" : "&Siguiente >";
         bSiguiente.Enabled = i != 2;
@@ -451,8 +520,8 @@ class Asistente : Form
             terminado = true;
             if (chkAbrir.Visible && chkAbrir.Checked)
             {
-                try { Process.Start(new ProcessStartInfo(Path.Combine(ins.Raiz, "Laburo IA.exe")) { WorkingDirectory = ins.Raiz }); }
-                catch (Exception e) { MessageBox.Show(this, "No pude abrir Laburo IA: " + e.Message, Text); }
+                try { Process.Start(new ProcessStartInfo(Path.Combine(ins.Raiz, "Postulá.exe")) { WorkingDirectory = ins.Raiz }); }
+                catch (Exception e) { MessageBox.Show(this, "No pude abrir Postulá: " + e.Message, Text); }
             }
             Close();
         }
@@ -469,7 +538,7 @@ class Asistente : Form
         ins.Nombre = txtNombre.Text.Trim();
         ins.CrearEscritorio = chkEscritorio.Checked;
         ins.BorrarDatos = chkBorrar.Checked;
-        if (ins.BorrarDatos && MessageBox.Show(this, "Se van a borrar las sesiones, los historiales, las búsquedas, los avisos descartados y los datos personales del usuario anterior.\n\nSi querés conservarlos, cancelá, abrí Laburo IA y exportalos primero (Ajustes > Exportar). ¿Borrarlos igual?",
+        if (ins.BorrarDatos && MessageBox.Show(this, "Se van a borrar las sesiones, los historiales, las búsquedas, los avisos descartados y los datos personales del usuario anterior.\n\nSi querés conservarlos, cancelá, abrí Postulá y exportalos primero (Ajustes > Exportar). ¿Borrarlos igual?",
                 Text, MessageBoxButtons.YesNo, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button2) != DialogResult.Yes)
             return;
         Mostrar(2);
@@ -493,9 +562,9 @@ class Asistente : Form
         if (error == null)
         {
             barra.Value = barra.Maximum;
-            finTitulo.Text = "Laburo IA quedó instalado";
-            finTexto.Text = "Ya podés usar Laburo IA: abrilo con \"Laburo IA\" de la carpeta del programa" +
-                            (ins.CrearEscritorio ? " o con el acceso del escritorio." : ".") +
+            finTitulo.Text = "Postulá quedó instalado";
+            finTexto.Text = "Ya podés usar Postulá: abrila desde el menú Inicio" +
+                            (ins.CrearEscritorio ? " o con el acceso del escritorio." : ".") + "\nQuedó instalada en " + ins.Destino + "." +
                             "\n\nLa primera vez, completá tu sueldo pretendido y tu zona en \"Tus datos\" (o traé todo de una instalación anterior con Ajustes > Importar), y cuando entres a una bolsa de trabajo iniciá sesión en la ventana que se abre.\n\nHacé clic en Finalizar para cerrar el asistente.";
             chkAbrir.Visible = true;
         }
@@ -518,7 +587,7 @@ class Asistente : Form
             return;
         }
         if (!terminado && actual < 2 &&
-            MessageBox.Show(this, "¿Salir del instalador? Laburo IA no va a quedar instalado.", Text,
+            MessageBox.Show(this, "¿Salir del instalador? Postulá no va a quedar instalado.", Text,
                             MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
             e.Cancel = true;
         base.OnFormClosing(e);
@@ -532,7 +601,7 @@ class Asistente : Form
         Location = P(40, 40);
         TopMost = true;
         Show();
-        txtLog.Text = "12:00:01 Instalando Laburo IA en " + ins.Raiz + "\r\n12:00:02 Python: C:\\...\\python.exe\r\n12:00:05    Requirement already satisfied: playwright\r\n";
+        txtLog.Text = "12:00:01 Instalando Postulá en " + ins.Raiz + "\r\n12:00:02 Python: C:\\...\\python.exe\r\n12:00:05    Requirement already satisfied: playwright\r\n";
         barra.Value = 2; lblEstado.Text = "Instalando las librerías (Playwright y pywebview)...";
         for (int i = 0; i < 4; i++)
         {
@@ -566,6 +635,9 @@ static class Programa
         {
             if (!ins.ProgramaPresente()) return 2;
             ins.CrearEscritorio = a.Contains("/escritorio");
+            ins.SinMenu = a.Contains("/sinmenu");
+            int dd = a.IndexOf("/destino");
+            if (dd >= 0 && dd + 1 < args.Length) ins.Destino = args[dd + 1].TrimEnd('\\');
             ins.BorrarDatos = a.Contains("/borrar");
             int n = a.IndexOf("/nombre");
             if (n >= 0 && n + 1 < args.Length) ins.Nombre = args[n + 1];
@@ -578,8 +650,8 @@ static class Programa
         Application.SetCompatibleTextRenderingDefault(false);
         if (!ins.ProgramaPresente())
         {
-            MessageBox.Show("No encuentro la carpeta \"programa\" al lado de Setup.exe.\n\nSetup.exe, Laburo IA.exe y la carpeta programa tienen que estar juntos.",
-                            "Instalar Laburo IA", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show("No encuentro la carpeta \"programa\" al lado de Setup.exe.\n\nSetup.exe, Postulá.exe y la carpeta programa tienen que estar juntos.",
+                            "Instalar Postulá", MessageBoxButtons.OK, MessageBoxIcon.Error);
             return 2;
         }
         int i = a.IndexOf("/capturas");
