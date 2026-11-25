@@ -24,6 +24,7 @@ sys.path.insert(0, str(APP.parent / "comun"))   # módulos compartidos
 from motor_computrabajo import MotorComputrabajo  # noqa: E402
 from motor_jobint import MotorBumeran, MotorZonaJobs  # noqa: E402
 from motor_empleosit import MotorEmpleosIT  # noqa: E402
+from motor_linkedin import MotorLinkedIn  # noqa: E402
 import perfil  # noqa: E402
 import sueldo_neto  # noqa: E402
 import busquedas  # noqa: E402
@@ -34,7 +35,7 @@ import cuenta  # noqa: E402
 import actualizar  # noqa: E402
 
 MOTORES = {"computrabajo": MotorComputrabajo, "bumeran": MotorBumeran, "zonajobs": MotorZonaJobs,
-           "empleosit": MotorEmpleosIT}
+           "empleosit": MotorEmpleosIT, "linkedin": MotorLinkedIn}
 LOG = rutas.registros() / "errores.log"
 ICONO = APP / "recursos" / "logo.ico"
 

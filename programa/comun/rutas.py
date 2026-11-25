@@ -18,7 +18,7 @@ PROGRAMA = Path(__file__).resolve().parent.parent
 APP = PROGRAMA / "app"
 BOLSAS = PROGRAMA / "bolsas"
 DATOS = PROGRAMA / "datos"
-PLATAFORMAS = ("computrabajo", "bumeran", "zonajobs", "empleosit")
+PLATAFORMAS = ("computrabajo", "bumeran", "zonajobs", "empleosit", "linkedin")
 PERFIL = DATOS / "perfil.json"         # nombre, sueldo pretendido y zona de residencia
 REGISTROS = DATOS / "registros"        # app.log, errores.log, setup.log
 

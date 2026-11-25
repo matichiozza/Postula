@@ -1,0 +1,256 @@
+{
+ "solo_palabra": true,
+ "categorias": [],
+ "provincias": [
+  {
+   "sem": "Capital Federal, Buenos Aires, Argentina",
+   "nombre": "Capital Federal (CABA)",
+   "ciudades": []
+  },
+  {
+   "sem": "Buenos Aires Province, Argentina",
+   "nombre": "Buenos Aires (provincia)",
+   "ciudades": [
+    {
+     "sem": "La Plata, Buenos Aires, Argentina",
+     "nombre": "La Plata"
+    },
+    {
+     "sem": "Mar del Plata, Buenos Aires, Argentina",
+     "nombre": "Mar del Plata"
+    },
+    {
+     "sem": "Bahía Blanca, Buenos Aires, Argentina",
+     "nombre": "Bahía Blanca"
+    },
+    {
+     "sem": "Tandil, Buenos Aires, Argentina",
+     "nombre": "Tandil"
+    },
+    {
+     "sem": "San Isidro, Buenos Aires, Argentina",
+     "nombre": "San Isidro"
+    },
+    {
+     "sem": "Vicente López, Buenos Aires, Argentina",
+     "nombre": "Vicente López"
+    },
+    {
+     "sem": "Pilar, Buenos Aires, Argentina",
+     "nombre": "Pilar"
+    },
+    {
+     "sem": "Tigre, Buenos Aires, Argentina",
+     "nombre": "Tigre"
+    },
+    {
+     "sem": "Morón, Buenos Aires, Argentina",
+     "nombre": "Morón"
+    },
+    {
+     "sem": "Quilmes, Buenos Aires, Argentina",
+     "nombre": "Quilmes"
+    },
+    {
+     "sem": "Lomas de Zamora, Buenos Aires, Argentina",
+     "nombre": "Lomas de Zamora"
+    },
+    {
+     "sem": "La Matanza, Buenos Aires, Argentina",
+     "nombre": "La Matanza"
+    }
+   ]
+  },
+  {
+   "sem": "Catamarca, Argentina",
+   "nombre": "Catamarca",
+   "ciudades": []
+  },
+  {
+   "sem": "Chaco, Argentina",
+   "nombre": "Chaco",
+   "ciudades": []
+  },
+  {
+   "sem": "Chubut, Argentina",
+   "nombre": "Chubut",
+   "ciudades": [
+    {
+     "sem": "Comodoro Rivadavia, Chubut, Argentina",
+     "nombre": "Comodoro Rivadavia"
+    },
+    {
+     "sem": "Puerto Madryn, Chubut, Argentina",
+     "nombre": "Puerto Madryn"
+    }
+   ]
+  },
+  {
+   "sem": "Córdoba, Argentina",
+   "nombre": "Córdoba",
+   "ciudades": [
+    {
+     "sem": "Córdoba, Córdoba, Argentina",
+     "nombre": "Córdoba"
+    },
+    {
+     "sem": "Río Cuarto, Córdoba, Argentina",
+     "nombre": "Río Cuarto"
+    },
+    {
+     "sem": "Villa María, Córdoba, Argentina",
+     "nombre": "Villa María"
+    }
+   ]
+  },
+  {
+   "sem": "Corrientes, Argentina",
+   "nombre": "Corrientes",
+   "ciudades": [
+    {
+     "sem": "Corrientes, Corrientes, Argentina",
+     "nombre": "Corrientes"
+    }
+   ]
+  },
+  {
+   "sem": "Entre Ríos, Argentina",
+   "nombre": "Entre Ríos",
+   "ciudades": [
+    {
+     "sem": "Paraná, Entre Ríos, Argentina",
+     "nombre": "Paraná"
+    }
+   ]
+  },
+  {
+   "sem": "Formosa, Argentina",
+   "nombre": "Formosa",
+   "ciudades": []
+  },
+  {
+   "sem": "Jujuy, Argentina",
+   "nombre": "Jujuy",
+   "ciudades": []
+  },
+  {
+   "sem": "La Pampa, Argentina",
+   "nombre": "La Pampa",
+   "ciudades": []
+  },
+  {
+   "sem": "La Rioja, Argentina",
+   "nombre": "La Rioja",
+   "ciudades": []
+  },
+  {
+   "sem": "Mendoza, Argentina",
+   "nombre": "Mendoza",
+   "ciudades": [
+    {
+     "sem": "Mendoza, Mendoza, Argentina",
+     "nombre": "Mendoza"
+    }
+   ]
+  },
+  {
+   "sem": "Misiones, Argentina",
+   "nombre": "Misiones",
+   "ciudades": [
+    {
+     "sem": "Posadas, Misiones, Argentina",
+     "nombre": "Posadas"
+    }
+   ]
+  },
+  {
+   "sem": "Neuquén, Argentina",
+   "nombre": "Neuquén",
+   "ciudades": [
+    {
+     "sem": "Neuquén, Neuquén, Argentina",
+     "nombre": "Neuquén"
+    }
+   ]
+  },
+  {
+   "sem": "Río Negro, Argentina",
+   "nombre": "Río Negro",
+   "ciudades": [
+    {
+     "sem": "Bariloche, Río Negro, Argentina",
+     "nombre": "Bariloche"
+    }
+   ]
+  },
+  {
+   "sem": "Salta, Argentina",
+   "nombre": "Salta",
+   "ciudades": [
+    {
+     "sem": "Salta, Salta, Argentina",
+     "nombre": "Salta"
+    }
+   ]
+  },
+  {
+   "sem": "San Juan, Argentina",
+   "nombre": "San Juan",
+   "ciudades": [
+    {
+     "sem": "San Juan, San Juan, Argentina",
+     "nombre": "San Juan"
+    }
+   ]
+  },
+  {
+   "sem": "San Luis, Argentina",
+   "nombre": "San Luis",
+   "ciudades": []
+  },
+  {
+   "sem": "Santa Cruz, Argentina",
+   "nombre": "Santa Cruz",
+   "ciudades": []
+  },
+  {
+   "sem": "Santa Fe, Argentina",
+   "nombre": "Santa Fe",
+   "ciudades": [
+    {
+     "sem": "Rosario, Santa Fe, Argentina",
+     "nombre": "Rosario"
+    },
+    {
+     "sem": "Santa Fe, Santa Fe, Argentina",
+     "nombre": "Santa Fe"
+    },
+    {
+     "sem": "Rafaela, Santa Fe, Argentina",
+     "nombre": "Rafaela"
+    }
+   ]
+  },
+  {
+   "sem": "Santiago del Estero, Argentina",
+   "nombre": "Santiago del Estero",
+   "ciudades": []
+  },
+  {
+   "sem": "Tierra del Fuego, Argentina",
+   "nombre": "Tierra del Fuego",
+   "ciudades": []
+  },
+  {
+   "sem": "Tucumán, Argentina",
+   "nombre": "Tucumán",
+   "ciudades": [
+    {
+     "sem": "San Miguel de Tucumán, Tucumán, Argentina",
+     "nombre": "San Miguel de Tucumán"
+    }
+   ]
+  }
+ ],
+ "nota": "LinkedIn no tiene categorías: se busca por palabra clave y lugar. 'sem' es el texto de lugar que se le pasa a LinkedIn (location)."
+}

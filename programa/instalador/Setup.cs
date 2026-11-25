@@ -5,7 +5,7 @@
 // cambiar. Copia programa\, trae los datos que haya junto a Setup.exe y desempaqueta "Postulá.exe"
 // (que viaja adentro de Setup.exe) en esa misma carpeta. Antes de instalar, la raíz solo tiene Setup.exe y programa\.
 //   1. Python >= 3.9 (si no hay, ofrece instalar 3.12 con winget o con el instalador de python.org)
-//   2. pip install playwright pywebview
+//   2. pip install playwright pywebview (y python-jobspy, para LinkedIn)
 //   3. Verifica Microsoft Edge
 //   4. Anota el Python en programa\datos\python.txt (lo usa Postulá.exe)
 //   5. Desempaqueta Postulá.exe en la raíz y, opcional, acceso directo en el escritorio
@@ -251,11 +251,15 @@ class Instalacion
                    "(marcá \"Add python.exe to PATH\") y volvé a ejecutar Setup.exe.";
         Escribir("Python: " + py);
 
-        Paso(2, "Instalando las librerías (Playwright y pywebview)...");
+        Paso(2, "Instalando las librerías (Playwright, pywebview y JobSpy)...");
         int r = Correr(py, "-m pip install --disable-pip-version-check playwright pywebview", 900);
         if (r != 0) return "Falló la instalación de las librerías (pip). Revisá la conexión a internet y volvé a intentar.";
         if (Correr(py, "-c \"import playwright.sync_api, webview\"", 60) != 0)
             return "Las librerías se instalaron pero Python no las puede abrir.";
+        // JobSpy: solo lo usa LinkedIn (la búsqueda). Si falla, se sigue: las otras bolsas no lo necesitan.
+        if (Correr(py, "-m pip install --disable-pip-version-check python-jobspy", 900) != 0 ||
+            Correr(py, "-c \"import jobspy\"", 60) != 0)
+            Escribir("Aviso: no se pudo instalar JobSpy (python-jobspy). LinkedIn no va a poder buscar avisos; las demás bolsas funcionan igual.");
         Escribir("Librerías listas.");
 
         Paso(3, "Buscando Microsoft Edge...");
@@ -602,7 +606,7 @@ class Asistente : Form
         TopMost = true;
         Show();
         txtLog.Text = "12:00:01 Instalando Postulá en " + ins.Raiz + "\r\n12:00:02 Python: C:\\...\\python.exe\r\n12:00:05    Requirement already satisfied: playwright\r\n";
-        barra.Value = 2; lblEstado.Text = "Instalando las librerías (Playwright y pywebview)...";
+        barra.Value = 2; lblEstado.Text = "Instalando las librerías (Playwright, pywebview y JobSpy)...";
         for (int i = 0; i < 4; i++)
         {
             if (i == 3) { Terminar(null); }

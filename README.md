@@ -1,13 +1,13 @@
 # Postulá
 
-App de escritorio para Windows para **postularte a avisos de trabajo** en **Computrabajo**, **Bumeran**, **ZonaJobs** y **EmpleosIT**, de a uno o en automático.
+App de escritorio para Windows para **postularte a avisos de trabajo** en **Computrabajo**, **Bumeran**, **ZonaJobs**, **EmpleosIT** y **LinkedIn** (solo *Solicitud sencilla*), de a uno o en automático.
 
 Elegís qué buscar, tocás **Empezar** y la app lee todos los avisos y te los deja ordenados para decidir. **Nada se envía sin que vos lo pidas.**
 
 ## Qué hace
 
-- **Dos listas.** Los avisos *sin preguntas* y los *con preguntas*. En Computrabajo y EmpleosIT la primera se llama *Sin revisar*, porque esas bolsas no avisan si hay preguntas hasta abrir el aviso.
-- **Auto, apagado al empezar.** Si lo activás, se postula uno por uno, con pausas. Si no, te postulás vos de a uno.
+- **Dos listas.** Los avisos *sin preguntas* y los *con preguntas*. En LinkedIn la primera se llama *Sin revisar*: se sabe si hay preguntas al tocar Postularme (si no hay, se envía; si hay, te las muestra).
+- **Auto, apagado al empezar.** Si lo activás, se postula uno por uno, con pausas. Si no, te postulás vos de a uno. (En LinkedIn no hay Auto.)
 - **No repetís postulaciones.** Al empezar lee las postulaciones de tu cuenta (también las que hiciste desde la web) y saltea esos avisos y sus republicaciones.
 - **Formularios** con tu sueldo pretendido y tu zona precargados.
 - **El aviso a la vista:** logo de la empresa, fecha de publicación, descripción ordenada y requisitos.
@@ -17,11 +17,14 @@ Elegís qué buscar, tocás **Empezar** y la app lee todos los avisos y te los d
 
 El navegador trabaja oculto: no aparece en pantalla ni en la barra de tareas (salvo para iniciar sesión).
 
-| | Computrabajo | Bumeran | ZonaJobs | EmpleosIT |
-|---|:---:|:---:|:---:|:---:|
-| Subáreas | — | Sí | Sí | Varias categorías |
-| Avisa de antemano si hay preguntas | No | Sí | Sí | No |
-| Requisitos aparte | Sí | Sí | Sí | No |
+| | Computrabajo | Bumeran | ZonaJobs | EmpleosIT | LinkedIn |
+|---|:---:|:---:|:---:|:---:|:---:|
+| Categorías | Sí | Sí, con subáreas | Sí, con subáreas | Varias categorías | Solo palabra clave |
+| Separa con y sin preguntas al recorrer | Sí | Sí | Sí | Sí | No (al postularte) |
+| Requisitos aparte | Sí | Sí | Sí | No | No |
+| Auto | Sí | Sí | Sí | Sí | No |
+
+LinkedIn busca con [JobSpy](https://github.com/speedyapply/JobSpy) (solo avisos con *Solicitud sencilla*) y se postula con tu sesión. Sus términos de uso no permiten automatizar postulaciones: usalo con moderación y bajo tu responsabilidad.
 
 ## Requisitos
 
@@ -36,7 +39,7 @@ El navegador trabaja oculto: no aparece en pantalla ni en la barra de tareas (sa
 2. Descomprimilo.
 3. Ejecutá **`Setup.exe`** y seguí los pasos. El instalador:
    - busca Python (y si falta, ofrece instalar Python 3.12);
-   - instala las librerías que usa la app (Playwright y pywebview);
+   - instala las librerías que usa la app (Playwright, pywebview y JobSpy para LinkedIn);
    - verifica que esté Microsoft Edge;
    - instala Postulá en `%LOCALAPPDATA%\Programs\Postulá` (no pide permisos de administrador; podés elegir otra carpeta);
    - crea el acceso en el menú Inicio y, si querés, en el escritorio.

@@ -1,7 +1,7 @@
 'use strict';
 // Versión de la app: se muestra abajo a la izquierda del menú. Regla del usuario: CADA cambio a la app,
 // por mínimo que sea, la sube en uno (1.0.0 → 1.0.1 → … → 1.0.9 → 1.1.0). Anotar cada una en CONTEXTO.md.
-const VERSION = '1.2.9';
+const VERSION = '1.3.0';
 /* Interfaz de Postulá. Habla con Python (app.py) por window.pywebview.api y recibe los
    eventos del motor en window.app.evento(tipo, datos). Todo se maneja con el teclado. */
 
@@ -53,6 +53,8 @@ const PLATAFORMAS = [
    icono: 'logos/zonajobs-icono.png', colores: ['#fe633f', '#ff9f43', '#c2361a']},
   {id: 'empleosit', nombre: 'EmpleosIT', sitio: 'empleosit.com.ar', activa: true, hosts: ['www.empleosit.com.ar', 'empleosit.com.ar'],
    icono: 'logos/empleosit-icono.png', colores: ['#1e80c1', '#86dced', '#2197c9']},
+  {id: 'linkedin', nombre: 'LinkedIn', sitio: 'linkedin.com', activa: true, hosts: ['www.linkedin.com', 'linkedin.com', 'ar.linkedin.com'],
+   icono: 'logos/linkedin-icono.svg', colores: ['#0a66c2', '#70b5f9', '#004182']},
 ];
 
 // Qué significa cada resultado del recorrido, en palabras simples.
@@ -124,9 +126,10 @@ const visibles = () => {
 };
 const idxSel = () => visibles().findIndex(x => x.gid === E.selGid);
 const actual = () => visibles()[idxSel()];
-// Las cuatro bolsas saben de antemano si un aviso tiene preguntas (Computrabajo y EmpleosIT lo
-// consultan sin postularse desde la 1.2.7), así que la primera lista siempre es "Sin preguntas".
-const nombreLibres = () => 'Sin preguntas';
+// Computrabajo, Bumeran, ZonaJobs y EmpleosIT saben de antemano si un aviso tiene preguntas. LinkedIn no
+// (averiguarlo exige abrir la Solicitud sencilla de cada aviso): ahí la primera lista es "Sin revisar".
+const sinAnticipo = () => E.plataformaId === 'linkedin';
+const nombreLibres = () => sinAnticipo() ? 'Sin revisar' : 'Sin preguntas';
 const inicial = t => ((t || '?').trim()[0] || '?').toUpperCase();
 
 // ================================================================== menú
@@ -359,11 +362,13 @@ function editarBusqueda() {
   const filtros = filtrosPlat[p.id];
   const vacios = () => ({categoria: '', subareas: [], lugares: [], puesto: ''});
   const varias = !!(filtros && filtros.varias_categorias);     // EmpleosIT: sin subáreas, pero se tildan varias categorías
+  const soloPalabra = !!(filtros && filtros.solo_palabra);      // LinkedIn: sin categorías, solo palabra clave + lugar
+  const modoInicial = soloPalabra ? 'palabra' : 'categoria';
   const entradas = (bq.busquedas || []).map(b => ({
     url: b.url, resumen: b.resumen, original: b.url, error: null, activa: b.activa !== false,
     manual: !(filtros && b.campos), campos: b.campos ? {...b.campos, subareas: [...(b.campos.subareas || [])],
                         lugares: b.campos.lugares || (b.campos.provincia ? [{provincia: b.campos.provincia, ciudad: b.campos.ciudad}] : [])} : vacios(),
-    modo: b.campos && !b.campos.categoria && !(b.campos.subareas || []).length && b.campos.puesto ? 'palabra' : 'categoria',
+    modo: soloPalabra || (b.campos && !b.campos.categoria && !(b.campos.subareas || []).length && b.campos.puesto) ? 'palabra' : 'categoria',
   }));
   let sel = 0;
   let pedido = 0;
@@ -375,7 +380,7 @@ function editarBusqueda() {
 
   const nueva = (manual = false) => {
     entradas.push({url: null, resumen: null, original: null, error: null, manual: manual || !filtros,
-                   campos: vacios(), modo: 'categoria', activa: true});
+                   campos: vacios(), modo: modoInicial, activa: true});
     sel = entradas.length - 1;
     pintar();
     setTimeout(() => { const f = panel.querySelector('.ed-desp, input'); if (f) f.focus(); }, 30);
@@ -555,7 +560,7 @@ function editarBusqueda() {
     } else {
       const c = e.campos;
       const f = filtros;
-      const modos = el('div', 'ed-modos');
+      const modos = el('div', 'ed-modos' + (soloPalabra ? ' oculto' : ''));
       for (const [m, t] of [['categoria', 'Por categoría'], ['palabra', 'Por palabra clave']]) {
         const b = el('button', 'ed-modo' + (e.modo === m ? ' sel' : ''), t);
         b.type = 'button';
@@ -701,7 +706,7 @@ function editarBusqueda() {
   caja.addEventListener('keydown', ev => {
     if (ev.key === 'Enter' && ev.ctrlKey) { ev.preventDefault(); ev.stopPropagation(); guardar(); }
   });
-  if (!entradas.length) { entradas.push({url: null, resumen: null, original: null, error: null, manual: !filtros, campos: vacios(), modo: 'categoria', activa: true}); }
+  if (!entradas.length) { entradas.push({url: null, resumen: null, original: null, error: null, manual: !filtros, campos: vacios(), modo: modoInicial, activa: true}); }
   pintar();
   velo(null, null, caja, 'busqueda');
   setTimeout(() => { const f = panel.querySelector('.ed-desp, input'); if (f) f.focus(); }, 50);
@@ -1235,7 +1240,7 @@ function pintarPastilla() {
     b.onclick = () => cambiarTab(tab);
   }
   const a = $('#btn-auto');
-  a.classList.toggle('oculto', E.tab !== 'libres');
+  a.classList.toggle('oculto', E.tab !== 'libres' || E.plataformaId === 'linkedin');   // LinkedIn: sin Auto
   a.classList.toggle('activo', E.auto);
   a.setAttribute('aria-checked', E.auto);
   a.onclick = alternarAuto;
@@ -1268,7 +1273,7 @@ function cambiarTab(tab) {
 }
 
 function alternarAuto() {
-  if (!E.activo || E.modo !== 'lista' || E.tab !== 'libres') return;
+  if (!E.activo || E.modo !== 'lista' || E.tab !== 'libres' || E.plataformaId === 'linkedin') return;
   E.auto = !E.auto;
   api().comando('auto', {activo: E.auto});
   pintarPastilla();
@@ -1563,7 +1568,9 @@ function pintarPanel() {
                boton('Descartar para siempre', 'N', 'no', descartar),
                boton('Ver en la web', 'O', '', () => api().abrir_url(it.url)));
     p.append(acc);
-    if (it.libre) p.append(el('p', 'nota-libre', 'No tiene preguntas: al apretar Postularme quedás postulado en el acto.'));
+    if (it.libre) p.append(el('p', 'nota-libre', sinAnticipo()
+      ? 'Al apretar Postularme: si no tiene preguntas quedás postulado en el acto; si tiene, te las muestro.'
+      : 'No tiene preguntas: al apretar Postularme quedás postulado en el acto.'));
   }
 
   if (it.repetidos.length) {
@@ -1657,7 +1664,7 @@ const respondida = q => {
 };
 
 function abrirForm(d) {
-  const f = {gid: d.gid, preguntas: d.preguntas, resp: {}, activa: 0, enviando: false, error: null};
+  const f = {gid: d.gid, preguntas: d.preguntas, resp: {}, activa: 0, enviando: false, error: null, pagina: d.pagina || null};
   for (const q of d.preguntas) if (q.precarga) f.resp[q.indice] = q.precarga;
   E.form = f;
   E.modo = 'form';
@@ -1678,7 +1685,8 @@ function pintarForm(p) {
   const f = E.form;
   const it = E.items.find(x => x.gid === f.gid) || {titulo: '', empresa: ''};
   cabeceraAviso(p, it);
-  p.append(el('div', 'form-sub', `${f.preguntas.length === 1 ? 'Una pregunta' : f.preguntas.length + ' preguntas'} de la empresa. Respondé y enviá tu postulación.`));
+  p.append(el('div', 'form-sub', `${f.preguntas.length === 1 ? 'Una pregunta' : f.preguntas.length + ' preguntas'} de la empresa` +
+    (f.pagina ? ` (página ${f.pagina} del formulario de LinkedIn; si hay más, te las muestro después)` : '') + '. Respondé y enviá tu postulación.'));
 
   if (f.preguntas.some(q => !q.soportada)) {
     p.append(el('p', 'error', 'Este formulario tiene un tipo de pregunta que la app no sabe completar. Postulate desde la web.'));
@@ -2044,7 +2052,8 @@ const handlers = {
   },
 
   form(d) {
-    if (E.modo !== 'cargando' || E.cargandoGid !== d.gid) return;   // lo cancelaste mientras cargaba
+    const siguientePagina = E.modo === 'form' && E.form && E.form.gid === d.gid && E.form.enviando;   // LinkedIn
+    if (!siguientePagina && (E.modo !== 'cargando' || E.cargandoGid !== d.gid)) return;   // lo cancelaste mientras cargaba
     abrirForm(d);
   },
   form_error(d) {

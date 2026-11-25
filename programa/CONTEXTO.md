@@ -1,6 +1,6 @@
 # Postulá: app para postularse a avisos de empleo
 
-Documento para que otra persona u otro chat de IA entienda el proyecto y pueda seguir sin perder nada. **Actualizado el 25-11-2026 (versión 1.2.9).** Si sos un chat nuevo, leé primero **"Cómo trabajar con el usuario"**, **"Cómo funciona hoy"** y **"Pendientes"**. Las secciones por bolsa y el historial de versiones tienen el detalle; **si algo viejo contradice a "Cómo funciona hoy" o a una versión más nueva, vale lo nuevo**.
+Documento para que otra persona u otro chat de IA entienda el proyecto y pueda seguir sin perder nada. **Actualizado el 25-11-2026 (versión 1.3.0).** Si sos un chat nuevo, leé primero **"Cómo trabajar con el usuario"**, **"Cómo funciona hoy"** y **"Pendientes"**. Las secciones por bolsa y el historial de versiones tienen el detalle; **si algo viejo contradice a "Cómo funciona hoy" o a una versión más nueva, vale lo nuevo**.
 
 Repositorio: https://github.com/matichiozza/Postula (público). La app se llamaba "Laburo IA" hasta la 1.2.3.
 
@@ -14,10 +14,12 @@ App de escritorio para Windows (**Postulá**) más los scripts de consola de cad
 | bumeran.com.ar | API JSON interna (Jobint/Navent) | `app/motor_jobint.py` |
 | zonajobs.com.ar | La misma API que Bumeran, con otro `x-site-id` | `app/motor_jobint.py` |
 | empleosit.com.ar | HTML + formulario AJAX (SmartJobBoard) | `app/motor_empleosit.py` |
+| linkedin.com (solo Solicitud sencilla) | Búsqueda con JobSpy (sin sesión) + formulario de Solicitud sencilla con tu sesión | `app/motor_linkedin.py` |
 
 ## Cómo funciona hoy
 
 - **El recorrido no postula.** Lee las búsquedas activas y deja los avisos en dos listas: *Sin preguntas* y *Con preguntas*. En Computrabajo se averigua con `/candidate/kq` sin seguir redirecciones (1.2.7) y en EmpleosIT leyendo el formulario con `fetch` (1.2.8); ninguna de las dos consultas postula. Si no se puede saber, el aviso queda en *Sin preguntas* y, si al postularse resulta tener, pasa a la otra lista.
+- **LinkedIn** es distinto: la primera lista se llama *Sin revisar* (no se sabe si hay preguntas hasta apretar Postularme) y no tiene Auto. Ver la sección de LinkedIn.
 - **Auto** arranca **apagado** en cada recorrido. Activado postula de a uno con pausas (`recorrido.paso_auto`), solo la primera lista, sin tocar los restaurados.
 - Al empezar, cada motor lee **las postulaciones de la cuenta** y las anota en el historial (`ya_postulado`).
 - En Computrabajo, **abrir el link de postulación de un aviso sin preguntas ya postula**. En EmpleosIT abrir el formulario no postula: postula el envío. En Jobint se postula por API.
@@ -39,9 +41,9 @@ App de escritorio para Windows (**Postulá**) más los scripts de consola de cad
 ## Instalar
 
 1. Ejecutar **`Setup.exe`** (asistente WinForms: Bienvenida → Opciones → Instalando → Listo). Instala en **`%LOCALAPPDATA%\Programs\Postulá`** (cambiable; no usar `C:\Program Files`: la app escribe sus datos adentro). Copia `programa/` y `Setup.exe`, y si el destino no tiene datos trae los que haya junto al instalador. Reinstalar encima no pisa los datos.
-2. Pasos: Python ≥ 3.9 (ofrece instalar 3.12) → `pip install playwright pywebview` → verifica Edge → copia → anota `datos/python.txt` → desempaqueta `Postulá.exe` → acceso en el menú Inicio y, opcional, en el escritorio. Detalle en `datos/registros/setup.log`.
+2. Pasos: Python ≥ 3.9 (ofrece instalar 3.12) → `pip install playwright pywebview` → `pip install python-jobspy` (para LinkedIn; si falla se sigue) → verifica Edge → copia → anota `datos/python.txt` → desempaqueta `Postulá.exe` → acceso en el menú Inicio y, opcional, en el escritorio. Detalle en `datos/registros/setup.log`.
 3. Sin ventanas: `Setup.exe /silencioso [/destino C:\carpeta] [/nombre "X"] [/borrar] [/escritorio] [/sinmenu]`; `/capturas <carpeta>` guarda las pantallas. Desde Git Bash no pasar esos parámetros (los convierte en rutas).
-4. Compilar: `programa/instalador/compilar.bat` (usa `csc.exe` de .NET Framework 4: solo C# 5). El lanzador viaja dentro de `Setup.exe`. `Setup.exe` usa `instalador/setup.ico`; `Postulá.exe`, `app/recursos/logo.ico`.
+4. Compilar: `programa/instalador/compilar.bat` (usa `csc.exe` de .NET Framework 4: solo C# 5). Desde PowerShell, `cmd /c compilar.bat` no lo encuentra por la "á" de la carpeta: correr los dos `csc` del .bat directo (lo hizo así la 1.3.0). El lanzador viaja dentro de `Setup.exe`. `Setup.exe` usa `instalador/setup.ico`; `Postulá.exe`, `app/recursos/logo.ico`.
 5. Las sesiones (`perfil_edge/`) no sirven en otra PC: hay que volver a iniciar sesión.
 6. **Detrás de un proxy que pide autenticación de Windows, `pip` falla con 407.** Se resolvió bajando las ruedas de PyPI con PowerShell (`-ProxyUseDefaultCredentials`) e instalando con `pip install --user --no-index --find-links`.
 
@@ -380,6 +382,18 @@ Plataforma **SmartJobBoard** (PHP, HTML clásico, jQuery). Se usa Edge por la se
 
 ---
 
+## LinkedIn (`bolsas/linkedin/`, `app/motor_linkedin.py`, 25-11-2026)
+
+Pedido del usuario: buscar con su herramienta JobSpy (`python-jobspy` 1.5.0) **solo avisos con Solicitud sencilla** y postularse desde la app. El usuario aceptó el riesgo de los términos de LinkedIn (prohíben automatizar); para bajarlo: Edge normal con su sesión, de a un aviso, **sin Auto**, y si LinkedIn pide verificación (checkpoint/captcha/login) se frena y se avisa.
+
+- **Búsqueda:** `postulador.buscar(url)` llama a `scrape_jobs(site_name=["linkedin"], easy_apply=True, …)`. Es la búsqueda pública de empleos (sin sesión). Trae id, título, empresa, lugar, fecha y link; **no** trae si tiene preguntas. LinkedIn limita los pedidos (429; JobSpy lo escribe en su log y la app lo detecta y avisa): no pedir descripciones en la búsqueda. "desarrollador" en Capital Federal: 191 avisos con Solicitud sencilla.
+- **Link guardado:** el de la web, `https://www.linkedin.com/jobs/search/?keywords=…&location=…&f_AL=true[&f_WT=2]` (`busquedas._armar_linkedin` / `_desarmar_linkedin` / `_leer_linkedin`). Sin categorías: el editor muestra solo Dónde + Palabra clave (`filtros.json` con `"solo_palabra": true`; los lugares son textos que LinkedIn entiende, ej. "Capital Federal, Buenos Aires, Argentina"). Remoto = `f_WT=2` en Argentina.
+- **Tus postulaciones:** Registro de empleos → Solicitados (`/jobs-tracker/?stage=applied`), 10 por página con "Siguiente" (en la última queda oculto). `SOLICITADOS_JS` saca id, título y empresa. El 25-11-2026 eran 24.
+- **Con o sin preguntas (opción "B" elegida por el usuario):** no se clasifica en el recorrido (habría que abrir el formulario de cada aviso: mucha actividad en la cuenta). Todos quedan en *Sin revisar*; al apretar Postularme se abre la Solicitud sencilla en la pestaña de formulario y se avanza por las páginas ya completas (contacto y CV vienen cargados). Si llega a "Enviar" sin nada pendiente, envía; si una página tiene campos obligatorios vacíos, el aviso pasa a *Con preguntas* y se muestran en la app **página por página** (evento `form` con `pagina`; la interfaz acepta la página siguiente después de enviar la anterior).
+- **Formulario (diseño nuevo de LinkedIn, clases ofuscadas):** `<dialog>` con "Aplicar a <empresa>" y "N/4 páginas"; botones "Siguiente", "Revisar", "Enviar solicitud". Cerrar con Escape pregunta "¿Quieres guardar esta solicitud?" → **Descartar** (si no, queda "En curso"). Campos: texto/número, `select` ("Selecciona una opción" = vacío) y sí/no en **dos variantes**: `div[role=radio]` con la pregunta en `aria-label`, o el `aria-label` en el propio `input` con el texto de la opción al lado. La `<label>` está vacía. El radio del CV se reconoce por `#easyApplyUploadedResumeRef`. Con la ventana de Edge oculta, `innerText` puede venir vacío y la página tarda en dibujar los textos: se usa `aria-label`/`textContent` y se lee hasta que dos lecturas coinciden (`_leer`); los radios se marcan con `click()` por JS (el input está escondido).
+- **Aviso donde ya te postulaste:** no tiene el botón "Solicitud sencilla" sino "Ver currículum". Descripción: texto después de "Acerca del empleo" (`DETALLE_JS`, pestaña de consulta con sesión).
+- **Probado el 25-11-2026 con la cuenta real:** login; 1 postulación real sin preguntas (Atentus, "Ingeniero/a de Software C/C++", por consola: Solicitados pasó de 23 a 24); el motor **en seco** (el botón Enviar reemplazado): lee las 24 postulaciones y ninguna aparece en la lista; búsqueda con JobSpy; descripción; 3 formularios con preguntas (sí/no de las dos variantes, años, sueldo precargado) completados hasta el botón Enviar sin tocarlo; "En curso" quedó en 2 (no quedaron borradores). **Falta:** una postulación real desde la app (con y sin preguntas).
+
 ## Pendientes e ideas
 
 1. **Barra de título azul:** el usuario la quiere gris oscuro. En Windows 10 una app no puede cambiarla (tiene activado el color de énfasis). Opciones ofrecidas, sin respuesta: desactivarlo en Windows, o ventana sin marco con barra propia.
@@ -447,6 +461,8 @@ Plataforma **SmartJobBoard** (PHP, HTML clásico, jQuery). Se usa Edge por la se
 - **1.2.8** (25-11-2026): (1) **EmpleosIT también separa *Sin preguntas* / *Con preguntas*** durante el recorrido: `MotorEmpleosIT.tiene_preguntas()` lee `/apply-now/` con `fetch` (`FORM_JS`: cantidad de `QuestionAnswer[]`, otros campos de pregunta, captcha). Ya no hay *Sin revisar* en ninguna bolsa (`sinAnticipo` se quitó de `app.js`). (2) Botón "Editar búsquedas" del menú más visible (borde punteado claro). **Pruebas con la cuenta real (permiso del usuario para hasta 8 postulaciones; se hicieron 4):** EmpleosIT CABA: 87 avisos nuevos → 21 sin preguntas y 66 con preguntas, en 116 s; postulación a 2 sin preguntas (124349, 130545) confirmada sin formulario. Computrabajo "soporte técnico" en Capital Federal: postulación a 2 sin preguntas (D546166F…, 821CA39E…) confirmada sin formulario; recorrido: 88 sin preguntas, 93 con preguntas. En las dos bolsas se borraron del historial local esas postulaciones y se volvió a recorrer: se leyeron de Mis Postulaciones (EmpleosIT 3, Computrabajo 297) y **no aparecieron en ninguna lista**.
 
 - **1.2.9** (25-11-2026): si *Sin preguntas* está vacía y hay avisos en *Con preguntas*, la lista pasa sola a *Con preguntas* (`pintarLista` en `app.js`; todas las bolsas). Si después llegan avisos sin preguntas no se vuelve sola. Probado en la interfaz con avisos simulados.
+
+- **1.3.0** (25-11-2026): **LinkedIn en la app** (ver su sección): búsqueda con JobSpy solo Solicitud sencilla, Solicitados de la cuenta, *Sin revisar* + Postularme (envía si no hay preguntas; si hay, las muestra página por página), sin Auto, editor solo con palabra clave + lugar. `Setup.exe` instala `python-jobspy` (si falla, sigue sin LinkedIn) y se recompiló.
 
 ## Lecciones técnicas (para no repetir errores)
 

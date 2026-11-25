@@ -19,6 +19,8 @@ PLATAFORMAS = {
                  "ejemplo": "https://www.zonajobs.com.ar/empleos.html"},
     "empleosit": {"nombre": "EmpleosIT", "hosts": ("www.empleosit.com.ar", "empleosit.com.ar"), "quitar": ("page", "searchId"),
                   "ejemplo": "https://www.empleosit.com.ar/search-results-jobs/?action=search&listing_type%5Bequal%5D=Job"},
+    "linkedin": {"nombre": "LinkedIn", "hosts": ("www.linkedin.com", "linkedin.com", "ar.linkedin.com"), "quitar": ("start", "currentJobId"),
+                 "ejemplo": "https://www.linkedin.com/jobs/search/?keywords=desarrollador&location=Argentina&f_AL=true"},
 }
 
 
@@ -133,6 +135,8 @@ def _armar_uno(plataforma, datos):
         return _armar_jobint(plataforma, f, datos)
     if plataforma == "empleosit":
         return _armar_empleosit(f, datos)
+    if plataforma == "linkedin":
+        return _armar_linkedin(f, datos)
     puesto = slug(datos.get("puesto"))
     cat = datos.get("categoria") or ""
     prov = datos.get("provincia") or ""
@@ -324,6 +328,68 @@ def _leer_empleosit(consulta):
     return c["puesto"], cat, lugar
 
 
+# ------------------------------------------------------------------ LinkedIn (búsqueda con JobSpy)
+# Se guarda el link de la web de LinkedIn (se puede abrir en el navegador), siempre con f_AL=true
+# (Solicitud sencilla). No tiene categorías: palabra clave + lugar (texto que LinkedIn entiende,
+# de bolsas/linkedin/filtros.json) o remoto (f_WT=2, en todo el país).
+LI_BASE = "https://www.linkedin.com/jobs/search/"
+
+
+def _armar_linkedin(f, datos):
+    puesto = " ".join((datos.get("puesto") or "").split())
+    if not puesto:
+        return {"ok": False, "error": "Escribí la palabra clave."}
+    prov, ciudad = datos.get("provincia") or "", datos.get("ciudad") or ""
+    consulta = [("keywords", puesto)]
+    if prov == REMOTO["sem"]:
+        consulta += [("location", "Argentina"), ("f_WT", "2")]
+    elif prov:
+        p = next((x for x in f["provincias"] if x["sem"] == prov), None)
+        if not p or (ciudad and ciudad not in {c["sem"] for c in p["ciudades"]}):
+            return {"ok": False, "error": "Lugar desconocido."}
+        consulta.append(("location", ciudad or prov))
+    else:
+        consulta.append(("location", "Argentina"))
+    consulta.append(("f_AL", "true"))
+    url = LI_BASE + "?" + urlencode(consulta)
+    return {"ok": True, "url": url, "resumen": resumen(url)}
+
+
+def _desarmar_linkedin(consulta):
+    f = filtros("linkedin")
+    q = dict(parse_qsl(consulta))
+    if not f or set(q) - {"keywords", "location", "f_AL", "f_WT"} or not q.get("keywords"):
+        return None
+    lugar, prov, ciudad = q.get("location", ""), "", ""
+    if q.get("f_WT") == "2":
+        prov = REMOTO["sem"]
+    elif lugar and lugar != "Argentina":
+        for p in f["provincias"]:
+            if p["sem"] == lugar:
+                prov = lugar
+            for c in p["ciudades"]:
+                if c["sem"] == lugar:
+                    prov, ciudad = p["sem"], lugar
+        if not prov:
+            return None
+    return {"categoria": "", "subareas": [], "provincia": prov, "ciudad": ciudad, "puesto": q["keywords"]}
+
+
+def _leer_linkedin(consulta):
+    q = dict(parse_qsl(consulta))
+    if not q.get("keywords"):
+        return None
+    lugar = "Remoto" if q.get("f_WT") == "2" else q.get("location", "")
+    f = filtros("linkedin") or {"provincias": []}
+    for p in f["provincias"]:
+        if p["sem"] == lugar:
+            lugar = p["nombre"].replace(" (CABA)", "")
+        for c in p["ciudades"]:
+            if c["sem"] == lugar:
+                lugar = c["nombre"]
+    return q["keywords"], "", "" if lugar == "Argentina" else lugar
+
+
 def _leer_computrabajo(camino):
     """Inverso de armar(): '/trabajo-de-x-de-cat-en-prov' -> (puesto, categoría, lugar) legibles, o None."""
     f = filtros("computrabajo")
@@ -373,6 +439,11 @@ def _resumen_uno(url):
                 leido = _leer_jobint(plat, partes.path, partes.query)
             except Exception:
                 leido = None
+    if host in PLATAFORMAS["linkedin"]["hosts"]:
+        try:
+            leido = _leer_linkedin(partes.query)
+        except Exception:
+            leido = None
     if host in PLATAFORMAS["empleosit"]["hosts"]:
         try:
             leido = _leer_empleosit(partes.query)
@@ -435,6 +506,8 @@ def _desarmar_uno(plataforma, url):
         partes = urlsplit(url)
         if plataforma == "empleosit":
             return _desarmar_empleosit(partes.query)
+        if plataforma == "linkedin":
+            return _desarmar_linkedin(partes.query)
         if plataforma in JOBINT:
             return _desarmar_jobint(plataforma, partes.path, partes.query)
         if partes.query:
@@ -535,6 +608,15 @@ def validar(plataforma, url):
     if plataforma in JOBINT and not partes.path.endswith(".html"):
         return None, "Pegá el link de una lista de avisos (termina en .html, por ejemplo …/empleos-area-…html)."
     consulta = [(k, v) for k, v in parse_qsl(partes.query, keep_blank_values=True) if k not in info["quitar"]]
+    if plataforma == "linkedin":
+        if not partes.path.startswith("/jobs/search"):
+            return None, "Pegá el link de una búsqueda de empleos de LinkedIn (…/jobs/search/?keywords=…)."
+        q = dict(consulta)
+        if not q.get("keywords"):
+            return None, "El link tiene que tener una palabra clave (keywords=…)."
+        # solo se usan palabra, lugar y remoto; siempre Solicitud sencilla
+        consulta = [(k, q[k]) for k in ("keywords", "location") if q.get(k)] +                    ([("f_WT", "2")] if "2" in q.get("f_WT", "").split(",") else []) + [("f_AL", "true")] +                    ([("lugares", q["lugares"])] if q.get("lugares") else [])        # varios lugares (es de la app)
+        return urlunsplit(("https", "www.linkedin.com", "/jobs/search/", urlencode(consulta), "")), None
     if plataforma == "empleosit":
         if "/search-results-jobs" not in partes.path:
             return None, "Pegá el link de una lista de resultados de EmpleosIT (…/search-results-jobs/?…)."
@@ -639,4 +721,13 @@ def _contar_avisos(plataforma, page, url):
     if plataforma == "empleosit":
         page.goto(url, wait_until="domcontentloaded", timeout=90000)
         return page.locator('.listing-title a[href*="/display-job/"]').count()
+    if plataforma == "linkedin":
+        import importlib.util
+        spec = importlib.util.spec_from_file_location("postulador_linkedin", rutas.codigo_bolsa("linkedin") / "postulador.py")
+        li = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(li)
+        avisos, frenado = li.buscar(url, 25)
+        if frenado and not avisos:
+            raise RuntimeError("LinkedIn está limitando las búsquedas; probá en unos minutos")
+        return len(avisos)
     raise ValueError("Todavía no sé probar links de esta plataforma.")
