@@ -1,7 +1,7 @@
 'use strict';
 // Versión de la app: se muestra abajo a la izquierda del menú. Regla del usuario: CADA cambio a la app,
 // por mínimo que sea, la sube en uno (1.0.0 → 1.0.1 → … → 1.0.9 → 1.1.0). Anotar cada una en CONTEXTO.md.
-const VERSION = '1.2.5';
+const VERSION = '1.2.6';
 /* Interfaz de Postulá. Habla con Python (app.py) por window.pywebview.api y recibe los
    eventos del motor en window.app.evento(tipo, datos). Todo se maneja con el teclado. */
 
@@ -931,6 +931,41 @@ async function pintarResumenDescartados() {
     : 'No tenés avisos descartados.';
 }
 
+// ---- actualizaciones: buscar -> actualizar -> reiniciar, siempre con el mismo botón
+let actPaso = 'buscar', actOcupado = false;
+function pintarActualizacion(texto, boton) {
+  $('#act-estado').textContent = texto;
+  const b = $('#btn-actualizar');
+  b.querySelector('span').textContent = boton || {buscar: 'Buscar actualizaciones', instalar: 'Actualizar ahora', reiniciar: 'Reiniciar Postulá'}[actPaso];
+  b.disabled = actOcupado;
+}
+
+async function tocarActualizacion() {
+  if (!api() || actOcupado) return;
+  if (actPaso === 'reiniciar') { api().reiniciar(); return; }
+  actOcupado = true;
+  if (actPaso === 'buscar') {
+    pintarActualizacion('Consultando GitHub…', 'Buscando…');
+    const r = await api().buscar_actualizacion();
+    actOcupado = false;
+    if (!r.ok) { pintarActualizacion(r.error); return; }
+    if (r.hay) {
+      actPaso = 'instalar';
+      pintarActualizacion(`Hay una versión nueva: ${r.publicada} (tenés la ${r.actual}). Tus datos no se tocan.`);
+    } else {
+      pintarActualizacion(r.publicada === r.actual ? `Tenés la última versión (${r.actual}).`
+                          : `Tenés la ${r.actual}, más nueva que la publicada (${r.publicada}).`);
+    }
+    return;
+  }
+  pintarActualizacion('Descargando e instalando. Puede tardar unos minutos; no cierres la app.', 'Actualizando…');
+  const r = await api().actualizar();
+  actOcupado = false;
+  if (!r.ok) { actPaso = 'buscar'; pintarActualizacion(r.error); return; }
+  actPaso = 'reiniciar';
+  pintarActualizacion(`Listo: se instaló la versión ${r.version}. Reiniciá para usarla.`);
+}
+
 // ---- empezar de cero: confirmación fuerte (hay que escribir BORRAR)
 function confirmarBorrado() {
   const caja = el('div');
@@ -979,6 +1014,8 @@ function prepararDatos() {
   $('#btn-exportar').onclick = exportarDatos;
   $('#btn-importar').onclick = importarDatos;
   $('#btn-borrar').onclick = confirmarBorrado;
+  $('#btn-actualizar').onclick = tocarActualizacion;
+  pintarActualizacion(`Versión instalada: ${VERSION}`);
   $('#btn-descartados').onclick = verDescartados;
   s.oninput = () => {
     // Formatea con puntos de miles sin mandar el cursor al final.

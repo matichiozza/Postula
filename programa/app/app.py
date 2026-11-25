@@ -7,6 +7,7 @@ script de consola.
     python app.py       -> igual, pero con consola (sirve para ver errores)
 """
 import json
+import subprocess
 import sys
 
 sys.dont_write_bytecode = True   # sin carpetas __pycache__ entre el código
@@ -30,6 +31,7 @@ import rutas  # noqa: E402
 import datos_usuario  # noqa: E402
 import descartes  # noqa: E402
 import cuenta  # noqa: E402
+import actualizar  # noqa: E402
 
 MOTORES = {"computrabajo": MotorComputrabajo, "bumeran": MotorBumeran, "zonajobs": MotorZonaJobs,
            "empleosit": MotorEmpleosIT}
@@ -263,6 +265,30 @@ class Api:
             return {**r, **perfil.cargar()}
         except Exception as e:
             return {"ok": False, "error": str(e)}
+
+    # ---- actualizaciones desde GitHub
+    def buscar_actualizacion(self):
+        try:
+            return {"ok": True, **actualizar.buscar()}
+        except Exception as e:
+            print(f"[actualizar] {e}")
+            return {"ok": False, "error": str(e)}
+
+    def actualizar(self):
+        if self._motor:
+            return {"ok": False, "error": "Volvé al menú antes de actualizar."}
+        try:
+            return {"ok": True, **actualizar.actualizar()}
+        except Exception as e:
+            print(f"[actualizar] {e}")
+            return {"ok": False, "error": str(e)}
+
+    def reiniciar(self):
+        """Abre la app de nuevo (ya actualizada) y cierra esta."""
+        exe = actualizar.RAIZ / "Postulá.exe"
+        orden = [str(exe)] if exe.exists() else [sys.executable, str(APP / "app.py")]
+        subprocess.Popen(orden, cwd=str(APP), close_fds=True)
+        self._ventana.destroy()
 
     def abrir_url(self, url):
         if str(url).startswith("https://"):

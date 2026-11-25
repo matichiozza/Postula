@@ -41,7 +41,7 @@ El navegador trabaja oculto: no aparece en pantalla ni en la barra de tareas (sa
    - instala Postulá en `%LOCALAPPDATA%\Programs\Postulá` (no pide permisos de administrador; podés elegir otra carpeta);
    - crea el acceso en el menú Inicio y, si querés, en el escritorio.
 
-Para actualizar, descargá la versión nueva y volvé a ejecutar su `Setup.exe`: tus datos se conservan.
+Para actualizar: **Ajustes → Buscar actualizaciones**. Si hay una versión nueva en este repositorio, la app la descarga, la instala y se reinicia; tus datos se conservan. (También se puede bajar a mano y ejecutar su `Setup.exe`.)
 
 > Windows puede mostrar un aviso de SmartScreen porque el instalador no está firmado: **Más información → Ejecutar de todas formas**.
 

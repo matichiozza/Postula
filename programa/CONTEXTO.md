@@ -441,6 +441,8 @@ Plataforma **SmartJobBoard** (PHP, HTML clásico, jQuery). Sin Cloudflare ni ant
 
 - **1.2.5** (25-11-2026): **Setup instala en `%LOCALAPPDATA%\Programs\Postulá`** (antes en el lugar), copia el programa, trae los datos y crea el acceso en el menú Inicio. README y este documento actualizados; subido a https://github.com/matichiozza/Postula.
 
+- **1.2.6** (25-11-2026): **Ajustes → Buscar actualizaciones** (`comun/actualizar.py`): compara `const VERSION` con la de `main` en GitHub; si es más nueva baja el zip y corre su `Setup.exe /silencioso /destino <carpeta de la app> /sinmenu`, que no toca `datos/`. Descarga con PowerShell para pasar el proxy con la sesión de Windows. **Para publicar una versión hay que subir al repo `app.js` con la versión nueva y, si cambió el instalador o el lanzador, `Setup.exe` recompilado.**
+
 ## Lecciones técnicas (para no repetir errores)
 
 - Con **pythonw**, cualquier `print` con emoji falla si la salida no está redirigida a un archivo UTF-8.
