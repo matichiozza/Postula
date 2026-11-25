@@ -1,7 +1,7 @@
 'use strict';
 // Versión de la app: se muestra abajo a la izquierda del menú. Regla del usuario: CADA cambio a la app,
 // por mínimo que sea, la sube en uno (1.0.0 → 1.0.1 → … → 1.0.9 → 1.1.0). Anotar cada una en CONTEXTO.md.
-const VERSION = '1.2.8';
+const VERSION = '1.2.9';
 /* Interfaz de Postulá. Habla con Python (app.py) por window.pywebview.api y recibe los
    eventos del motor en window.app.evento(tipo, datos). Todo se maneja con el teclado. */
 
@@ -1286,6 +1286,12 @@ function asegurarSel() {
 }
 
 function pintarLista() {
+  // Sin avisos en "Sin preguntas" y con alguno en "Con preguntas": se pasa solo a esa lista (todas las bolsas).
+  // Si después llegan avisos sin preguntas, no se vuelve sola: la pastilla muestra cuántos hay.
+  if (E.modo === 'lista' && E.tab === 'libres' && !E.autoGid && E.items.length && !E.items.some(x => x.libre)) {
+    E.tab = 'preg';
+    pintarAtajos();
+  }
   const cambio = asegurarSel();
   const items = visibles();
   const ol = $('#lista');

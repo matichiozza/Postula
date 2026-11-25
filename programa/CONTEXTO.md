@@ -1,6 +1,6 @@
 # Postulá: app para postularse a avisos de empleo
 
-Documento para que otra persona u otro chat de IA entienda el proyecto y pueda seguir sin perder nada. **Actualizado el 25-11-2026 (versión 1.2.8).** Si sos un chat nuevo, leé primero **"Cómo trabajar con el usuario"**, **"Cómo funciona hoy"** y **"Pendientes"**. Las secciones por bolsa y el historial de versiones tienen el detalle; **si algo viejo contradice a "Cómo funciona hoy" o a una versión más nueva, vale lo nuevo**.
+Documento para que otra persona u otro chat de IA entienda el proyecto y pueda seguir sin perder nada. **Actualizado el 25-11-2026 (versión 1.2.9).** Si sos un chat nuevo, leé primero **"Cómo trabajar con el usuario"**, **"Cómo funciona hoy"** y **"Pendientes"**. Las secciones por bolsa y el historial de versiones tienen el detalle; **si algo viejo contradice a "Cómo funciona hoy" o a una versión más nueva, vale lo nuevo**.
 
 Repositorio: https://github.com/matichiozza/Postula (público). La app se llamaba "Laburo IA" hasta la 1.2.3.
 
@@ -34,7 +34,7 @@ App de escritorio para Windows (**Postulá**) más los scripts de consola de cad
 - **Nunca postularse a avisos reales para probar.** Usar motores simulados, o la sesión real en solo lectura con los envíos bloqueados (`ctx.route`), escribiendo en una carpeta temporal.
 - **El perfil de Edge no se puede usar con la app abierta:** pedir que la cierre.
 - **Decisiones que no hay que revertir:** los descartes son solo locales (no usar "Ocultar aviso" de Computrabajo); `n` = descartar para siempre; en ZonaJobs `omitir_duplicados_de_bumeran` queda en `false`; en el menú, tocar una bolsa solo la elige.
-- **No evadir anti-bots.** Si un sitio bloquea o pide captcha, se frena y se avisa. Indeed y LinkedIn quedaron descartados por eso y por sus términos.
+- **No evadir anti-bots.** Si un sitio bloquea o pide captcha, se frena y se avisa. Indeed y LinkedIn quedaron descartados por eso y por sus términos. **Indeed se volvió a revisar el 25-11-2026** (el usuario lo pidió): la portada de ar.indeed.com carga, pero `/jobs?q=…&l=…` en un Edge manejado por Playwright da **403 "Security Check" de Cloudflare** ("Verificación adicional requerida"). Bumeran sí deja pasar al Edge visible; Indeed no. No se siguió.
 - **Privacidad:** `programa/datos/` (sesiones, tokens, perfil) nunca va al repositorio ni a servicios externos.
 
 ## Instalar
@@ -447,6 +447,8 @@ Plataforma **SmartJobBoard** (PHP, HTML clásico, jQuery). Sin Cloudflare ni ant
 - **1.2.7** (25-11-2026): **Computrabajo ya separa los avisos en *Sin preguntas* y *Con preguntas* durante el recorrido** (antes, *Sin revisar*, y al postularse saltaban a *Con preguntas*). Por cada aviso nuevo, `tiene_preguntas()` pide `/candidate/kq` sin seguir redirecciones (200 con formulario = con preguntas; 302 a `/apply/` = sin preguntas; otra cosa = no se sabe y queda en la primera lista como antes), con una pausa de 0,5–1,2 s. Los que tienen preguntas se anotan `con_preguntas`. Probado con la sesión real y Auto apagado: las 2 búsquedas del usuario (69 avisos, 11 nuevos) en 27 s, los 11 con preguntas (6 de ellos antes estaban en *Sin revisar*). EmpleosIT sigue con *Sin revisar*.
 
 - **1.2.8** (25-11-2026): (1) **EmpleosIT también separa *Sin preguntas* / *Con preguntas*** durante el recorrido: `MotorEmpleosIT.tiene_preguntas()` lee `/apply-now/` con `fetch` (`FORM_JS`: cantidad de `QuestionAnswer[]`, otros campos de pregunta, captcha). Ya no hay *Sin revisar* en ninguna bolsa (`sinAnticipo` se quitó de `app.js`). (2) Botón "Editar búsquedas" del menú más visible (borde punteado claro). **Pruebas con la cuenta real (permiso del usuario para hasta 8 postulaciones; se hicieron 4):** EmpleosIT CABA: 87 avisos nuevos → 21 sin preguntas y 66 con preguntas, en 116 s; postulación a 2 sin preguntas (124349, 130545) confirmada sin formulario. Computrabajo "soporte técnico" en Capital Federal: postulación a 2 sin preguntas (D546166F…, 821CA39E…) confirmada sin formulario; recorrido: 88 sin preguntas, 93 con preguntas. En las dos bolsas se borraron del historial local esas postulaciones y se volvió a recorrer: se leyeron de Mis Postulaciones (EmpleosIT 3, Computrabajo 297) y **no aparecieron en ninguna lista**.
+
+- **1.2.9** (25-11-2026): si *Sin preguntas* está vacía y hay avisos en *Con preguntas*, la lista pasa sola a *Con preguntas* (`pintarLista` en `app.js`; todas las bolsas). Si después llegan avisos sin preguntas no se vuelve sola. Probado en la interfaz con avisos simulados.
 
 ## Lecciones técnicas (para no repetir errores)
 
