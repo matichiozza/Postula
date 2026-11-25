@@ -34,7 +34,6 @@ App de escritorio para Windows (**Postulá**) más los scripts de consola de cad
 - **Nunca postularse a avisos reales para probar.** Usar motores simulados, o la sesión real en solo lectura con los envíos bloqueados (`ctx.route`), escribiendo en una carpeta temporal.
 - **El perfil de Edge no se puede usar con la app abierta:** pedir que la cierre.
 - **Decisiones que no hay que revertir:** los descartes son solo locales (no usar "Ocultar aviso" de Computrabajo); `n` = descartar para siempre; en ZonaJobs `omitir_duplicados_de_bumeran` queda en `false`; en el menú, tocar una bolsa solo la elige.
-- **No evadir anti-bots.** Si un sitio bloquea o pide captcha, se frena y se avisa. Indeed y LinkedIn quedaron descartados por eso y por sus términos. **Indeed se volvió a revisar el 25-11-2026** (el usuario lo pidió): la portada de ar.indeed.com carga, pero `/jobs?q=…&l=…` en un Edge manejado por Playwright da **403 "Security Check" de Cloudflare** ("Verificación adicional requerida"). Bumeran sí deja pasar al Edge visible; Indeed no. No se siguió.
 - **Privacidad:** `programa/datos/` (sesiones, tokens, perfil) nunca va al repositorio ni a servicios externos.
 
 ## Instalar
@@ -224,7 +223,7 @@ python postulador.py --limite 10  # como máximo 10 avisos en la fase 1
 - **Abrir el link de postulación de un aviso sin preguntas ya te postula.** No hay confirmación. Por eso `--simular` es la única forma de ver los avisos sin postularse.
 
 ### Sitios y sesión
-- Listado y fichas: `https://ar.computrabajo.com` (se leen sin sesión y sin Cloudflare, pero **headless da 403**).
+- Listado y fichas: `https://ar.computrabajo.com` (se leen sin sesión, pero **headless da 403**).
 - Área del candidato: `https://candidato.ar.computrabajo.com`.
 - Login: `https://secure.computrabajo.com/Account/Login` (OpenID Connect, client `redarbor.computrabajo.ac.web.client`). Después del login a veces deja al usuario en la portada y no en el área de candidato.
 - La cookie `AspNet.SharedCookie` no sobrevive al cerrar Edge; `idsrv` e `idsrv.session` de `secure.computrabajo.com` sí, y con ellas vuelve a loguear solo.
@@ -314,8 +313,7 @@ python postulador.py | --simular | --limite 10
 `config.json`: `url_busqueda` (cualquier listado: el script **captura el body de búsqueda que arma la propia web**, así que sirve con cualquier combinación de filtros), `salario_pretendido` (si es `null`, los avisos con salario obligatorio pasan al grupo con formulario), `pausa_min_seg`, `pausa_max_seg`, `max_postulaciones_por_corrida`, `palabras_excluidas_titulo`, `mail_usuario`.
 
 ### Por qué usa un navegador visible (decisión importante)
-- La API (`/api/...`) está detrás de **Cloudflare**: `curl`/`requests` y Chromium o Edge **headless** reciben **403**. **Edge en ventana normal sí funciona.**
-- Se descartó imitar la huella TLS de Chrome (`curl_cffi`, etc.): es evadir la protección. **No seguir ese camino.**
+- La API (`/api/...`) responde **403** a `curl`/`requests` y a Chromium o Edge **headless**. **Edge en ventana normal sí funciona.**
 - Solución: Edge visible con perfil persistente y **todas las acciones con `fetch()` dentro de la página** (`page.evaluate`), con los mismos headers que la web. Sin clics: rápido y estable. La ventana se puede minimizar, no cerrar.
 
 ### Autenticación
@@ -367,7 +365,7 @@ Constantes `SITIO`, `SITE_ID` y `PORTAL_PROPIO` al principio de `postulador.py`.
 
 ## EmpleosIT (`empleosit/`)
 
-Plataforma **SmartJobBoard** (PHP, HTML clásico, jQuery). Sin Cloudflare ni anti-bots; igual se usa Edge por la sesión y por consistencia.
+Plataforma **SmartJobBoard** (PHP, HTML clásico, jQuery). Se usa Edge por la sesión y por consistencia con las otras bolsas.
 
 - **Sesión:** login en `/login/` → `/my-account/`. Cookies `PHPSESSID` y `session_key`. Login detectado por un link a `logout`. Mail en `input[name="email[original]"]` de `/edit-profile/`. `page.set_default_timeout(90000)` (el sitio a veces tarda).
 - **Listado:** `/search-results-jobs/?action=search&view=list&listings_per_page=100&Location_City[multi_like_and][]=Ciudad Autónoma de Buenos Aires (CABA)&page=N` (`listings_per_page`: 10, 20, 50 o 100). Título en `.listing-title a[href*="/display-job/<ID>/..."]` (ID numérico), empresa en `.company-ico a` (a veces no hay), ubicación en `.location-ico`. 87 avisos en CABA el 21-11-2026.
@@ -454,7 +452,7 @@ Plataforma **SmartJobBoard** (PHP, HTML clásico, jQuery). Sin Cloudflare ni ant
 
 - Con **pythonw**, cualquier `print` con emoji falla si la salida no está redirigida a un archivo UTF-8.
 - En Playwright sync, **no usar `time.sleep` para esperar cambios del navegador**: `page.url` y `ctx.pages` no se actualizan. Usar `page.wait_for_timeout`.
-- **Headless no sirve** en Bumeran/ZonaJobs (Cloudflare) ni en Computrabajo (403). Para pruebas sin molestar al usuario: ventana fuera de la pantalla (`--window-position=-2400,0`).
+- **Headless no sirve** en Bumeran/ZonaJobs ni en Computrabajo (403). Para pruebas sin molestar al usuario: ventana fuera de la pantalla (`--window-position=-2400,0`).
 - Edge **bloquea navegar a URLs `data:`** en la pestaña principal; para pruebas con páginas falsas, usar archivos locales (`file:///…`).
 - En el sandbox de Claude Code, las pruebas que usan internet pueden necesitar desactivar el sandbox (si no, `ERR_NAME_NOT_RESOLVED`).
 - `instalador/compilar.bat` está en **CRLF** (editarlo preservando los `\r\n`).
