@@ -11,6 +11,7 @@ Así podés ir decidiendo los avisos con preguntas mientras el recorrido sigue.
 """
 import importlib.util
 import queue
+import random
 import sys
 import time
 import traceback
@@ -243,7 +244,25 @@ class MotorComputrabajo:
         pc.guardar_json(pc.HISTORIAL_FILE, self.historial)
 
     def necesita_form(self, aviso):
-        return False                 # en Computrabajo no se sabe hasta abrir el link
+        return False                 # sin consultar no se sabe (ver tiene_preguntas)
+
+    def tiene_preguntas(self, oid):
+        """¿El aviso tiene preguntas? Sin postularse: pide la página de preguntas (/candidate/kq)
+        SIN seguir redirecciones. Con preguntas responde 200 con el formulario; sin preguntas
+        redirige a /apply/, que es lo que postula, y esa redirección nunca se sigue.
+        Probado el 25-11-2026 con un aviso nuevo sin preguntas: no quedó en "Mis postulaciones".
+        Devuelve True / False, o None si no se pudo saber (queda como antes: se sabe al postularse).
+        OJO: no usar page.goto para esto: el navegador sigue la redirección y postula."""
+        try:
+            r = self.ctx.request.get(f"{pc.CANDIDATO}/candidate/kq?oi={oid}", max_redirects=0, timeout=20000)
+            if r.status == 200:
+                return True if "KillerQuestions[" in r.text() else None
+            if r.status in (301, 302, 303, 307, 308):
+                return False if "/apply" in (r.headers.get("location") or "").lower() else None
+            print(f"[kq] {oid}: HTTP {r.status}")
+        except Exception as e:
+            print(f"[kq] {oid}: {e}")
+        return None
 
     def cmd_ordenar(self, activo):
         recorrido.cmd_ordenar(self, activo)
@@ -529,7 +548,7 @@ class MotorComputrabajo:
         #    En cada aviso:
         #    - ya postulado / descartado / ya visto antes  -> se omite
         #    - con preguntas                              -> aparece en la lista para que decidas
-        #    - sin revisar                                -> queda en la lista (lo postulás vos o Auto)
+        #    - sin preguntas (se consulta /candidate/kq)  -> queda en la lista (lo postulás vos o Auto)
         #    Entre aviso y aviso se atienden tus decisiones.
         urls = busquedas.lista(self.cfg)
         excl = [w.lower() for w in self.cfg["palabras_excluidas_titulo"]]
@@ -569,7 +588,14 @@ class MotorComputrabajo:
             if orig:
                 self.registrar(a, "repetido", {"de": orig.get("titulo")})
                 return "rep", False
-            self.agregar_libre(a)                       # no se abre: abrir el link ya postula
+            # se consulta si tiene preguntas sin abrir el link de postulación (abrirlo ya postula)
+            preguntas = self.tiene_preguntas(a["id"])
+            self.atender(time.time() + random.uniform(0.5, 1.2))   # pausa corta entre consultas
+            if preguntas:
+                self.registrar(a, "con_preguntas")
+                self.agregar_con_preguntas(a)
+                return "preg", False
+            self.agregar_libre(a)                       # sin preguntas (o no se pudo saber)
             return "libre", False
 
         recorrido.recorrer(self, urls, cargar, procesar, cuenta)

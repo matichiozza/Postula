@@ -1,7 +1,7 @@
 'use strict';
 // Versión de la app: se muestra abajo a la izquierda del menú. Regla del usuario: CADA cambio a la app,
 // por mínimo que sea, la sube en uno (1.0.0 → 1.0.1 → … → 1.0.9 → 1.1.0). Anotar cada una en CONTEXTO.md.
-const VERSION = '1.2.6';
+const VERSION = '1.2.8';
 /* Interfaz de Postulá. Habla con Python (app.py) por window.pywebview.api y recibe los
    eventos del motor en window.app.evento(tipo, datos). Todo se maneja con el teclado. */
 
@@ -124,9 +124,9 @@ const visibles = () => {
 };
 const idxSel = () => visibles().findIndex(x => x.gid === E.selGid);
 const actual = () => visibles()[idxSel()];
-// Computrabajo y EmpleosIT no avisan de antemano si un aviso tiene preguntas: la primera lista no puede prometerlo.
-const sinAnticipo = () => ['computrabajo', 'empleosit'].includes(E.plataformaId);
-const nombreLibres = () => sinAnticipo() ? 'Sin revisar' : 'Sin preguntas';
+// Las cuatro bolsas saben de antemano si un aviso tiene preguntas (Computrabajo y EmpleosIT lo
+// consultan sin postularse desde la 1.2.7), así que la primera lista siempre es "Sin preguntas".
+const nombreLibres = () => 'Sin preguntas';
 const inicial = t => ((t || '?').trim()[0] || '?').toUpperCase();
 
 // ================================================================== menú
@@ -1557,9 +1557,7 @@ function pintarPanel() {
                boton('Descartar para siempre', 'N', 'no', descartar),
                boton('Ver en la web', 'O', '', () => api().abrir_url(it.url)));
     p.append(acc);
-    if (it.libre) p.append(el('p', 'nota-libre', sinAnticipo()
-      ? 'Al apretar Postularme quedás postulado en el acto, salvo que tenga preguntas (ahí te las muestro).'
-      : 'No tiene preguntas: al apretar Postularme quedás postulado en el acto.'));
+    if (it.libre) p.append(el('p', 'nota-libre', 'No tiene preguntas: al apretar Postularme quedás postulado en el acto.'));
   }
 
   if (it.repetidos.length) {

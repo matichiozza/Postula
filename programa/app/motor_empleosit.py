@@ -3,10 +3,11 @@ Motor de EmpleosIT para la app. Mismos eventos y comandos que los otros (la inte
 hereda de MotorComputrabajo la lista de decisiones, los descartes, Auto y la ventana escondida, y
 usa las funciones de bolsas/empleosit/postulador.py (listar, abrir_form, enviar).
 
-Como en Computrabajo, el listado no dice qué avisos tienen preguntas: quedan "Sin revisar" y se
-sabe al abrir el formulario (abrirlo NO postula: postula el envío, que acá se hace recién cuando
-vos o Auto lo piden y no hay preguntas).
+El listado no dice qué avisos tienen preguntas: el recorrido lee el formulario de cada aviso nuevo
+con fetch (tiene_preguntas) y lo pone en "Sin preguntas" o "Con preguntas". Abrir el formulario NO
+postula: postula el envío, que se hace recién cuando vos o Auto lo piden.
 """
+import random
 import time
 from datetime import datetime
 
@@ -62,6 +63,20 @@ POSTULACIONES_JS = """async (pagina) => {
         return id ? {id, titulo: a.textContent.trim(), url: new URL(a.getAttribute('href'), res.url).href,
                      empresa: empresa ? empresa.textContent.replace(/\\s+/g, ' ').trim() : ''} : null;
     }).filter(Boolean);
+}"""
+
+# Lee el formulario de postulación SIN abrirlo en una pestaña (fetch; abrirlo no postula, postula el
+# envío): cuántas preguntas tiene, si tiene campos que la app no completa y si pide captcha.
+FORM_JS = """async (lid) => {
+    const res = await fetch('/apply-now/?listing_id=' + lid + '&ajaxRelocate=1', {credentials: 'include'});
+    const d = new DOMParser().parseFromString(await res.text(), 'text/html');
+    const f = d.querySelector('#applyForm');
+    if (!f) return {form: false, status: res.status};
+    return {form: true,
+            preguntas: f.querySelectorAll('input[name="QuestionAnswer[]"]').length,
+            otros: [...f.querySelectorAll('input, select, textarea')].some(e =>
+                /question/i.test(e.name) && !(e.name === 'QuestionAnswer[]' && e.type === 'text')),
+            captcha: !!d.querySelector('.g-recaptcha, iframe[src*="recaptcha"]')};
 }"""
 
 # Estado del formulario ya abierto: si pide captcha (sesión caída) y si tiene algo que la app no completa.
@@ -143,6 +158,23 @@ class MotorEmpleosIT(MotorComputrabajo):
         print(f"[mis postulaciones] leídas {len(todas)}, nuevas en el historial {nuevas}")
 
     # ------------------------------------------------------------------ formulario
+    def tiene_preguntas(self, lid):
+        """¿El aviso tiene preguntas? Lee el formulario de postulación con fetch (abrirlo NO postula:
+        postula el envío). True / False, o None si no se pudo saber (queda en la primera lista y se
+        sabe al postularse, como antes)."""
+        try:
+            r = self.pag_consulta.evaluate(FORM_JS, lid)
+        except Exception as e:
+            print(f"[form] {lid}: {e}")
+            return None
+        if not r or not r.get("form") or r.get("captcha"):
+            print(f"[form] {lid}: {r}")
+            if r and r.get("captcha") and not getattr(self, "_avisado_captcha", False):
+                self._avisado_captcha = True
+                self._sin_sesion()
+            return None
+        return bool(r["preguntas"] or r["otros"])
+
     def _abrir(self, a):
         """Abre el formulario en la pestaña de formulario -> (preguntas | None, {captcha, otros})."""
         preguntas = eit.EmpleosIT(self.pag_form).abrir_form(a["id"])
@@ -339,7 +371,13 @@ class MotorEmpleosIT(MotorComputrabajo):
             if original:
                 self.registrar(a, "repetido", {"de": original.get("titulo")})
                 return "rep", False
-            self.agregar_libre(a)
+            preguntas = self.tiene_preguntas(a["id"])
+            self.atender(time.time() + random.uniform(0.5, 1.2))   # pausa corta entre consultas
+            if preguntas:
+                self.registrar(a, "con_preguntas")
+                self.agregar_con_preguntas(a)
+                return "preg", False
+            self.agregar_libre(a)                       # sin preguntas (o no se pudo saber)
             return "libre", False
 
         recorrido.recorrer(self, urls, cargar, procesar, cuenta)

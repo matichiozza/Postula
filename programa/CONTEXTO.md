@@ -1,6 +1,6 @@
 # Postulá: app para postularse a avisos de empleo
 
-Documento para que otra persona u otro chat de IA entienda el proyecto y pueda seguir sin perder nada. **Actualizado el 25-11-2026 (versión 1.2.5).** Si sos un chat nuevo, leé primero **"Cómo trabajar con el usuario"**, **"Cómo funciona hoy"** y **"Pendientes"**. Las secciones por bolsa y el historial de versiones tienen el detalle; **si algo viejo contradice a "Cómo funciona hoy" o a una versión más nueva, vale lo nuevo**.
+Documento para que otra persona u otro chat de IA entienda el proyecto y pueda seguir sin perder nada. **Actualizado el 25-11-2026 (versión 1.2.8).** Si sos un chat nuevo, leé primero **"Cómo trabajar con el usuario"**, **"Cómo funciona hoy"** y **"Pendientes"**. Las secciones por bolsa y el historial de versiones tienen el detalle; **si algo viejo contradice a "Cómo funciona hoy" o a una versión más nueva, vale lo nuevo**.
 
 Repositorio: https://github.com/matichiozza/Postula (público). La app se llamaba "Laburo IA" hasta la 1.2.3.
 
@@ -17,7 +17,7 @@ App de escritorio para Windows (**Postulá**) más los scripts de consola de cad
 
 ## Cómo funciona hoy
 
-- **El recorrido no postula.** Lee las búsquedas activas y deja los avisos en dos listas: *Sin preguntas* (en Computrabajo y EmpleosIT, *Sin revisar*: no se sabe si hay preguntas hasta abrir) y *Con preguntas*.
+- **El recorrido no postula.** Lee las búsquedas activas y deja los avisos en dos listas: *Sin preguntas* y *Con preguntas*. En Computrabajo se averigua con `/candidate/kq` sin seguir redirecciones (1.2.7) y en EmpleosIT leyendo el formulario con `fetch` (1.2.8); ninguna de las dos consultas postula. Si no se puede saber, el aviso queda en *Sin preguntas* y, si al postularse resulta tener, pasa a la otra lista.
 - **Auto** arranca **apagado** en cada recorrido. Activado postula de a uno con pausas (`recorrido.paso_auto`), solo la primera lista, sin tocar los restaurados.
 - Al empezar, cada motor lee **las postulaciones de la cuenta** y las anota en el historial (`ya_postulado`).
 - En Computrabajo, **abrir el link de postulación de un aviso sin preguntas ya postula**. En EmpleosIT abrir el formulario no postula: postula el envío. En Jobint se postula por API.
@@ -220,7 +220,7 @@ python postulador.py --limite 10  # como máximo 10 avisos en la fase 1
 
 ### Diferencias clave con Bumeran y ZonaJobs
 - **No hay API JSON.** Todo es HTML del servidor (ASP.NET MVC). Se navega con Edge (Playwright) y se lee y completa el HTML.
-- **No se sabe de antemano qué aviso tiene preguntas:** se descubre al abrir el link de postulación.
+- **El listado y la ficha no dicen qué aviso tiene preguntas** (comparado el 25-11-2026, con y sin sesión). Se averigua pidiendo `https://candidato.ar.computrabajo.com/candidate/kq?oi=<ID>` **sin seguir redirecciones** (`ctx.request.get(..., max_redirects=0)`): con preguntas → 200 con `KillerQuestions[`; sin preguntas o ya postulado → 302 a `/apply/?oi=…&idcandidate=…`. **`/apply/` es lo que postula: nunca seguir esa redirección** (con `page.goto` el navegador la sigue, y `ctx.route` NO intercepta redirecciones del servidor). Probado con un aviso nuevo sin preguntas: no apareció en Mis postulaciones. `MotorComputrabajo.tiene_preguntas()`.
 - **Abrir el link de postulación de un aviso sin preguntas ya te postula.** No hay confirmación. Por eso `--simular` es la única forma de ver los avisos sin postularse.
 
 ### Sitios y sesión
@@ -371,6 +371,7 @@ Plataforma **SmartJobBoard** (PHP, HTML clásico, jQuery). Sin Cloudflare ni ant
 
 - **Sesión:** login en `/login/` → `/my-account/`. Cookies `PHPSESSID` y `session_key`. Login detectado por un link a `logout`. Mail en `input[name="email[original]"]` de `/edit-profile/`. `page.set_default_timeout(90000)` (el sitio a veces tarda).
 - **Listado:** `/search-results-jobs/?action=search&view=list&listings_per_page=100&Location_City[multi_like_and][]=Ciudad Autónoma de Buenos Aires (CABA)&page=N` (`listings_per_page`: 10, 20, 50 o 100). Título en `.listing-title a[href*="/display-job/<ID>/..."]` (ID numérico), empresa en `.company-ico a` (a veces no hay), ubicación en `.location-ico`. 87 avisos en CABA el 21-11-2026.
+- **Mis Postulaciones** (`/system/applications/view/`) muestra todas en una tabla (el 25-11-2026 eran 3, sin paginación). El formulario de un aviso donde ya estás postulado se ve igual que uno nuevo: lo que evita mostrarlos es esta lista.
 - **Postulación:** `GET /apply-now/?listing_id=<ID>&ajaxRelocate=1` → `form#applyForm` (multipart) con ocultos (`is_data_submitted`, `listing_id`, `redirect_url`, `anonymous`), `comments`, `id_resume` (CV preseleccionado) y preguntas `input[name="QuestionAnswer[]"]` (**todas de texto**, en orden; el texto en el `div.inputName` anterior). Sin sesión pide reCAPTCHA; con sesión no.
 - **Envío:** `fetch(form.action, {method: 'POST', body: new FormData(form)})` →
   - `{"status":"jobapplysuccess", "check_redirect_url": ""}` → postulado;
@@ -384,7 +385,7 @@ Plataforma **SmartJobBoard** (PHP, HTML clásico, jQuery). Sin Cloudflare ni ant
 ## Pendientes e ideas
 
 1. **Barra de título azul:** el usuario la quiere gris oscuro. En Windows 10 una app no puede cambiarla (tiene activado el color de énfasis). Opciones ofrecidas, sin respuesta: desactivarlo en Windows, o ventana sin marco con barra propia.
-2. **Pruebas reales que faltan:** postulación desde la app en Bumeran y ZonaJobs; formulario con preguntas en EmpleosIT (la postulación sin preguntas ya funcionó); paginación de "Mis Postulaciones" de EmpleosIT con más de una página.
+2. **Pruebas reales que faltan:** postulación desde la app en Bumeran y ZonaJobs; envío de un formulario con preguntas en EmpleosIT; paginación de "Mis Postulaciones" de EmpleosIT con más de una página.
 3. Bumeran informa como máximo 250 postulaciones. El 25-11-2026 su búsqueda devolvió HTTP 503 un rato (se resolvió solo).
 4. Los scripts de consola no entienden `lugares` (recorren el primero) y los de Bumeran, ZonaJobs y EmpleosIT usan solo la primera búsqueda.
 5. Actualizar `sueldo_neto.py` cuando cambien los valores (tope ANSES mensual; Ganancias semestral).
@@ -443,6 +444,10 @@ Plataforma **SmartJobBoard** (PHP, HTML clásico, jQuery). Sin Cloudflare ni ant
 
 - **1.2.6** (25-11-2026): **Ajustes → Buscar actualizaciones** (`comun/actualizar.py`): compara `const VERSION` con la de `main` en GitHub; si es más nueva baja el zip y corre su `Setup.exe /silencioso /destino <carpeta de la app> /sinmenu`, que no toca `datos/`. Descarga con PowerShell para pasar el proxy con la sesión de Windows. **Para publicar una versión hay que subir al repo `app.js` con la versión nueva y, si cambió el instalador o el lanzador, `Setup.exe` recompilado.**
 
+- **1.2.7** (25-11-2026): **Computrabajo ya separa los avisos en *Sin preguntas* y *Con preguntas* durante el recorrido** (antes, *Sin revisar*, y al postularse saltaban a *Con preguntas*). Por cada aviso nuevo, `tiene_preguntas()` pide `/candidate/kq` sin seguir redirecciones (200 con formulario = con preguntas; 302 a `/apply/` = sin preguntas; otra cosa = no se sabe y queda en la primera lista como antes), con una pausa de 0,5–1,2 s. Los que tienen preguntas se anotan `con_preguntas`. Probado con la sesión real y Auto apagado: las 2 búsquedas del usuario (69 avisos, 11 nuevos) en 27 s, los 11 con preguntas (6 de ellos antes estaban en *Sin revisar*). EmpleosIT sigue con *Sin revisar*.
+
+- **1.2.8** (25-11-2026): (1) **EmpleosIT también separa *Sin preguntas* / *Con preguntas*** durante el recorrido: `MotorEmpleosIT.tiene_preguntas()` lee `/apply-now/` con `fetch` (`FORM_JS`: cantidad de `QuestionAnswer[]`, otros campos de pregunta, captcha). Ya no hay *Sin revisar* en ninguna bolsa (`sinAnticipo` se quitó de `app.js`). (2) Botón "Editar búsquedas" del menú más visible (borde punteado claro). **Pruebas con la cuenta real (permiso del usuario para hasta 8 postulaciones; se hicieron 4):** EmpleosIT CABA: 87 avisos nuevos → 21 sin preguntas y 66 con preguntas, en 116 s; postulación a 2 sin preguntas (124349, 130545) confirmada sin formulario. Computrabajo "soporte técnico" en Capital Federal: postulación a 2 sin preguntas (D546166F…, 821CA39E…) confirmada sin formulario; recorrido: 88 sin preguntas, 93 con preguntas. En las dos bolsas se borraron del historial local esas postulaciones y se volvió a recorrer: se leyeron de Mis Postulaciones (EmpleosIT 3, Computrabajo 297) y **no aparecieron en ninguna lista**.
+
 ## Lecciones técnicas (para no repetir errores)
 
 - Con **pythonw**, cualquier `print` con emoji falla si la salida no está redirigida a un archivo UTF-8.
@@ -454,4 +459,5 @@ Plataforma **SmartJobBoard** (PHP, HTML clásico, jQuery). Sin Cloudflare ni ant
 - Desde Git Bash, un heredoc puede convertir `\\` en `\`: para editar archivos con barras invertidas (como `Setup.cs`) usar el editor, no scripts escritos en un heredoc.
 - En PowerShell las variables no distinguen mayúsculas: `$R` y `$r` son la misma.
 - En esta PC el Python con las librerías es el de `programa/datos/python.txt` (hoy `%LOCALAPPDATA%\Programs\Python\Python312\`).
+- **`ctx.route` de Playwright no intercepta las redirecciones del servidor** (302): bloquear `/apply/` con una ruta no alcanza si se navega a una página que redirige ahí. Para mirar una redirección sin seguirla, `ctx.request.get(url, max_redirects=0)` (usa las cookies de la sesión).
 - Desde Git Bash, un argumento que empieza con `/` se convierte en ruta de Windows (`/empleos-...` → `C:/Program Files/Git/empleos-...`): pasar los caminos sin la barra inicial.

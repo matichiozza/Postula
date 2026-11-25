@@ -428,7 +428,7 @@ body { background: #0b0e13; }
 }
 .chip b { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .chip span { color: #9aa6b5; white-space: nowrap; }
-.chip-btn { border-style: dashed; border-color: #3a4454; background: transparent; color: #b4bfcc; font: 600 13.5px "Segoe UI", system-ui, sans-serif; }
+.chip-btn { border-style: dashed; border-color: rgba(226, 232, 240, .5); background: rgba(255, 255, 255, .04); color: #dfe5ec; font: 600 13.5px "Segoe UI", system-ui, sans-serif; }
 .chip-btn:hover { border-color: var(--acento); color: var(--acento); }
 .busquedas-zona .pronto { font-size: 14px; color: #9aa6b5; align-self: center; }
 
@@ -655,7 +655,7 @@ body { background: #0b0e13; }
 .cuenta-menu .estado.ok .p { background: #e8edf4; }
 .cuenta-menu .acc.prim { background: #f2f4f7; border-color: #f2f4f7; color: #0b0e13; }
 .cuenta-menu .acc.prim:hover { background: #fff; }
-.chip-btn:hover { border-color: #c3ccd8; color: #f2f5f9; }
+.chip-btn:hover { border-color: rgba(242, 245, 249, .9); color: #fff; background: rgba(255, 255, 255, .08); }
 
 /* flecha de volver y título juntos; ayuda chica en el menú de cuenta */
 #trabajo .registro-cab { justify-content: flex-start; gap: 12px; }
