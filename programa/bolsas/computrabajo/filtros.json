@@ -1,0 +1,1229 @@
+{
+ "relevado": "2026-11-24",
+ "categorias": [
+  {
+   "slug": "administracion-y-oficina",
+   "nombre": "Administración / Oficina"
+  },
+  {
+   "slug": "almacen-logistica",
+   "nombre": "Almacén / Logística / Transporte"
+  },
+  {
+   "slug": "atencion-a-clientes",
+   "nombre": "Atención a clientes"
+  },
+  {
+   "slug": "callcenter-telemercadeo",
+   "nombre": "CallCenter / Telemercadeo"
+  },
+  {
+   "slug": "compras-comercio-exterior",
+   "nombre": "Compras / Comercio Exterior"
+  },
+  {
+   "slug": "construccion-y-obra",
+   "nombre": "Construcción y obra"
+  },
+  {
+   "slug": "economia-y-contabilidad",
+   "nombre": "Contabilidad / Finanzas"
+  },
+  {
+   "slug": "direccion-y-gerencia",
+   "nombre": "Dirección / Gerencia"
+  },
+  {
+   "slug": "arte-y-diseno-y-medios",
+   "nombre": "Diseño / Artes gráficas"
+  },
+  {
+   "slug": "educacion-y-universidad",
+   "nombre": "Docencia"
+  },
+  {
+   "slug": "hosteleria-y-turismo",
+   "nombre": "Hostelería / Turismo"
+  },
+  {
+   "slug": "informatica-y-telecom",
+   "nombre": "Informática / Telecomunicaciones"
+  },
+  {
+   "slug": "ingenieria-y-tecnico",
+   "nombre": "Ingeniería"
+  },
+  {
+   "slug": "cientifico-y-investigacion",
+   "nombre": "Investigación y Calidad"
+  },
+  {
+   "slug": "legal-y-asesoria",
+   "nombre": "Legal / Asesoría"
+  },
+  {
+   "slug": "mantenimiento-y-reparaciones-tecnicas",
+   "nombre": "Mantenimiento y Reparaciones Técnicas"
+  },
+  {
+   "slug": "mercadeo-publicidad-comunicacion",
+   "nombre": "Marketing / Publicidad / Comunicación"
+  },
+  {
+   "slug": "medicina-y-salud",
+   "nombre": "Medicina / Salud"
+  },
+  {
+   "slug": "produccion-operaciones",
+   "nombre": "Producción / Operarios / Manufactura"
+  },
+  {
+   "slug": "recursos-humanos",
+   "nombre": "Recursos Humanos"
+  },
+  {
+   "slug": "servicios-generales-aseo-y-seguridad",
+   "nombre": "Servicios Generales, Aseo y Seguridad"
+  },
+  {
+   "slug": "marketing-y-ventas",
+   "nombre": "Ventas"
+  }
+ ],
+ "provincias": [
+  {
+   "sem": "-en-buenos-aires",
+   "nombre": "Buenos Aires",
+   "ciudades": [
+    {
+     "sem": "-en-buenos-aires-en-25-de-mayo",
+     "nombre": "25 de Mayo"
+    },
+    {
+     "sem": "-en-buenos-aires-en-3-de-febrero",
+     "nombre": "3 de Febrero"
+    },
+    {
+     "sem": "-en-buenos-aires-en-bahia-blanca",
+     "nombre": "Bahía Blanca"
+    },
+    {
+     "sem": "-en-buenos-aires-en-baradero",
+     "nombre": "Baradero"
+    },
+    {
+     "sem": "-en-buenos-aires-en-campana",
+     "nombre": "Campana"
+    },
+    {
+     "sem": "-en-buenos-aires-canuelas",
+     "nombre": "Cañuelas"
+    },
+    {
+     "sem": "-en-buenos-aires-en-chascomus",
+     "nombre": "Chascomús"
+    },
+    {
+     "sem": "-en-buenos-aires-en-chivilcoy",
+     "nombre": "Chivilcoy"
+    },
+    {
+     "sem": "-en-buenos-aires-en-colon",
+     "nombre": "Colón"
+    },
+    {
+     "sem": "-en-buenos-aires-en-del-viso",
+     "nombre": "Del Viso"
+    },
+    {
+     "sem": "-en-buenos-aires-en-don-torcuato",
+     "nombre": "Don Torcuato"
+    },
+    {
+     "sem": "-en-buenos-aires-en-ensenada",
+     "nombre": "Ensenada"
+    },
+    {
+     "sem": "-en-buenos-aires-en-escobar",
+     "nombre": "Escobar"
+    },
+    {
+     "sem": "-en-buenos-aires-en-garin",
+     "nombre": "Garín"
+    },
+    {
+     "sem": "-en-buenos-aires-en-gral-pacheco",
+     "nombre": "Gral. Pacheco"
+    },
+    {
+     "sem": "-en-buenos-aires-en-gral-rodriguez",
+     "nombre": "Gral. Rodríguez"
+    },
+    {
+     "sem": "-en-buenos-aires-en-guernica",
+     "nombre": "Guernica"
+    },
+    {
+     "sem": "-en-buenos-aires-en-ing-maschwitz",
+     "nombre": "Ing. Maschwitz"
+    },
+    {
+     "sem": "-en-buenos-aires-en-junin",
+     "nombre": "Junín"
+    },
+    {
+     "sem": "-en-buenos-aires-en-la-plata",
+     "nombre": "La Plata"
+    },
+    {
+     "sem": "-en-buenos-aires-en-los-cardales",
+     "nombre": "Los Cardales"
+    },
+    {
+     "sem": "-en-buenos-aires-en-lujan",
+     "nombre": "Luján"
+    },
+    {
+     "sem": "-en-buenos-aires-en-magdalena",
+     "nombre": "Magdalena"
+    },
+    {
+     "sem": "-en-buenos-aires-en-mar-del-plata",
+     "nombre": "Mar del Plata"
+    },
+    {
+     "sem": "-en-buenos-aires-en-marcos-paz",
+     "nombre": "Marcos Paz"
+    },
+    {
+     "sem": "-en-buenos-aires-en-munro",
+     "nombre": "Munro"
+    },
+    {
+     "sem": "-en-buenos-aires-en-olavarria",
+     "nombre": "Olavarría"
+    },
+    {
+     "sem": "-en-buenos-aires-en-partido-de-la-costa",
+     "nombre": "Partido de la Costa"
+    },
+    {
+     "sem": "-en-buenos-aires-en-pergamino",
+     "nombre": "Pergamino"
+    },
+    {
+     "sem": "-en-buenos-aires-en-pilar",
+     "nombre": "Pilar"
+    },
+    {
+     "sem": "-en-buenos-aires-en-pinamar",
+     "nombre": "Pinamar"
+    },
+    {
+     "sem": "-en-buenos-aires-en-saavedra",
+     "nombre": "Saavedra"
+    },
+    {
+     "sem": "-en-buenos-aires-en-san-nicolas",
+     "nombre": "San Nicolás"
+    },
+    {
+     "sem": "-en-buenos-aires-en-san-pedro",
+     "nombre": "San Pedro"
+    },
+    {
+     "sem": "-en-buenos-aires-en-tandil",
+     "nombre": "Tandil"
+    },
+    {
+     "sem": "-en-buenos-aires-en-trenque-lauquen",
+     "nombre": "Trenque Lauquen"
+    },
+    {
+     "sem": "-en-buenos-aires-en-tres-arroyos",
+     "nombre": "Tres arroyos"
+    },
+    {
+     "sem": "-en-buenos-aires-en-villa-gesell",
+     "nombre": "Villa Gesell"
+    },
+    {
+     "sem": "-en-buenos-aires-en-zarate",
+     "nombre": "Zárate"
+    }
+   ]
+  },
+  {
+   "sem": "-en-buenos-aires-gba",
+   "nombre": "Buenos Aires-GBA",
+   "ciudades": [
+    {
+     "sem": "-en-buenos-aires-gba-en-9-de-abril",
+     "nombre": "9 de Abril"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-acassuso",
+     "nombre": "Acassuso"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-adrogue",
+     "nombre": "Adrogué"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-aldo-bonzi",
+     "nombre": "Aldo Bonzi"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-avellaneda",
+     "nombre": "Avellaneda"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-banfield",
+     "nombre": "Banfield"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-beccar",
+     "nombre": "Beccar"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-bella-vista",
+     "nombre": "Bella Vista"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-berazategui",
+     "nombre": "Berazategui"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-bernal-este",
+     "nombre": "Bernal Este"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-bernal-oeste",
+     "nombre": "Bernal Oeste"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-billinghurst",
+     "nombre": "Billinghurst"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-boulogne",
+     "nombre": "Boulogne"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-burzaco",
+     "nombre": "Burzaco"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-carapachay",
+     "nombre": "Carapachay"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-caseros",
+     "nombre": "Caseros"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-castelar",
+     "nombre": "Castelar"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-ciudad-madero",
+     "nombre": "Ciudad Madero"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-ciudadela",
+     "nombre": "Ciudadela"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-dock-sud",
+     "nombre": "Dock Sud"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-el-jaguel",
+     "nombre": "El Jagüel"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-el-palomar",
+     "nombre": "El Palomar"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-el-tala",
+     "nombre": "El Tala"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-ezeiza",
+     "nombre": "Ezeiza"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-florencio-varela",
+     "nombre": "Florencio Varela"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-florida",
+     "nombre": "Florida"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-gonzalez-catan",
+     "nombre": "González Catán"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-grand-bourg",
+     "nombre": "Grand Bourg"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-gregorio-de-laferrere",
+     "nombre": "Gregorio de Laferrere"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-haedo",
+     "nombre": "Haedo"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-hurlingham",
+     "nombre": "Hurlingham"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-isidro-casanova",
+     "nombre": "Isidro Casanova"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-ituzaingo",
+     "nombre": "Ituzaingó"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-jose-c-paz",
+     "nombre": "José C. Paz"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-la-reja",
+     "nombre": "La Reja"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-la-tablada",
+     "nombre": "La Tablada"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-lanus",
+     "nombre": "Lanús"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-loma-hermosa",
+     "nombre": "Loma Hermosa"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-lomas-de-zamora",
+     "nombre": "Lomas de Zamora"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-lomas-del-mirador",
+     "nombre": "Lomas del Mirador"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-longchamps",
+     "nombre": "Longchamps"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-luis-guillon",
+     "nombre": "Luis Guillón"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-malvinas-argentinas",
+     "nombre": "Malvinas Argentinas"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-martinez",
+     "nombre": "Martínez"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-merlo",
+     "nombre": "Merlo"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-monte-chingolo",
+     "nombre": "Monte Chingolo"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-monte-grande",
+     "nombre": "Monte Grande"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-moreno",
+     "nombre": "Moreno"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-moron",
+     "nombre": "Morón"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-olivos",
+     "nombre": "Olivos"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-pablo-nogues",
+     "nombre": "Pablo Nogués"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-pablo-podesta",
+     "nombre": "Pablo Podestá"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-paso-del-rey",
+     "nombre": "Paso del Rey"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-quilmes",
+     "nombre": "Quilmes"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-ramos-mejia",
+     "nombre": "Ramos Mejía"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-remedios-de-escalada",
+     "nombre": "Remedios de Escalada"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-saenz-pena",
+     "nombre": "Sáenz Peña"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-san-fernando",
+     "nombre": "San Fernando"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-san-isidro",
+     "nombre": "San Isidro"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-san-justo",
+     "nombre": "San Justo"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-san-martin",
+     "nombre": "San Martín"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-san-miguel",
+     "nombre": "San Miguel"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-santos-lugares",
+     "nombre": "Santos Lugares"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-sarandi",
+     "nombre": "Sarandí"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-tapiales",
+     "nombre": "Tapiales"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-temperley",
+     "nombre": "Temperley"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-tigre",
+     "nombre": "Tigre"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-tortuguitas",
+     "nombre": "Tortuguitas"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-tristan-suarez",
+     "nombre": "Tristán Suárez"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-trujui",
+     "nombre": "Trujui"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-valentin-alsina",
+     "nombre": "Valentín Alsina"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-vicente-lopez",
+     "nombre": "Vicente López"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-villa-adelina",
+     "nombre": "Villa Adelina"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-villa-ballester",
+     "nombre": "Villa Ballester"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-villa-bosch",
+     "nombre": "Villa Bosch"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-villa-celina",
+     "nombre": "Villa Celina"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-villa-jose-leon-suarez",
+     "nombre": "Villa José León Suárez"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-villa-luzuriaga",
+     "nombre": "Villa Luzuriaga"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-villa-martelli",
+     "nombre": "Villa Martelli"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-villa-tesei",
+     "nombre": "Villa Tesei"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-virrey-del-pino",
+     "nombre": "Virrey del Pino"
+    },
+    {
+     "sem": "-en-buenos-aires-gba-en-wilde",
+     "nombre": "Wilde"
+    }
+   ]
+  },
+  {
+   "sem": "-en-capital-federal",
+   "nombre": "Capital Federal",
+   "ciudades": [
+    {
+     "sem": "-en-capital-federal-en-agronomia",
+     "nombre": "Agronomía"
+    },
+    {
+     "sem": "-en-capital-federal-en-almagro",
+     "nombre": "Almagro"
+    },
+    {
+     "sem": "-en-capital-federal-en-balvanera",
+     "nombre": "Balvanera"
+    },
+    {
+     "sem": "-en-capital-federal-en-barracas",
+     "nombre": "Barracas"
+    },
+    {
+     "sem": "-en-capital-federal-en-belgrano",
+     "nombre": "Belgrano"
+    },
+    {
+     "sem": "-en-capital-federal-en-boca",
+     "nombre": "Boca"
+    },
+    {
+     "sem": "-en-capital-federal-en-boedo",
+     "nombre": "Boedo"
+    },
+    {
+     "sem": "-en-capital-federal-en-caballito",
+     "nombre": "Caballito"
+    },
+    {
+     "sem": "-en-capital-federal-en-chacarita",
+     "nombre": "Chacarita"
+    },
+    {
+     "sem": "-en-capital-federal-en-coghlan",
+     "nombre": "Coghlan"
+    },
+    {
+     "sem": "-en-capital-federal-en-colegiales",
+     "nombre": "Colegiales"
+    },
+    {
+     "sem": "-en-capital-federal-en-constitucion",
+     "nombre": "Constitución"
+    },
+    {
+     "sem": "-en-capital-federal-en-flores",
+     "nombre": "Flores"
+    },
+    {
+     "sem": "-en-capital-federal-en-floresta",
+     "nombre": "Floresta"
+    },
+    {
+     "sem": "-en-capital-federal-en-la-paternal",
+     "nombre": "La Paternal"
+    },
+    {
+     "sem": "-en-capital-federal-en-liniers",
+     "nombre": "Liniers"
+    },
+    {
+     "sem": "-en-capital-federal-en-mataderos",
+     "nombre": "Mataderos"
+    },
+    {
+     "sem": "-en-capital-federal-en-monserrat",
+     "nombre": "Monserrat"
+    },
+    {
+     "sem": "-en-capital-federal-en-monte-castro",
+     "nombre": "Monte Castro"
+    },
+    {
+     "sem": "-en-capital-federal-en-nueva-pompeya",
+     "nombre": "Nueva Pompeya"
+    },
+    {
+     "sem": "-en-capital-federal-en-nunez",
+     "nombre": "Núñez"
+    },
+    {
+     "sem": "-en-capital-federal-en-palermo",
+     "nombre": "Palermo"
+    },
+    {
+     "sem": "-en-capital-federal-en-parque-avellaneda",
+     "nombre": "Parque Avellaneda"
+    },
+    {
+     "sem": "-en-capital-federal-en-parque-chacabuco",
+     "nombre": "Parque Chacabuco"
+    },
+    {
+     "sem": "-en-capital-federal-en-parque-chas",
+     "nombre": "Parque Chas"
+    },
+    {
+     "sem": "-en-capital-federal-en-parque-patricios",
+     "nombre": "Parque Patricios"
+    },
+    {
+     "sem": "-en-capital-federal-en-puerto-madero",
+     "nombre": "Puerto Madero"
+    },
+    {
+     "sem": "-en-capital-federal-en-recoleta",
+     "nombre": "Recoleta"
+    },
+    {
+     "sem": "-en-capital-federal-en-retiro",
+     "nombre": "Retiro"
+    },
+    {
+     "sem": "-en-capital-federal-en-saavedra",
+     "nombre": "Saavedra"
+    },
+    {
+     "sem": "-en-capital-federal-en-san-cristobal",
+     "nombre": "San Cristóbal"
+    },
+    {
+     "sem": "-en-capital-federal-en-san-nicolas",
+     "nombre": "San Nicolás"
+    },
+    {
+     "sem": "-en-capital-federal-en-san-telmo",
+     "nombre": "San Telmo"
+    },
+    {
+     "sem": "-en-capital-federal-en-velez-sarsfield",
+     "nombre": "Vélez Sársfield"
+    },
+    {
+     "sem": "-en-capital-federal-en-villa-crespo",
+     "nombre": "Villa Crespo"
+    },
+    {
+     "sem": "-en-capital-federal-en-villa-del-parque",
+     "nombre": "Villa del Parque"
+    },
+    {
+     "sem": "-en-capital-federal-en-villa-devoto",
+     "nombre": "Villa Devoto"
+    },
+    {
+     "sem": "-en-capital-federal-en-villa-lugano",
+     "nombre": "Villa Lugano"
+    },
+    {
+     "sem": "-en-capital-federal-en-villa-luro",
+     "nombre": "Villa Luro"
+    },
+    {
+     "sem": "-en-capital-federal-en-villa-ortuzar",
+     "nombre": "Villa Ortúzar"
+    },
+    {
+     "sem": "-en-capital-federal-en-villa-pueyrredon",
+     "nombre": "Villa Pueyrredón"
+    },
+    {
+     "sem": "-en-capital-federal-en-villa-santa-rita",
+     "nombre": "Villa Santa Rita"
+    },
+    {
+     "sem": "-en-capital-federal-en-villa-soldati",
+     "nombre": "Villa Soldati"
+    },
+    {
+     "sem": "-en-capital-federal-en-villa-urquiza",
+     "nombre": "Villa Urquiza"
+    }
+   ]
+  },
+  {
+   "sem": "-en-catamarca",
+   "nombre": "Catamarca",
+   "ciudades": [
+    {
+     "sem": "-en-catamarca-en-capital",
+     "nombre": "Catamarca (capital)"
+    },
+    {
+     "sem": "-en-catamarca-en-san-fernando",
+     "nombre": "San Fernando"
+    },
+    {
+     "sem": "-en-catamarca-en-san-fernando-del-valle",
+     "nombre": "San Fernando del Valle"
+    }
+   ]
+  },
+  {
+   "sem": "-en-chaco",
+   "nombre": "Chaco",
+   "ciudades": [
+    {
+     "sem": "-en-chaco-en-capital",
+     "nombre": "Chaco (capital)"
+    },
+    {
+     "sem": "-en-chaco-en-resistencia",
+     "nombre": "Resistencia"
+    }
+   ]
+  },
+  {
+   "sem": "-en-chubut",
+   "nombre": "Chubut",
+   "ciudades": [
+    {
+     "sem": "-en-chubut-en-comodoro-rivadavia",
+     "nombre": "Comodoro Rivadavia"
+    },
+    {
+     "sem": "-en-chubut-en-pto-madryn",
+     "nombre": "Pto. Madryn"
+    },
+    {
+     "sem": "-en-chubut-en-trelew",
+     "nombre": "Trelew"
+    }
+   ]
+  },
+  {
+   "sem": "-en-cordoba",
+   "nombre": "Córdoba",
+   "ciudades": [
+    {
+     "sem": "-en-cordoba-en-alta-gracia",
+     "nombre": "Alta Gracia"
+    },
+    {
+     "sem": "-en-cordoba-en-col-caroya",
+     "nombre": "Col. Caroya"
+    },
+    {
+     "sem": "-en-cordoba-en-capital",
+     "nombre": "Córdoba (capital)"
+    },
+    {
+     "sem": "-en-cordoba-en-la-calera",
+     "nombre": "La Calera"
+    },
+    {
+     "sem": "-en-cordoba-en-leones",
+     "nombre": "Leones"
+    },
+    {
+     "sem": "-en-cordoba-en-malagueno",
+     "nombre": "Malagueño"
+    },
+    {
+     "sem": "-en-cordoba-en-mendiolaza",
+     "nombre": "Mendiolaza"
+    },
+    {
+     "sem": "-en-cordoba-en-rio-cuarto",
+     "nombre": "Río Cuarto"
+    },
+    {
+     "sem": "-en-cordoba-en-rio-tercero",
+     "nombre": "Río Tercero"
+    },
+    {
+     "sem": "-en-cordoba-en-san-francisco",
+     "nombre": "San Francisco"
+    },
+    {
+     "sem": "-en-cordoba-en-villa-allende",
+     "nombre": "Villa Allende"
+    },
+    {
+     "sem": "-en-cordoba-en-villa-carlos-paz",
+     "nombre": "Villa Carlos Paz"
+    },
+    {
+     "sem": "-en-cordoba-en-villa-gral-belgrano",
+     "nombre": "Villa Gral. Belgrano"
+    },
+    {
+     "sem": "-en-cordoba-en-villa-maria",
+     "nombre": "Villa María"
+    }
+   ]
+  },
+  {
+   "sem": "-en-corrientes",
+   "nombre": "Corrientes",
+   "ciudades": [
+    {
+     "sem": "-en-corrientes-en-capital",
+     "nombre": "Corrientes (capital)"
+    },
+    {
+     "sem": "-en-corrientes-en-mercedes",
+     "nombre": "Mercedes"
+    }
+   ]
+  },
+  {
+   "sem": "-en-entre-rios",
+   "nombre": "Entre Ríos",
+   "ciudades": [
+    {
+     "sem": "-en-entre-rios-en-concepcion-del-uruguay",
+     "nombre": "Concepción del Uruguay"
+    },
+    {
+     "sem": "-en-entre-rios-en-concordia",
+     "nombre": "Concordia"
+    },
+    {
+     "sem": "-en-entre-rios-en-crespo",
+     "nombre": "Crespo"
+    },
+    {
+     "sem": "-en-entre-rios-en-gualeguaychu",
+     "nombre": "Gualeguaychú"
+    },
+    {
+     "sem": "-en-entre-rios-en-parana",
+     "nombre": "Paraná"
+    }
+   ]
+  },
+  {
+   "sem": "-en-formosa",
+   "nombre": "Formosa",
+   "ciudades": [
+    {
+     "sem": "-en-formosa-capital",
+     "nombre": "Formosa (capital)"
+    }
+   ]
+  },
+  {
+   "sem": "-en-jujuy",
+   "nombre": "Jujuy",
+   "ciudades": [
+    {
+     "sem": "-en-jujuy-en-san-salvador",
+     "nombre": "San Salvador de Jujuy"
+    }
+   ]
+  },
+  {
+   "sem": "-en-la-pampa",
+   "nombre": "La Pampa",
+   "ciudades": [
+    {
+     "sem": "-en-la-pampa-en-gral-pico",
+     "nombre": "Gral. Pico"
+    },
+    {
+     "sem": "-en-la-pampa-en-sta-rosa",
+     "nombre": "Sta. Rosa"
+    }
+   ]
+  },
+  {
+   "sem": "-en-la-rioja",
+   "nombre": "La Rioja",
+   "ciudades": [
+    {
+     "sem": "-en-la-rioja-en-capital",
+     "nombre": "La Rioja (capital)"
+    }
+   ]
+  },
+  {
+   "sem": "-en-mendoza",
+   "nombre": "Mendoza",
+   "ciudades": [
+    {
+     "sem": "-en-mendoza-en-godoy-cruz",
+     "nombre": "Godoy Cruz"
+    },
+    {
+     "sem": "-en-mendoza-en-guaymallen",
+     "nombre": "Guaymallén"
+    },
+    {
+     "sem": "-en-mendoza-en-las-heras",
+     "nombre": "Las Heras"
+    },
+    {
+     "sem": "-en-mendoza-en-lujan-de-cuyo",
+     "nombre": "Luján De Cuyo"
+    },
+    {
+     "sem": "-en-mendoza-en-maipu",
+     "nombre": "Maipú"
+    },
+    {
+     "sem": "-en-mendoza-en-capital",
+     "nombre": "Mendoza (capital)"
+    },
+    {
+     "sem": "-en-mendoza-en-san-martin",
+     "nombre": "San Martín"
+    },
+    {
+     "sem": "-en-mendoza-en-san-rafael",
+     "nombre": "San Rafael"
+    },
+    {
+     "sem": "-en-mendoza-en-tunuyan",
+     "nombre": "Tunuyán"
+    }
+   ]
+  },
+  {
+   "sem": "-en-misiones",
+   "nombre": "Misiones",
+   "ciudades": [
+    {
+     "sem": "-en-misiones-en-posadas",
+     "nombre": "Posadas"
+    },
+    {
+     "sem": "-en-misiones-en-pto-iguazu",
+     "nombre": "Pto. Iguazú"
+    }
+   ]
+  },
+  {
+   "sem": "-en-neuquen",
+   "nombre": "Neuquén",
+   "ciudades": [
+    {
+     "sem": "-en-neuquen-en-anelo",
+     "nombre": "Añelo"
+    },
+    {
+     "sem": "-en-neuquen-en-centenario",
+     "nombre": "Centenario"
+    },
+    {
+     "sem": "-en-neuquen-en-cipolletti",
+     "nombre": "Cipolletti"
+    },
+    {
+     "sem": "-en-neuquen-en-capital",
+     "nombre": "Neuquén (capital)"
+    },
+    {
+     "sem": "-en-neuquen-en-plottier",
+     "nombre": "Plottier"
+    },
+    {
+     "sem": "-en-neuquen-en-rincon-de-los-sauces",
+     "nombre": "Rincón de Los Sauces"
+    }
+   ]
+  },
+  {
+   "sem": "-en-rio-negro",
+   "nombre": "Río Negro",
+   "ciudades": [
+    {
+     "sem": "-en-rio-negro-en-bariloche",
+     "nombre": "Bariloche"
+    },
+    {
+     "sem": "-en-rio-negro-en-cipolletti",
+     "nombre": "Cipolletti"
+    },
+    {
+     "sem": "-en-rio-negro-en-gral-roca",
+     "nombre": "Gral. Roca"
+    },
+    {
+     "sem": "-en-rio-negro-en-sierra-grande",
+     "nombre": "Sierra Grande"
+    },
+    {
+     "sem": "-en-rio-negro-en-viedma",
+     "nombre": "Viedma"
+    }
+   ]
+  },
+  {
+   "sem": "-en-salta",
+   "nombre": "Salta",
+   "ciudades": [
+    {
+     "sem": "-en-salta-en-capital",
+     "nombre": "Salta (capital)"
+    }
+   ]
+  },
+  {
+   "sem": "-en-san-juan",
+   "nombre": "San Juan",
+   "ciudades": [
+    {
+     "sem": "-en-san-juan-en-capital",
+     "nombre": "San Juan (capital)"
+    }
+   ]
+  },
+  {
+   "sem": "-en-san-luis",
+   "nombre": "San Luis",
+   "ciudades": [
+    {
+     "sem": "-en-san-luis-en-capital",
+     "nombre": "San Luis (capital)"
+    },
+    {
+     "sem": "-en-san-luis-en-villa-mercedes",
+     "nombre": "Villa Mercedes"
+    }
+   ]
+  },
+  {
+   "sem": "-en-santa-cruz",
+   "nombre": "Santa Cruz",
+   "ciudades": [
+    {
+     "sem": "-en-santa-cruz-en-rio-gallegos",
+     "nombre": "Río Gallegos"
+    }
+   ]
+  },
+  {
+   "sem": "-en-santa-fe",
+   "nombre": "Santa Fe",
+   "ciudades": [
+    {
+     "sem": "-en-santa-fe-en-carcarana",
+     "nombre": "Carcarañá"
+    },
+    {
+     "sem": "-en-santa-fe-en-estacion-alvear",
+     "nombre": "Estación Alvear"
+    },
+    {
+     "sem": "-en-santa-fe-en-funes",
+     "nombre": "Funes"
+    },
+    {
+     "sem": "-en-santa-fe-en-granadero-baigorria",
+     "nombre": "Granadero Baigorria"
+    },
+    {
+     "sem": "-en-santa-fe-en-perez",
+     "nombre": "Pérez"
+    },
+    {
+     "sem": "-en-santa-fe-en-rafaela",
+     "nombre": "Rafaela"
+    },
+    {
+     "sem": "-en-santa-fe-en-rosario",
+     "nombre": "Rosario"
+    },
+    {
+     "sem": "-en-santa-fe-en-san-lorenzo",
+     "nombre": "San Lorenzo"
+    },
+    {
+     "sem": "-en-santa-fe-en-capital",
+     "nombre": "Santa Fe (capital)"
+    },
+    {
+     "sem": "-en-santa-fe-en-santo-tome",
+     "nombre": "Santo Tomé"
+    },
+    {
+     "sem": "-en-santa-fe-en-sauce-viejo",
+     "nombre": "Sauce Viejo"
+    },
+    {
+     "sem": "-en-santa-fe-en-venado-tuerto",
+     "nombre": "Venado Tuerto"
+    },
+    {
+     "sem": "-en-santa-fe-en-villa-constitucion",
+     "nombre": "Villa Constitución"
+    },
+    {
+     "sem": "-en-santa-fe-en-villa-gdor-galvez",
+     "nombre": "Villa Gdor. Gálvez"
+    }
+   ]
+  },
+  {
+   "sem": "-en-santiago-del-estero",
+   "nombre": "Santiago del Estero",
+   "ciudades": [
+    {
+     "sem": "-en-santiago-del-estero-en-santiago-del-estero",
+     "nombre": "Santiago del Estero (capital)"
+    }
+   ]
+  },
+  {
+   "sem": "-en-tierra-del-fuego",
+   "nombre": "Tierra del Fuego",
+   "ciudades": [
+    {
+     "sem": "-en-tierra-del-fuego-en-rio-grande",
+     "nombre": "Río Grande"
+    },
+    {
+     "sem": "-en-tierra-del-fuego-en-ushuaia",
+     "nombre": "Ushuaia"
+    }
+   ]
+  },
+  {
+   "sem": "-en-tucuman",
+   "nombre": "Tucumán",
+   "ciudades": [
+    {
+     "sem": "-en-tucuman-en-alderetes",
+     "nombre": "Alderetes"
+    },
+    {
+     "sem": "-en-tucuman-en-san-miguel-de-tucuman",
+     "nombre": "San Miguel de Tucumán"
+    },
+    {
+     "sem": "-en-tucuman-en-yerba-buena",
+     "nombre": "Yerba Buena"
+    }
+   ]
+  }
+ ]
+}

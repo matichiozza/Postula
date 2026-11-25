@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Laburo IA</title>
+  <link rel="stylesheet" href="estilo.css">
+  <link rel="icon" href="logo.svg">
+</head>
+<body>
+<!-- fondo animado compartido por el menú y Ajustes: degradé suave con los colores de la bolsa elegida -->
+<div class="fondo" aria-hidden="true"><i class="mancha m1"></i><i class="mancha m2"></i><i class="mancha m3"></i></div>
+
+<!-- ============================================================ menú -->
+<section id="inicio" class="pantalla activa">
+  <button class="btn-ajustes" id="btn-ajustes">
+    <svg class="ic" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    Ajustes
+  </button>
+  <div class="inicio-caja">
+    <h1 id="saludo">¿Dónde buscamos hoy?</h1>
+    <p class="sub">¿En qué bolsa buscamos hoy?</p>
+    <div class="plataformas" id="plataformas"></div>
+    <div class="busquedas-zona" id="busquedas-zona"></div>
+    <div class="empezar-fila">
+      <div class="cuenta-sel">
+        <button class="btn-cuenta" id="btn-cuenta" type="button"></button>
+        <div class="cuenta-menu" id="cuenta-menu"></div>
+      </div>
+      <button class="btn-empezar" id="btn-empezar"></button>
+    </div>
+    <span class="nota" id="nota-inicio"></span>
+    <span class="aviso-datos" id="aviso-datos"></span>
+  </div>
+  <footer class="firma">Made by Matichiozza</footer>
+  <footer class="version" id="version"></footer>
+</section>
+
+<!-- ============================================================ ajustes -->
+<section id="ajustes" class="pantalla">
+  <div class="ajustes-caja">
+    <div class="ajustes-cab">
+      <button class="btn chico" id="btn-volver"><span>← Volver</span></button>
+      <h1>Ajustes</h1>
+    </div>
+
+    <div class="tarjeta" id="datos">
+      <div class="tarjeta-cab">
+        <div>
+          <strong>Tus datos</strong>
+          <span class="tenue">Tu nombre es para saludarte. Sueldo y zona se completan solos cuando una empresa los pregunta (podés cambiarlos antes de enviar).</span>
+        </div>
+        <span class="datos-estado tenue" id="datos-estado"></span>
+      </div>
+      <div class="datos-campos">
+        <label class="campo">
+          <span>Tu nombre</span>
+          <span class="campo-caja"><input id="d-nombre" autocomplete="off" maxlength="60" placeholder="Ej: Mati"></span>
+        </label>
+        <label class="campo">
+          <span>Sueldo bruto pretendido</span>
+          <span class="campo-caja"><span class="prefijo">$</span><input id="d-sueldo" inputmode="numeric" autocomplete="off" placeholder="1.800.000"></span>
+          <span class="neto" id="d-neto"></span>
+        </label>
+        <label class="campo">
+          <span>Zona de residencia</span>
+          <span class="campo-caja"><input id="d-zona" autocomplete="off" maxlength="120" placeholder="Ej: Palermo, CABA"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="tarjeta fila">
+      <div>
+        <strong>Copia de tus datos</strong>
+        <span class="tenue">Guardá en un archivo tu nombre, sueldo, zona, tus búsquedas y los avisos que descartaste, para pasarlos a una instalación nueva u otra PC.</span>
+      </div>
+      <div class="tarjeta-botones">
+        <button class="btn" id="btn-exportar"><span>Exportar</span></button>
+        <button class="btn" id="btn-importar"><span>Importar</span></button>
+      </div>
+    </div>
+
+    <div class="tarjeta fila">
+      <div>
+        <strong>Avisos descartados</strong>
+        <span class="tenue" id="descartados-resumen">Los avisos que descartaste para siempre no se te vuelven a mostrar. Si te arrepentiste de alguno, recuperalo acá.</span>
+      </div>
+      <div class="tarjeta-botones">
+        <button class="btn" id="btn-descartados"><span>Ver y recuperar</span></button>
+      </div>
+    </div>
+
+    <div class="tarjeta fila peligro">
+      <div>
+        <strong>Empezar de cero</strong>
+        <span class="tenue">Borra todos tus datos: nombre, sueldo, zona, avisos descartados, historiales, búsquedas y las sesiones iniciadas en las bolsas. No se puede deshacer.</span>
+      </div>
+      <div class="tarjeta-botones">
+        <button class="btn no" id="btn-borrar"><span>Borrar todos los datos</span></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ trabajo -->
+<section id="trabajo" class="pantalla">
+  <header class="cabecera recorrido">
+    <img class="cab-ic" id="t-icono" src="" alt="">
+    <div class="busq-sel">
+      <button class="busq-btn" id="r-busq" type="button"></button>
+      <div class="busq-menu" id="busq-menu"></div>
+    </div>
+    <span class="rec-cuenta" id="r-cuenta"></span>
+    <span class="rec-titulo" id="r-titulo"></span>
+    <span class="cab-esp"></span>
+    <div class="stats" id="stats"></div>
+    <button class="btn chico oculto" id="btn-pausa"></button>
+    <div class="progreso"><div id="r-barra"></div></div>
+  </header>
+
+  <main class="cuerpo">
+    <aside class="lista-col">
+      <div class="lista-cab">
+        <span>Para decidir</span>
+        <span class="badge" id="l-cant">0</span>
+      </div>
+      <ol class="lista" id="lista"></ol>
+      <div class="lista-vacia" id="lista-vacia"></div>
+    </aside>
+    <section class="panel" id="panel"></section>
+  </main>
+
+  <footer class="atajos" id="atajos"></footer>
+
+  <aside class="registro" id="registro">
+    <div class="registro-cab">
+      <strong>Registro del recorrido</strong>
+      <span class="tenue"><kbd>L</kbd> cerrar</span>
+    </div>
+    <ol id="registro-lista"></ol>
+  </aside>
+
+  <aside class="registro" id="historial">
+    <div class="registro-cab">
+      <div>
+        <strong>Postulaciones con tus respuestas</strong>
+        <div class="tenue" style="font-size: 12px">Los avisos con formulario a los que te postulaste respondiendo las preguntas.</div>
+      </div>
+      <span class="tenue"><kbd>H</kbd> cerrar</span>
+    </div>
+    <ol id="historial-lista"></ol>
+  </aside>
+</section>
+
+<div class="toasts" id="toasts"></div>
+<div class="velo" id="velo"><div class="velo-caja" id="velo-caja"></div></div>
+
+<script src="app.js"></script>
+</body>
+</html>

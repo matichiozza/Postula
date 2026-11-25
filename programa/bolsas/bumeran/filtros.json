@@ -1,0 +1,1810 @@
+{
+ "relevado": "2026-11-24",
+ "categorias": [
+  {
+   "slug": "abastecimiento-y-logistica",
+   "nombre": "Abastecimiento y Logística"
+  },
+  {
+   "slug": "administracion-contabilidad-y-finanzas",
+   "nombre": "Administración, Contabilidad y Finanzas"
+  },
+  {
+   "slug": "aduana-y-comercio-exterior",
+   "nombre": "Aduana y Comercio Exterior"
+  },
+  {
+   "slug": "atencion-al-cliente-call-center-y-telemarketing",
+   "nombre": "Atención al Cliente, Call Center y Telemarketing"
+  },
+  {
+   "slug": "comercial-ventas-y-negocios",
+   "nombre": "Comercial, Ventas y Negocios"
+  },
+  {
+   "slug": "comunicacion-relaciones-institucionales-y-publicas",
+   "nombre": "Comunicación, Relaciones Institucionales y Públicas"
+  },
+  {
+   "slug": "departamento-tecnico",
+   "nombre": "Departamento Tecnico"
+  },
+  {
+   "slug": "diseno",
+   "nombre": "Diseño"
+  },
+  {
+   "slug": "educacion-docencia-e-investigacion",
+   "nombre": "Educación, Docencia e Investigación"
+  },
+  {
+   "slug": "enfermeria",
+   "nombre": "Enfermería"
+  },
+  {
+   "slug": "gastronomia-y-turismo",
+   "nombre": "Gastronomía y Turismo"
+  },
+  {
+   "slug": "gerencia-y-direccion-general",
+   "nombre": "Gerencia y Dirección General"
+  },
+  {
+   "slug": "ingenieria-civil-y-construccion",
+   "nombre": "Ingeniería Civil y Construcción"
+  },
+  {
+   "slug": "ingenierias",
+   "nombre": "Ingenierías"
+  },
+  {
+   "slug": "legales",
+   "nombre": "Legales"
+  },
+  {
+   "slug": "marketing-y-publicidad",
+   "nombre": "Marketing y Publicidad"
+  },
+  {
+   "slug": "mineria-petroleo-y-gas",
+   "nombre": "Minería, Petróleo y Gas"
+  },
+  {
+   "slug": "naviero-maritimo-portuario",
+   "nombre": "Naviero, Maritimo, Portuario"
+  },
+  {
+   "slug": "oficios-y-otros",
+   "nombre": "Oficios y Otros"
+  },
+  {
+   "slug": "produccion-y-manufactura",
+   "nombre": "Producción y Manufactura"
+  },
+  {
+   "slug": "recursos-humanos-y-capacitacion",
+   "nombre": "Recursos Humanos y Capacitación"
+  },
+  {
+   "slug": "salud-medicina-y-farmacia",
+   "nombre": "Salud, Medicina y Farmacia"
+  },
+  {
+   "slug": "secretarias-y-recepcion",
+   "nombre": "Secretarias y Recepción"
+  },
+  {
+   "slug": "seguros",
+   "nombre": "Seguros"
+  },
+  {
+   "slug": "sociologia-trabajo-social",
+   "nombre": "Sociología / Trabajo Social"
+  },
+  {
+   "slug": "tecnologia-sistemas-y-telecomunicaciones",
+   "nombre": "Tecnología, Sistemas y Telecomunicaciones"
+  }
+ ],
+ "provincias": [
+  {
+   "sem": "buenos-aires",
+   "nombre": "Buenos Aires",
+   "ciudades": [
+    {
+     "sem": "11-de-septiembre",
+     "nombre": "11 de Septiembre"
+    },
+    {
+     "sem": "12-de-agosto",
+     "nombre": "12 de Agosto"
+    },
+    {
+     "sem": "12-de-octubre",
+     "nombre": "12 de Octubre"
+    },
+    {
+     "sem": "9-de-abril",
+     "nombre": "9 de Abril"
+    },
+    {
+     "sem": "9-de-julio",
+     "nombre": "9 de Julio"
+    },
+    {
+     "sem": "abasto",
+     "nombre": "Abasto"
+    },
+    {
+     "sem": "acassuso",
+     "nombre": "Acassuso"
+    },
+    {
+     "sem": "adrogue",
+     "nombre": "Adrogue"
+    },
+    {
+     "sem": "aldo-bonzi",
+     "nombre": "Aldo Bonzi"
+    },
+    {
+     "sem": "almirante-brown",
+     "nombre": "Almirante Brown"
+    },
+    {
+     "sem": "area-de-promocion-el-triangulo",
+     "nombre": "Area de Promocion El Triangulo"
+    },
+    {
+     "sem": "avellaneda",
+     "nombre": "Avellaneda"
+    },
+    {
+     "sem": "ayacucho",
+     "nombre": "Ayacucho"
+    },
+    {
+     "sem": "azul",
+     "nombre": "Azul"
+    },
+    {
+     "sem": "bahia-blanca",
+     "nombre": "Bahia Blanca"
+    },
+    {
+     "sem": "balcarce",
+     "nombre": "Balcarce"
+    },
+    {
+     "sem": "banfield",
+     "nombre": "Banfield"
+    },
+    {
+     "sem": "baradero",
+     "nombre": "Baradero"
+    },
+    {
+     "sem": "beccar",
+     "nombre": "Beccar"
+    },
+    {
+     "sem": "belen-de-escobar",
+     "nombre": "Belen de Escobar"
+    },
+    {
+     "sem": "bella-vista",
+     "nombre": "Bella Vista"
+    },
+    {
+     "sem": "benavidez",
+     "nombre": "Benavidez"
+    },
+    {
+     "sem": "benito-juarez",
+     "nombre": "Benito Juarez"
+    },
+    {
+     "sem": "berazategui",
+     "nombre": "Berazategui"
+    },
+    {
+     "sem": "berazategui-oeste",
+     "nombre": "Berazategui Oeste"
+    },
+    {
+     "sem": "berisso",
+     "nombre": "Berisso"
+    },
+    {
+     "sem": "bernal",
+     "nombre": "Bernal"
+    },
+    {
+     "sem": "bernal-oeste",
+     "nombre": "Bernal Oeste"
+    },
+    {
+     "sem": "billinghurst",
+     "nombre": "Billinghurst"
+    },
+    {
+     "sem": "bolivar",
+     "nombre": "Bolivar"
+    },
+    {
+     "sem": "boulogne",
+     "nombre": "Boulogne"
+    },
+    {
+     "sem": "bragado",
+     "nombre": "Bragado"
+    },
+    {
+     "sem": "buenos-aires",
+     "nombre": "Buenos Aires"
+    },
+    {
+     "sem": "burzaco",
+     "nombre": "Burzaco"
+    },
+    {
+     "sem": "campana",
+     "nombre": "Campana"
+    },
+    {
+     "sem": "canning",
+     "nombre": "Canning"
+    },
+    {
+     "sem": "canuelas",
+     "nombre": "Canuelas"
+    },
+    {
+     "sem": "capilla-del-senor",
+     "nombre": "Capilla del Senor"
+    },
+    {
+     "sem": "capital-federal",
+     "nombre": "Capital Federal"
+    },
+    {
+     "sem": "carapachay",
+     "nombre": "Carapachay"
+    },
+    {
+     "sem": "carlos-casares",
+     "nombre": "Carlos Casares"
+    },
+    {
+     "sem": "carmen-de-areco",
+     "nombre": "Carmen de Areco"
+    },
+    {
+     "sem": "caseros",
+     "nombre": "Caseros"
+    },
+    {
+     "sem": "castelar",
+     "nombre": "Castelar"
+    },
+    {
+     "sem": "chacabuco",
+     "nombre": "Chacabuco"
+    },
+    {
+     "sem": "chascomus",
+     "nombre": "Chascomus"
+    },
+    {
+     "sem": "city-bell",
+     "nombre": "City Bell"
+    },
+    {
+     "sem": "ciudad-madero",
+     "nombre": "Ciudad Madero"
+    },
+    {
+     "sem": "ciudadela",
+     "nombre": "Ciudadela"
+    },
+    {
+     "sem": "claypole",
+     "nombre": "Claypole"
+    },
+    {
+     "sem": "coronel-brandsen",
+     "nombre": "Coronel Brandsen"
+    },
+    {
+     "sem": "coronel-suarez",
+     "nombre": "Coronel Suarez"
+    },
+    {
+     "sem": "daireaux",
+     "nombre": "Daireaux"
+    },
+    {
+     "sem": "del-viso",
+     "nombre": "Del Viso"
+    },
+    {
+     "sem": "dique-lujan",
+     "nombre": "Dique Lujan"
+    },
+    {
+     "sem": "dock-sud",
+     "nombre": "Dock Sud"
+    },
+    {
+     "sem": "don-torcuato",
+     "nombre": "Don Torcuato"
+    },
+    {
+     "sem": "el-jaguel",
+     "nombre": "El Jaguel"
+    },
+    {
+     "sem": "el-libertador",
+     "nombre": "El Libertador"
+    },
+    {
+     "sem": "el-palomar",
+     "nombre": "El Palomar"
+    },
+    {
+     "sem": "el-talar",
+     "nombre": "El Talar"
+    },
+    {
+     "sem": "ensenada",
+     "nombre": "Ensenada"
+    },
+    {
+     "sem": "escobar",
+     "nombre": "Escobar"
+    },
+    {
+     "sem": "esteban-echeverria",
+     "nombre": "Esteban Echeverria"
+    },
+    {
+     "sem": "ezeiza",
+     "nombre": "Ezeiza"
+    },
+    {
+     "sem": "ezpeleta",
+     "nombre": "Ezpeleta"
+    },
+    {
+     "sem": "fatima",
+     "nombre": "Fatima"
+    },
+    {
+     "sem": "florencio-varela",
+     "nombre": "Florencio Varela"
+    },
+    {
+     "sem": "florida",
+     "nombre": "Florida"
+    },
+    {
+     "sem": "florida-oeste",
+     "nombre": "Florida Oeste"
+    },
+    {
+     "sem": "francisco-alvarez",
+     "nombre": "Francisco Alvarez"
+    },
+    {
+     "sem": "garin",
+     "nombre": "Garin"
+    },
+    {
+     "sem": "general-pacheco",
+     "nombre": "General Pacheco"
+    },
+    {
+     "sem": "general-rodriguez",
+     "nombre": "General Rodriguez"
+    },
+    {
+     "sem": "general-villegas",
+     "nombre": "General Villegas"
+    },
+    {
+     "sem": "gerli",
+     "nombre": "Gerli"
+    },
+    {
+     "sem": "glew",
+     "nombre": "Glew"
+    },
+    {
+     "sem": "gonzalez-catan",
+     "nombre": "Gonzalez Catan"
+    },
+    {
+     "sem": "gran-buenos-aires",
+     "nombre": "Gran Buenos Aires"
+    },
+    {
+     "sem": "grand-bourg",
+     "nombre": "Grand Bourg"
+    },
+    {
+     "sem": "gregorio-de-laferrere",
+     "nombre": "Gregorio de Laferrere"
+    },
+    {
+     "sem": "guillermo-hudson",
+     "nombre": "Guillermo Hudson"
+    },
+    {
+     "sem": "haedo",
+     "nombre": "Haedo"
+    },
+    {
+     "sem": "hurlingham",
+     "nombre": "Hurlingham"
+    },
+    {
+     "sem": "ingeniero-maschwitz",
+     "nombre": "Ingeniero Maschwitz"
+    },
+    {
+     "sem": "isidro-casanova",
+     "nombre": "Isidro Casanova"
+    },
+    {
+     "sem": "ituzaingo",
+     "nombre": "Ituzaingo"
+    },
+    {
+     "sem": "jeppener",
+     "nombre": "Jeppener"
+    },
+    {
+     "sem": "jose-c-paz",
+     "nombre": "Jose C. Paz"
+    },
+    {
+     "sem": "jose-leon-suarez",
+     "nombre": "Jose Leon Suarez"
+    },
+    {
+     "sem": "junin",
+     "nombre": "Junin"
+    },
+    {
+     "sem": "la-matanza",
+     "nombre": "La Matanza"
+    },
+    {
+     "sem": "la-plata",
+     "nombre": "La Plata"
+    },
+    {
+     "sem": "la-reja",
+     "nombre": "La Reja"
+    },
+    {
+     "sem": "la-tablada",
+     "nombre": "La Tablada"
+    },
+    {
+     "sem": "lanus-este",
+     "nombre": "Lanus Este"
+    },
+    {
+     "sem": "lanus-oeste",
+     "nombre": "Lanus Oeste"
+    },
+    {
+     "sem": "las-toninas",
+     "nombre": "Las Toninas"
+    },
+    {
+     "sem": "libertad",
+     "nombre": "Libertad"
+    },
+    {
+     "sem": "llavallol",
+     "nombre": "Llavallol"
+    },
+    {
+     "sem": "lobos",
+     "nombre": "Lobos"
+    },
+    {
+     "sem": "loma-hermosa",
+     "nombre": "Loma Hermosa"
+    },
+    {
+     "sem": "loma-verde",
+     "nombre": "Loma Verde"
+    },
+    {
+     "sem": "lomas-de-zamora",
+     "nombre": "Lomas de Zamora"
+    },
+    {
+     "sem": "lomas-del-mirador",
+     "nombre": "Lomas del Mirador"
+    },
+    {
+     "sem": "longchamps",
+     "nombre": "Longchamps"
+    },
+    {
+     "sem": "los-cardales",
+     "nombre": "Los Cardales"
+    },
+    {
+     "sem": "los-hornos",
+     "nombre": "Los Hornos"
+    },
+    {
+     "sem": "los-polvorines",
+     "nombre": "Los Polvorines"
+    },
+    {
+     "sem": "los-toldos",
+     "nombre": "Los Toldos"
+    },
+    {
+     "sem": "los-troncos-del-talar",
+     "nombre": "Los Troncos del Talar"
+    },
+    {
+     "sem": "luis-guillon",
+     "nombre": "Luis Guillon"
+    },
+    {
+     "sem": "lujan",
+     "nombre": "Lujan"
+    },
+    {
+     "sem": "magdalena",
+     "nombre": "Magdalena"
+    },
+    {
+     "sem": "malvinas-argentinas",
+     "nombre": "Malvinas Argentinas"
+    },
+    {
+     "sem": "manuel-alberti",
+     "nombre": "Manuel Alberti"
+    },
+    {
+     "sem": "mar-de-ajo",
+     "nombre": "Mar de Ajo"
+    },
+    {
+     "sem": "mar-del-plata",
+     "nombre": "Mar del Plata"
+    },
+    {
+     "sem": "marcos-paz",
+     "nombre": "Marcos Paz"
+    },
+    {
+     "sem": "martin-coronado",
+     "nombre": "Martin Coronado"
+    },
+    {
+     "sem": "martinez",
+     "nombre": "Martinez"
+    },
+    {
+     "sem": "matheu",
+     "nombre": "Matheu"
+    },
+    {
+     "sem": "mercedes",
+     "nombre": "Mercedes"
+    },
+    {
+     "sem": "merlo",
+     "nombre": "Merlo"
+    },
+    {
+     "sem": "monte-grande",
+     "nombre": "Monte Grande"
+    },
+    {
+     "sem": "moreno",
+     "nombre": "Moreno"
+    },
+    {
+     "sem": "moron",
+     "nombre": "Moron"
+    },
+    {
+     "sem": "muniz",
+     "nombre": "Muniz"
+    },
+    {
+     "sem": "munro",
+     "nombre": "Munro"
+    },
+    {
+     "sem": "navarro",
+     "nombre": "Navarro"
+    },
+    {
+     "sem": "necochea",
+     "nombre": "Necochea"
+    },
+    {
+     "sem": "olavarria",
+     "nombre": "Olavarria"
+    },
+    {
+     "sem": "olivos",
+     "nombre": "Olivos"
+    },
+    {
+     "sem": "pablo-nogues",
+     "nombre": "Pablo Nogues"
+    },
+    {
+     "sem": "pablo-podesta",
+     "nombre": "Pablo Podesta"
+    },
+    {
+     "sem": "paso-del-rey",
+     "nombre": "Paso del Rey"
+    },
+    {
+     "sem": "patricios",
+     "nombre": "Patricios"
+    },
+    {
+     "sem": "pavon",
+     "nombre": "Pavon"
+    },
+    {
+     "sem": "pehuajo",
+     "nombre": "Pehuajo"
+    },
+    {
+     "sem": "pergamino",
+     "nombre": "Pergamino"
+    },
+    {
+     "sem": "pilar",
+     "nombre": "Pilar"
+    },
+    {
+     "sem": "pilar-centro",
+     "nombre": "Pilar Centro"
+    },
+    {
+     "sem": "pinamar",
+     "nombre": "Pinamar"
+    },
+    {
+     "sem": "playa-dorada",
+     "nombre": "Playa Dorada"
+    },
+    {
+     "sem": "pontevedra",
+     "nombre": "Pontevedra"
+    },
+    {
+     "sem": "presidente-peron",
+     "nombre": "Presidente Peron"
+    },
+    {
+     "sem": "quilmes",
+     "nombre": "Quilmes"
+    },
+    {
+     "sem": "quilmes-oeste",
+     "nombre": "Quilmes Oeste"
+    },
+    {
+     "sem": "ramos-mejia",
+     "nombre": "Ramos Mejia"
+    },
+    {
+     "sem": "ranelagh",
+     "nombre": "Ranelagh"
+    },
+    {
+     "sem": "remedios-de-escalada",
+     "nombre": "Remedios de Escalada"
+    },
+    {
+     "sem": "ricardo-rojas",
+     "nombre": "Ricardo Rojas"
+    },
+    {
+     "sem": "rincon-de-milberg",
+     "nombre": "Rincon de Milberg"
+    },
+    {
+     "sem": "saavedra",
+     "nombre": "Saavedra"
+    },
+    {
+     "sem": "saenz-pena",
+     "nombre": "Saenz Pena"
+    },
+    {
+     "sem": "saladillo",
+     "nombre": "Saladillo"
+    },
+    {
+     "sem": "salto",
+     "nombre": "Salto"
+    },
+    {
+     "sem": "san-andres",
+     "nombre": "San Andres"
+    },
+    {
+     "sem": "san-antonio-de-padua",
+     "nombre": "San Antonio de Padua"
+    },
+    {
+     "sem": "san-clemente-del-tuyu",
+     "nombre": "San Clemente del Tuyu"
+    },
+    {
+     "sem": "san-fernando",
+     "nombre": "San Fernando"
+    },
+    {
+     "sem": "san-isidro",
+     "nombre": "San Isidro"
+    },
+    {
+     "sem": "san-justo",
+     "nombre": "San Justo"
+    },
+    {
+     "sem": "san-martin",
+     "nombre": "San Martin"
+    },
+    {
+     "sem": "san-miguel",
+     "nombre": "San Miguel"
+    },
+    {
+     "sem": "san-miguel-del-monte",
+     "nombre": "San Miguel del Monte"
+    },
+    {
+     "sem": "san-nicolas-de-los-arroyos",
+     "nombre": "San Nicolas de Los Arroyos"
+    },
+    {
+     "sem": "san-pedro",
+     "nombre": "San Pedro"
+    },
+    {
+     "sem": "san-vicente",
+     "nombre": "San Vicente"
+    },
+    {
+     "sem": "santos-lugares",
+     "nombre": "Santos Lugares"
+    },
+    {
+     "sem": "sarandi",
+     "nombre": "Sarandi"
+    },
+    {
+     "sem": "spegazzini",
+     "nombre": "Spegazzini"
+    },
+    {
+     "sem": "tandil",
+     "nombre": "Tandil"
+    },
+    {
+     "sem": "tapiales",
+     "nombre": "Tapiales"
+    },
+    {
+     "sem": "temperley",
+     "nombre": "Temperley"
+    },
+    {
+     "sem": "tigre",
+     "nombre": "Tigre"
+    },
+    {
+     "sem": "tortuguitas",
+     "nombre": "Tortuguitas"
+    },
+    {
+     "sem": "trenque-lauquen",
+     "nombre": "Trenque Lauquen"
+    },
+    {
+     "sem": "tristan-suarez",
+     "nombre": "Tristan Suarez"
+    },
+    {
+     "sem": "turdera",
+     "nombre": "Turdera"
+    },
+    {
+     "sem": "valentin-alsina",
+     "nombre": "Valentin Alsina"
+    },
+    {
+     "sem": "vicente-lopez",
+     "nombre": "Vicente Lopez"
+    },
+    {
+     "sem": "victoria",
+     "nombre": "Victoria"
+    },
+    {
+     "sem": "villa-adelina",
+     "nombre": "Villa Adelina"
+    },
+    {
+     "sem": "villa-ballester",
+     "nombre": "Villa Ballester"
+    },
+    {
+     "sem": "villa-bosch",
+     "nombre": "Villa Bosch"
+    },
+    {
+     "sem": "villa-centenario",
+     "nombre": "Villa Centenario"
+    },
+    {
+     "sem": "villa-de-mayo",
+     "nombre": "Villa de Mayo"
+    },
+    {
+     "sem": "villa-dominico",
+     "nombre": "Villa Dominico"
+    },
+    {
+     "sem": "villa-gesell",
+     "nombre": "Villa Gesell"
+    },
+    {
+     "sem": "villa-luzuriaga",
+     "nombre": "Villa Luzuriaga"
+    },
+    {
+     "sem": "villa-lynch",
+     "nombre": "Villa Lynch"
+    },
+    {
+     "sem": "villa-madero",
+     "nombre": "Villa Madero"
+    },
+    {
+     "sem": "villa-maipu",
+     "nombre": "Villa Maipu"
+    },
+    {
+     "sem": "villa-martelli",
+     "nombre": "Villa Martelli"
+    },
+    {
+     "sem": "villa-raffo",
+     "nombre": "Villa Raffo"
+    },
+    {
+     "sem": "villa-rosa",
+     "nombre": "Villa Rosa"
+    },
+    {
+     "sem": "villa-sarmiento",
+     "nombre": "Villa Sarmiento"
+    },
+    {
+     "sem": "villa-tesei",
+     "nombre": "Villa Tesei"
+    },
+    {
+     "sem": "virrey-del-pino",
+     "nombre": "Virrey del Pino"
+    },
+    {
+     "sem": "wilde",
+     "nombre": "Wilde"
+    },
+    {
+     "sem": "zarate",
+     "nombre": "Zarate"
+    },
+    {
+     "sem": "zona-de-reserva",
+     "nombre": "Zona de Reserva"
+    }
+   ]
+  },
+  {
+   "sem": "buenos-aires/capital-federal",
+   "nombre": "Capital Federal (CABA)",
+   "ciudades": []
+  },
+  {
+   "sem": "catamarca",
+   "nombre": "Catamarca",
+   "ciudades": [
+    {
+     "sem": "fiambala",
+     "nombre": "Fiambala"
+    },
+    {
+     "sem": "san-fernando-del-valle-de-catamarca",
+     "nombre": "San Fernando del Valle de Catamarca"
+    }
+   ]
+  },
+  {
+   "sem": "chaco",
+   "nombre": "Chaco",
+   "ciudades": [
+    {
+     "sem": "general-san-martin",
+     "nombre": "General San Martin"
+    },
+    {
+     "sem": "pampa-del-infierno",
+     "nombre": "Pampa del Infierno"
+    },
+    {
+     "sem": "presidencia-roque-saenz-pena",
+     "nombre": "Presidencia Roque Saenz Pena"
+    },
+    {
+     "sem": "resistencia",
+     "nombre": "Resistencia"
+    }
+   ]
+  },
+  {
+   "sem": "chubut",
+   "nombre": "Chubut",
+   "ciudades": [
+    {
+     "sem": "comodoro-rivadavia",
+     "nombre": "Comodoro Rivadavia"
+    },
+    {
+     "sem": "esquel",
+     "nombre": "Esquel"
+    },
+    {
+     "sem": "lago-puelo",
+     "nombre": "Lago Puelo"
+    },
+    {
+     "sem": "puerto-madryn",
+     "nombre": "Puerto Madryn"
+    },
+    {
+     "sem": "rada-tilly",
+     "nombre": "Rada Tilly"
+    },
+    {
+     "sem": "trelew",
+     "nombre": "Trelew"
+    }
+   ]
+  },
+  {
+   "sem": "cordoba",
+   "nombre": "Córdoba",
+   "ciudades": [
+    {
+     "sem": "alejandro-roca",
+     "nombre": "Alejandro Roca"
+    },
+    {
+     "sem": "alta-cordoba",
+     "nombre": "Alta Cordoba"
+    },
+    {
+     "sem": "arias",
+     "nombre": "Arias"
+    },
+    {
+     "sem": "arroyito",
+     "nombre": "Arroyito"
+    },
+    {
+     "sem": "bell-ville",
+     "nombre": "Bell Ville"
+    },
+    {
+     "sem": "brinkmann",
+     "nombre": "Brinkmann"
+    },
+    {
+     "sem": "canals",
+     "nombre": "Canals"
+    },
+    {
+     "sem": "colonia-caroya",
+     "nombre": "Colonia Caroya"
+    },
+    {
+     "sem": "cordoba",
+     "nombre": "Córdoba"
+    },
+    {
+     "sem": "el-tio",
+     "nombre": "El Tio"
+    },
+    {
+     "sem": "falda-del-carmen",
+     "nombre": "Falda Del Carmen"
+    },
+    {
+     "sem": "general-cabrera",
+     "nombre": "General Cabrera"
+    },
+    {
+     "sem": "general-deheza",
+     "nombre": "General Deheza"
+    },
+    {
+     "sem": "jesus-maria",
+     "nombre": "Jesus Maria"
+    },
+    {
+     "sem": "justiniano-posse",
+     "nombre": "Justiniano Posse"
+    },
+    {
+     "sem": "la-carlota",
+     "nombre": "La Carlota"
+    },
+    {
+     "sem": "laboulaye",
+     "nombre": "Laboulaye"
+    },
+    {
+     "sem": "luque",
+     "nombre": "Luque"
+    },
+    {
+     "sem": "malagueno",
+     "nombre": "Malagueno"
+    },
+    {
+     "sem": "malvinas-argentinas",
+     "nombre": "Malvinas Argentinas"
+    },
+    {
+     "sem": "marcos-juarez",
+     "nombre": "Marcos Juarez"
+    },
+    {
+     "sem": "mendiolaza",
+     "nombre": "Mendiolaza"
+    },
+    {
+     "sem": "molinari",
+     "nombre": "Molinari"
+    },
+    {
+     "sem": "monte-buey",
+     "nombre": "Monte Buey"
+    },
+    {
+     "sem": "monte-cristo",
+     "nombre": "Monte Cristo"
+    },
+    {
+     "sem": "morteros",
+     "nombre": "Morteros"
+    },
+    {
+     "sem": "olmos",
+     "nombre": "Olmos"
+    },
+    {
+     "sem": "oncativo",
+     "nombre": "Oncativo"
+    },
+    {
+     "sem": "rio-cuarto",
+     "nombre": "Rio Cuarto"
+    },
+    {
+     "sem": "rio-tercero",
+     "nombre": "Rio Tercero"
+    },
+    {
+     "sem": "rivera-indarte",
+     "nombre": "Rivera Indarte"
+    },
+    {
+     "sem": "san-francisco",
+     "nombre": "San Francisco"
+    },
+    {
+     "sem": "san-vicente",
+     "nombre": "San Vicente"
+    },
+    {
+     "sem": "villa-carlos-paz",
+     "nombre": "Villa Carlos Paz"
+    },
+    {
+     "sem": "villa-cura-brochero",
+     "nombre": "Villa Cura Brochero"
+    },
+    {
+     "sem": "villa-dolores",
+     "nombre": "Villa Dolores"
+    },
+    {
+     "sem": "villa-general-belgrano",
+     "nombre": "Villa General Belgrano"
+    },
+    {
+     "sem": "villa-maria",
+     "nombre": "Villa Maria"
+    }
+   ]
+  },
+  {
+   "sem": "corrientes",
+   "nombre": "Corrientes",
+   "ciudades": [
+    {
+     "sem": "corrientes",
+     "nombre": "Corrientes"
+    },
+    {
+     "sem": "gobernador-ing-valentin-virasoro",
+     "nombre": "Gobernador Ing. Valentin Virasoro"
+    },
+    {
+     "sem": "goya",
+     "nombre": "Goya"
+    },
+    {
+     "sem": "mercedes",
+     "nombre": "Mercedes"
+    },
+    {
+     "sem": "monte-caseros",
+     "nombre": "Monte Caseros"
+    },
+    {
+     "sem": "santo-tome",
+     "nombre": "Santo Tome"
+    }
+   ]
+  },
+  {
+   "sem": "entre-rios",
+   "nombre": "Entre Ríos",
+   "ciudades": [
+    {
+     "sem": "cerrito",
+     "nombre": "Cerrito"
+    },
+    {
+     "sem": "concepcion-del-uruguay",
+     "nombre": "Concepcion del Uruguay"
+    },
+    {
+     "sem": "concordia",
+     "nombre": "Concordia"
+    },
+    {
+     "sem": "crespo",
+     "nombre": "Crespo"
+    },
+    {
+     "sem": "gualeguaychu",
+     "nombre": "Gualeguaychu"
+    },
+    {
+     "sem": "ibicuy",
+     "nombre": "Ibicuy"
+    },
+    {
+     "sem": "nogoya",
+     "nombre": "Nogoya"
+    },
+    {
+     "sem": "parana",
+     "nombre": "Parana"
+    },
+    {
+     "sem": "victoria",
+     "nombre": "Victoria"
+    },
+    {
+     "sem": "villaguay",
+     "nombre": "Villaguay"
+    }
+   ]
+  },
+  {
+   "sem": "formosa",
+   "nombre": "Formosa",
+   "ciudades": [
+    {
+     "sem": "formosa",
+     "nombre": "Formosa"
+    }
+   ]
+  },
+  {
+   "sem": "jujuy",
+   "nombre": "Jujuy",
+   "ciudades": [
+    {
+     "sem": "libertador-general-san-martin",
+     "nombre": "Libertador General San Martin"
+    },
+    {
+     "sem": "libertador-gral-san-martin",
+     "nombre": "Libertador Gral. San Martin"
+    },
+    {
+     "sem": "san-salvador-de-jujuy",
+     "nombre": "San Salvador de Jujuy"
+    }
+   ]
+  },
+  {
+   "sem": "la-pampa",
+   "nombre": "La Pampa",
+   "ciudades": [
+    {
+     "sem": "catrilo",
+     "nombre": "Catrilo"
+    },
+    {
+     "sem": "general-pico",
+     "nombre": "General Pico"
+    },
+    {
+     "sem": "realico",
+     "nombre": "Realico"
+    },
+    {
+     "sem": "santa-rosa",
+     "nombre": "Santa Rosa"
+    },
+    {
+     "sem": "toay",
+     "nombre": "Toay"
+    }
+   ]
+  },
+  {
+   "sem": "la-rioja",
+   "nombre": "La Rioja",
+   "ciudades": [
+    {
+     "sem": "la-rioja",
+     "nombre": "La Rioja"
+    }
+   ]
+  },
+  {
+   "sem": "mendoza",
+   "nombre": "Mendoza",
+   "ciudades": [
+    {
+     "sem": "agrelo",
+     "nombre": "Agrelo"
+    },
+    {
+     "sem": "buena-nueva",
+     "nombre": "Buena Nueva"
+    },
+    {
+     "sem": "capdevila",
+     "nombre": "Capdevila"
+    },
+    {
+     "sem": "coquimbito",
+     "nombre": "Coquimbito"
+    },
+    {
+     "sem": "dorrego",
+     "nombre": "Dorrego"
+    },
+    {
+     "sem": "el-plumerillo",
+     "nombre": "El Plumerillo"
+    },
+    {
+     "sem": "general-alvear",
+     "nombre": "General Alvear"
+    },
+    {
+     "sem": "godoy-cruz",
+     "nombre": "Godoy Cruz"
+    },
+    {
+     "sem": "las-heras",
+     "nombre": "Las Heras"
+    },
+    {
+     "sem": "lujan-de-cuyo",
+     "nombre": "Lujan de Cuyo"
+    },
+    {
+     "sem": "maipu",
+     "nombre": "Maipu"
+    },
+    {
+     "sem": "malargue",
+     "nombre": "Malargue"
+    },
+    {
+     "sem": "mendoza",
+     "nombre": "Mendoza"
+    },
+    {
+     "sem": "rodeo-del-medio",
+     "nombre": "Rodeo del Medio"
+    },
+    {
+     "sem": "san-jose",
+     "nombre": "San Jose"
+    },
+    {
+     "sem": "san-martin",
+     "nombre": "San Martin"
+    },
+    {
+     "sem": "san-rafael",
+     "nombre": "San Rafael"
+    },
+    {
+     "sem": "tunuyan",
+     "nombre": "Tunuyan"
+    },
+    {
+     "sem": "villa-nueva",
+     "nombre": "Villa Nueva"
+    }
+   ]
+  },
+  {
+   "sem": "misiones",
+   "nombre": "Misiones",
+   "ciudades": [
+    {
+     "sem": "posadas",
+     "nombre": "Posadas"
+    },
+    {
+     "sem": "puerto-iguazu",
+     "nombre": "Puerto Iguazu"
+    },
+    {
+     "sem": "santo-pipo",
+     "nombre": "Santo Pipo"
+    }
+   ]
+  },
+  {
+   "sem": "neuquen",
+   "nombre": "Neuquén",
+   "ciudades": [
+    {
+     "sem": "anelo",
+     "nombre": "Anelo"
+    },
+    {
+     "sem": "centenario",
+     "nombre": "Centenario"
+    },
+    {
+     "sem": "chos-malal",
+     "nombre": "Chos Malal"
+    },
+    {
+     "sem": "junin-de-los-andes",
+     "nombre": "Junin de Los Andes"
+    },
+    {
+     "sem": "neuquen",
+     "nombre": "Neuquén"
+    },
+    {
+     "sem": "piedra-del-aguila",
+     "nombre": "Piedra del Aguila"
+    },
+    {
+     "sem": "plottier",
+     "nombre": "Plottier"
+    },
+    {
+     "sem": "rincon-de-los-sauces",
+     "nombre": "Rincon de Los Sauces"
+    },
+    {
+     "sem": "san-martin-de-los-andes",
+     "nombre": "San Martin de Los Andes"
+    },
+    {
+     "sem": "villa-la-angostura",
+     "nombre": "Villa La Angostura"
+    },
+    {
+     "sem": "zapala",
+     "nombre": "Zapala"
+    }
+   ]
+  },
+  {
+   "sem": "rio-negro",
+   "nombre": "Río Negro",
+   "ciudades": [
+    {
+     "sem": "allen",
+     "nombre": "Allen"
+    },
+    {
+     "sem": "catriel",
+     "nombre": "Catriel"
+    },
+    {
+     "sem": "cipolletti",
+     "nombre": "Cipolletti"
+    },
+    {
+     "sem": "el-bolson",
+     "nombre": "El Bolson"
+    },
+    {
+     "sem": "general-roca",
+     "nombre": "General Roca"
+    },
+    {
+     "sem": "lamarque",
+     "nombre": "Lamarque"
+    },
+    {
+     "sem": "san-carlos-de-bariloche",
+     "nombre": "San Carlos de Bariloche"
+    },
+    {
+     "sem": "sierra-grande",
+     "nombre": "Sierra Grande"
+    },
+    {
+     "sem": "viedma",
+     "nombre": "Viedma"
+    },
+    {
+     "sem": "villa-regina",
+     "nombre": "Villa Regina"
+    }
+   ]
+  },
+  {
+   "sem": "salta",
+   "nombre": "Salta",
+   "ciudades": [
+    {
+     "sem": "cafayate",
+     "nombre": "Cafayate"
+    },
+    {
+     "sem": "salta",
+     "nombre": "Salta"
+    },
+    {
+     "sem": "san-juan",
+     "nombre": "San Juan"
+    },
+    {
+     "sem": "san-ramon-de-la-nueva-oran",
+     "nombre": "San Ramon de la Nueva Oran"
+    }
+   ]
+  },
+  {
+   "sem": "san-juan",
+   "nombre": "San Juan",
+   "ciudades": [
+    {
+     "sem": "albardon",
+     "nombre": "Albardon"
+    },
+    {
+     "sem": "pocito",
+     "nombre": "Pocito"
+    },
+    {
+     "sem": "san-juan",
+     "nombre": "San Juan"
+    },
+    {
+     "sem": "santa-lucia",
+     "nombre": "Santa Lucia"
+    }
+   ]
+  },
+  {
+   "sem": "san-luis",
+   "nombre": "San Luis",
+   "ciudades": [
+    {
+     "sem": "juana-koslay",
+     "nombre": "Juana Koslay"
+    },
+    {
+     "sem": "merlo",
+     "nombre": "Merlo"
+    },
+    {
+     "sem": "san-luis",
+     "nombre": "San Luis"
+    },
+    {
+     "sem": "villa-mercedes",
+     "nombre": "Villa Mercedes"
+    }
+   ]
+  },
+  {
+   "sem": "santa-cruz",
+   "nombre": "Santa Cruz",
+   "ciudades": [
+    {
+     "sem": "caleta-olivia",
+     "nombre": "Caleta Olivia"
+    },
+    {
+     "sem": "el-calafate",
+     "nombre": "El Calafate"
+    },
+    {
+     "sem": "el-chalten",
+     "nombre": "El Chalten"
+    },
+    {
+     "sem": "puerto-san-julian",
+     "nombre": "Puerto San Julian"
+    },
+    {
+     "sem": "rio-gallegos",
+     "nombre": "Rio Gallegos"
+    }
+   ]
+  },
+  {
+   "sem": "santa-fe",
+   "nombre": "Santa Fe",
+   "ciudades": [
+    {
+     "sem": "alvear",
+     "nombre": "Alvear"
+    },
+    {
+     "sem": "armstrong",
+     "nombre": "Armstrong"
+    },
+    {
+     "sem": "arroyo-seco",
+     "nombre": "Arroyo Seco"
+    },
+    {
+     "sem": "avellaneda",
+     "nombre": "Avellaneda"
+    },
+    {
+     "sem": "canada-de-gomez",
+     "nombre": "Canada de Gomez"
+    },
+    {
+     "sem": "capitan-bermudez",
+     "nombre": "Capitan Bermudez"
+    },
+    {
+     "sem": "casilda",
+     "nombre": "Casilda"
+    },
+    {
+     "sem": "esperanza",
+     "nombre": "Esperanza"
+    },
+    {
+     "sem": "fighiera",
+     "nombre": "Fighiera"
+    },
+    {
+     "sem": "fray-luis-beltran",
+     "nombre": "Fray Luis Beltran"
+    },
+    {
+     "sem": "funes",
+     "nombre": "Funes"
+    },
+    {
+     "sem": "gobernador-crespo",
+     "nombre": "Gobernador Crespo"
+    },
+    {
+     "sem": "las-rosas",
+     "nombre": "Las Rosas"
+    },
+    {
+     "sem": "perez",
+     "nombre": "Perez"
+    },
+    {
+     "sem": "puerto-general-san-martin",
+     "nombre": "Puerto General San Martin"
+    },
+    {
+     "sem": "rafaela",
+     "nombre": "Rafaela"
+    },
+    {
+     "sem": "reconquista",
+     "nombre": "Reconquista"
+    },
+    {
+     "sem": "ricardone",
+     "nombre": "Ricardone"
+    },
+    {
+     "sem": "roldan",
+     "nombre": "Roldan"
+    },
+    {
+     "sem": "rosario",
+     "nombre": "Rosario"
+    },
+    {
+     "sem": "san-carlos-centro",
+     "nombre": "San Carlos Centro"
+    },
+    {
+     "sem": "san-cristobal",
+     "nombre": "San Cristobal"
+    },
+    {
+     "sem": "san-javier",
+     "nombre": "San Javier"
+    },
+    {
+     "sem": "san-jorge",
+     "nombre": "San Jorge"
+    },
+    {
+     "sem": "san-lorenzo",
+     "nombre": "San Lorenzo"
+    },
+    {
+     "sem": "santa-clara-de-buena-vista",
+     "nombre": "Santa Clara de Buena Vista"
+    },
+    {
+     "sem": "santa-fe",
+     "nombre": "Santa Fe"
+    },
+    {
+     "sem": "santo-tome",
+     "nombre": "Santo Tome"
+    },
+    {
+     "sem": "sauce-viejo",
+     "nombre": "Sauce Viejo"
+    },
+    {
+     "sem": "soldini",
+     "nombre": "Soldini"
+    },
+    {
+     "sem": "tostado",
+     "nombre": "Tostado"
+    },
+    {
+     "sem": "totoras",
+     "nombre": "Totoras"
+    },
+    {
+     "sem": "venado-tuerto",
+     "nombre": "Venado Tuerto"
+    },
+    {
+     "sem": "vera",
+     "nombre": "Vera"
+    },
+    {
+     "sem": "villa-canas",
+     "nombre": "Villa Canas"
+    },
+    {
+     "sem": "villa-constitucion",
+     "nombre": "Villa Constitucion"
+    },
+    {
+     "sem": "villa-gobernador-galvez",
+     "nombre": "Villa Gobernador Galvez"
+    }
+   ]
+  },
+  {
+   "sem": "santiago-del-estero",
+   "nombre": "Santiago del Estero",
+   "ciudades": [
+    {
+     "sem": "bandera",
+     "nombre": "Bandera"
+    },
+    {
+     "sem": "la-banda",
+     "nombre": "La Banda"
+    },
+    {
+     "sem": "quimili",
+     "nombre": "Quimili"
+    },
+    {
+     "sem": "santiago-del-estero",
+     "nombre": "Santiago del Estero"
+    }
+   ]
+  },
+  {
+   "sem": "tierra-del-fuego",
+   "nombre": "Tierra del Fuego",
+   "ciudades": [
+    {
+     "sem": "rio-grande",
+     "nombre": "Rio Grande"
+    },
+    {
+     "sem": "ushuaia",
+     "nombre": "Ushuaia"
+    }
+   ]
+  },
+  {
+   "sem": "tucuman",
+   "nombre": "Tucumán",
+   "ciudades": [
+    {
+     "sem": "concepcion",
+     "nombre": "Concepcion"
+    },
+    {
+     "sem": "las-talitas",
+     "nombre": "Las Talitas"
+    },
+    {
+     "sem": "monteros",
+     "nombre": "Monteros"
+    },
+    {
+     "sem": "san-miguel",
+     "nombre": "San Miguel"
+    },
+    {
+     "sem": "san-miguel-de-tucuman",
+     "nombre": "San Miguel de Tucuman"
+    },
+    {
+     "sem": "tucuman",
+     "nombre": "Tucumán"
+    },
+    {
+     "sem": "yerba-buena",
+     "nombre": "Yerba Buena"
+    }
+   ]
+  }
+ ]
+}

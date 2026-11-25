@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <!-- Ícono de Setup.exe: una caja abierta con una flecha que entra (instalar). Distinto del logo de la app. -->
+  <defs>
+    <linearGradient id="frente" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f2c46b"/><stop offset="1" stop-color="#d99a2b"/></linearGradient>
+    <linearGradient id="lado" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9a446"/><stop offset="1" stop-color="#b57a17"/></linearGradient>
+    <linearGradient id="flecha" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3fd6a0"/><stop offset="1" stop-color="#11845b"/></linearGradient>
+  </defs>
+  <!-- interior de la caja -->
+  <path d="M40 116 L128 92 L216 116 L128 140 Z" fill="#8a5a10"/>
+  <!-- solapas abiertas -->
+  <path d="M40 116 L128 140 L104 172 L14 146 Z" fill="#f5d48e" stroke="#b57a17" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M216 116 L128 140 L152 172 L242 146 Z" fill="#f5d48e" stroke="#b57a17" stroke-width="6" stroke-linejoin="round"/>
+  <!-- flecha que entra -->
+  <path d="M106 18 h44 v62 h30 l-52 56 -52 -56 h30 z" fill="url(#flecha)" stroke="#0d6e4b" stroke-width="6" stroke-linejoin="round"/>
+  <!-- frente y lado de la caja -->
+  <path d="M40 132 L128 156 L128 244 L40 216 Z" fill="url(#lado)" stroke="#9c6810" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M216 132 L128 156 L128 244 L216 216 Z" fill="url(#frente)" stroke="#9c6810" stroke-width="6" stroke-linejoin="round"/>
+</svg>

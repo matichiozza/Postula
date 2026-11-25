@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <!-- Laburo IA: un maletín (el trabajo) con un destello (la IA) -->
+  <defs>
+    <linearGradient id="fondo" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3fd6a0"/>
+      <stop offset="1" stop-color="#11845b"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="58" fill="url(#fondo)"/>
+  <path d="M98 86V70a16 16 0 0 1 16-16h28a16 16 0 0 1 16 16v16" fill="none" stroke="#fff" stroke-width="15" stroke-linejoin="round"/>
+  <rect x="44" y="84" width="168" height="120" rx="22" fill="#fff"/>
+  <path d="M44 132h168" stroke="#1a9e70" stroke-width="9" opacity=".55"/>
+  <rect x="112" y="118" width="32" height="28" rx="8" fill="#1a9e70"/>
+  <path d="M200 26c4.5 24 11 30.5 35 35-24 4.5-30.5 11-35 35-4.5-24-11-30.5-35-35 24-4.5 30.5-11 35-35z"
+        fill="#ffe17a" stroke="#17905f" stroke-width="9" stroke-linejoin="round" paint-order="stroke"/>
+</svg>

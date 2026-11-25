@@ -1,0 +1,14 @@
+# Datos del usuario: sesiones de Edge (cookies), historial, descartes, perfil, registros. NUNCA al repo.
+programa/datos/
+
+# Generado por Setup.exe al instalar
+/Laburo IA.exe
+
+# Python
+__pycache__/
+*.pyc
+
+# Varios
+*.log
+Thumbs.db
+desktop.ini
