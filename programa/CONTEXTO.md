@@ -1,6 +1,6 @@
 # Postulá: app para postularse a avisos de empleo
 
-Documento para que otra persona u otro chat de IA entienda el proyecto y pueda seguir sin perder nada. **Actualizado el 25-11-2026 (versión 1.3.1).** Si sos un chat nuevo, leé primero **"Cómo trabajar con el usuario"**, **"Cómo funciona hoy"** y **"Pendientes"**. Las secciones por bolsa y el historial de versiones tienen el detalle; **si algo viejo contradice a "Cómo funciona hoy" o a una versión más nueva, vale lo nuevo**.
+Documento para que otra persona u otro chat de IA entienda el proyecto y pueda seguir sin perder nada. **Actualizado el 25-11-2026 (versión 1.3.2).** Si sos un chat nuevo, leé primero **"Cómo trabajar con el usuario"**, **"Cómo funciona hoy"** y **"Pendientes"**. Las secciones por bolsa y el historial de versiones tienen el detalle; **si algo viejo contradice a "Cómo funciona hoy" o a una versión más nueva, vale lo nuevo**.
 
 Repositorio: https://github.com/matichiozza/Postula (público). La app se llamaba "Laburo IA" hasta la 1.2.3.
 
@@ -465,6 +465,8 @@ Pedido del usuario: buscar con su herramienta JobSpy (`python-jobspy` 1.5.0) **s
 - **1.3.0** (25-11-2026): **LinkedIn en la app** (ver su sección): búsqueda con JobSpy solo Solicitud sencilla, Solicitados de la cuenta, *Sin revisar* + Postularme (envía si no hay preguntas; si hay, las muestra página por página), sin Auto, editor solo con palabra clave + lugar. `Setup.exe` instala `python-jobspy` (si falla, sigue sin LinkedIn) y se recompiló.
 
 - **1.3.1** (25-11-2026): LinkedIn busca en segundo plano y muestra los avisos a medida que llegan (pedido del usuario: tardaba ~2 minutos en mostrar algo). Probado con la sesión real: "programador" en Capital Federal, primer aviso a los 26 s (lo que tarda leer la sesión y las 26 postulaciones), 191 avisos en 145 s, ninguno ya postulado en la lista.
+
+- **1.3.2** (25-11-2026): sin cambios de funcionamiento; solo sube la versión para que el usuario pruebe "Buscar actualizaciones" con otra PC.
 
 ## Lecciones técnicas (para no repetir errores)
 
