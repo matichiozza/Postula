@@ -1,5 +1,6 @@
 {
  "relevado": "25-11-2026",
+ "varias_categorias": true,
  "categorias": [
   {
    "slug": "1081",
@@ -356,45 +357,49 @@
  ],
  "provincias": [
   {
-   "sem": "Bahia Blanca",
-   "nombre": "Bahia Blanca, Buenos Aires",
-   "ciudades": []
+   "sem": "61",
+   "nombre": "Buenos Aires",
+   "ciudades": [
+    {
+     "sem": "Bahia Blanca",
+     "nombre": "Bahia Blanca"
+    },
+    {
+     "sem": "Ciudad Autónoma de Buenos Aires (CABA)",
+     "nombre": "Ciudad Autónoma de Buenos Aires (CABA)"
+    },
+    {
+     "sem": "Ensenada",
+     "nombre": "Ensenada"
+    },
+    {
+     "sem": "Garin",
+     "nombre": "Garin"
+    },
+    {
+     "sem": "Pilar",
+     "nombre": "Pilar"
+    },
+    {
+     "sem": "Quilmes",
+     "nombre": "Quilmes"
+    }
+   ]
   },
   {
-   "sem": "Ciudad Autónoma de Buenos Aires (CABA)",
-   "nombre": "Ciudad Autónoma de Buenos Aires (CABA), Buenos Aires",
-   "ciudades": []
+   "sem": "65",
+   "nombre": "Córdoba",
+   "ciudades": [
+    {
+     "sem": "Cordoba",
+     "nombre": "Cordoba"
+    }
+   ]
   },
   {
-   "sem": "Cordoba",
-   "nombre": "Cordoba, Córdoba",
-   "ciudades": []
-  },
-  {
-   "sem": "Ensenada",
-   "nombre": "Ensenada, Buenos Aires",
-   "ciudades": []
-  },
-  {
-   "sem": "Garin",
-   "nombre": "Garin, Buenos Aires",
-   "ciudades": []
-  },
-  {
-   "sem": "Pilar",
-   "nombre": "Pilar, Buenos Aires",
-   "ciudades": []
-  },
-  {
-   "sem": "Quilmes",
-   "nombre": "Quilmes, Buenos Aires",
-   "ciudades": []
-  },
-  {
-   "sem": "Rosario",
-   "nombre": "Rosario, Santa Fe",
+   "sem": "80",
+   "nombre": "Santa Fe",
    "ciudades": []
   }
- ],
- "varias_categorias": true
+ ]
 }

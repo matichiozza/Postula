@@ -1,7 +1,7 @@
 'use strict';
 // Versión de la app: se muestra abajo a la izquierda del menú. Regla del usuario: CADA cambio a la app,
 // por mínimo que sea, la sube en uno (1.0.0 → 1.0.1 → … → 1.0.9 → 1.1.0). Anotar cada una en CONTEXTO.md.
-const VERSION = '1.3.3';
+const VERSION = '1.3.4';
 /* Interfaz de Postulá. Habla con Python (app.py) por window.pywebview.api y recibe los
    eventos del motor en window.app.evento(tipo, datos). Todo se maneja con el teclado. */
 
@@ -360,7 +360,8 @@ function editarBusqueda() {
   if (!p.activa) { toast(`${p.nombre} todavía no está en la app.`); return; }
   const bq = busquedas[p.id] || {};
   const filtros = filtrosPlat[p.id];
-  const vacios = () => ({categoria: '', subareas: [], lugares: [], puesto: ''});
+  // EmpleosIT: una búsqueda nueva arranca con TODAS las categorías marcadas (pedido del usuario, 25-11-2026)
+  const vacios = () => ({categoria: '', subareas: varias ? filtros.categorias.map(c => c.slug) : [], lugares: [], puesto: ''});
   const varias = !!(filtros && filtros.varias_categorias);     // EmpleosIT: sin subáreas, pero se tildan varias categorías
   const soloPalabra = !!(filtros && filtros.solo_palabra);      // LinkedIn: sin categorías, solo palabra clave + lugar
   const modoInicial = soloPalabra ? 'palabra' : 'categoria';
@@ -382,6 +383,7 @@ function editarBusqueda() {
     entradas.push({url: null, resumen: null, original: null, error: null, manual: manual || !filtros,
                    campos: vacios(), modo: modoInicial, activa: true});
     sel = entradas.length - 1;
+    if (varias && !manual) recalcular(entradas[sel]);          // ya es una búsqueda válida (todas las categorías)
     pintar();
     setTimeout(() => { const f = panel.querySelector('.ed-desp, input'); if (f) f.focus(); }, 30);
   };
@@ -571,15 +573,26 @@ function editarBusqueda() {
 
       // varias marcadas a la vez, guardadas en c.subareas (subáreas, o categorías en EmpleosIT)
       const multiple = (lista, vacio, plural) => {
-        const texto = () => resumir(lista.filter(o => c.subareas.includes(o.slug)).map(o => o.nombre), vacio, plural);
-        const b = desplegable(texto(), !c.subareas.length, q => lista.filter(o => llano(o.nombre).includes(q)).map(o => ({
-          texto: o.nombre, marcado: c.subareas.includes(o.slug),
-          tocar: () => {
-            c.subareas = c.subareas.includes(o.slug) ? c.subareas.filter(v => v !== o.slug) : [...c.subareas, o.slug];
+        const todasMarcadas = () => lista.length > 0 && lista.every(o => c.subareas.includes(o.slug));
+        const texto = () => todasMarcadas() && lista.length > 2 ? `Todas las ${plural}`
+          : resumir(lista.filter(o => c.subareas.includes(o.slug)).map(o => o.nombre), vacio, plural);
+        const b = desplegable(texto(), !c.subareas.length, q => {
+          const ops = lista.filter(o => llano(o.nombre).includes(q)).map(o => ({
+            texto: o.nombre, marcado: c.subareas.includes(o.slug),
+            tocar: () => {
+              c.subareas = c.subareas.includes(o.slug) ? c.subareas.filter(v => v !== o.slug) : [...c.subareas, o.slug];
+              b.actualizar(texto(), !c.subareas.length);
+              recalcular(e);
+            },
+          }));
+          // "Todas": marca o desmarca todo de un toque (sin texto de búsqueda)
+          if (!q && lista.length > 2) ops.unshift({texto: `Todas las ${plural}`, marcado: todasMarcadas(), tocar: () => {
+            c.subareas = todasMarcadas() ? [] : lista.map(o => o.slug);
             b.actualizar(texto(), !c.subareas.length);
             recalcular(e);
-          },
-        })), false);
+          }});
+          return ops;
+        }, false);
         return b;
       };
 
@@ -706,7 +719,10 @@ function editarBusqueda() {
   caja.addEventListener('keydown', ev => {
     if (ev.key === 'Enter' && ev.ctrlKey) { ev.preventDefault(); ev.stopPropagation(); guardar(); }
   });
-  if (!entradas.length) { entradas.push({url: null, resumen: null, original: null, error: null, manual: !filtros, campos: vacios(), modo: modoInicial, activa: true}); }
+  if (!entradas.length) {
+    entradas.push({url: null, resumen: null, original: null, error: null, manual: !filtros, campos: vacios(), modo: modoInicial, activa: true});
+    if (varias) recalcular(entradas[0]);
+  }
   pintar();
   velo(null, null, caja, 'busqueda');
   setTimeout(() => { const f = panel.querySelector('.ed-desp, input'); if (f) f.focus(); }, 50);

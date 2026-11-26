@@ -271,30 +271,47 @@ def _leer_jobint(plataforma, camino, consulta=""):
 # ------------------------------------------------------------------ EmpleosIT (SmartJobBoard)
 # El buscador es un GET a /search-results-jobs/ (verificado 25-11-2026): keywords[all_words],
 # JobCategory[multi_like][]=<id>, JobType[multi_like][]=1242 (remoto) y Location_City[multi_like_and][].
-# No filtra por provincia: en las listas "Dónde" son las ciudades con avisos.
+# Lugar: Location_State[multi_like][]=<número de provincia> (la web solo lista las provincias con avisos)
+# o Location_City[multi_like_and][]=<ciudad>; en "Dónde" las ciudades van dentro de su provincia.
 EIT_BASE = "https://www.empleosit.com.ar/search-results-jobs/"
 EIT_FIJOS = [("action", "search"), ("listing_type[equal]", "Job"), ("view", "list"), ("listings_per_page", "100")]
 EIT_PALABRA, EIT_CATEGORIA = "keywords[all_words]", "JobCategory[multi_like][]"
 EIT_TIPO, EIT_REMOTO, EIT_CIUDAD = "JobType[multi_like][]", "1242", "Location_City[multi_like_and][]"
+EIT_PROVINCIA = "Location_State[multi_like][]"            # número de provincia (61 = Buenos Aires)
+
+
+def _lugar_empleosit(f, prov, ciudad):
+    """(provincia, ciudad) del editor -> (clave, valor) del link, o None si no está en las listas.
+    Provincia = número de Location_State (25-11-2026: la web sí filtra por provincia; solo lista las que
+    tienen avisos). Ciudad = Location_City. Una ciudad "suelta" (su provincia no está) va como provincia."""
+    if prov == REMOTO["sem"]:
+        return EIT_TIPO, EIT_REMOTO
+    p = next((x for x in f["provincias"] if x["sem"] == prov), None)
+    if not p:
+        return None
+    if ciudad:
+        return (EIT_CIUDAD, ciudad) if ciudad in {c["sem"] for c in p["ciudades"]} else None
+    return (EIT_PROVINCIA, prov) if prov.isdigit() else (EIT_CIUDAD, prov)
 
 
 def _armar_empleosit(f, datos):
     puesto = " ".join((datos.get("puesto") or "").split())
     cats = list(dict.fromkeys(datos.get("subareas") or ([datos["categoria"]] if datos.get("categoria") else [])))
-    lugar = datos.get("provincia") or ""
-    if not set(cats) <= {c["slug"] for c in f["categorias"]}:
+    todas = {c["slug"] for c in f["categorias"]}
+    if not set(cats) <= todas:
         return {"ok": False, "error": "Categoría desconocida."}
     consulta = list(EIT_FIJOS)
     if puesto:
         consulta.append((EIT_PALABRA, puesto))
-    consulta += [(EIT_CATEGORIA, c) for c in cats]            # la web suma los avisos de todas
-    if lugar == REMOTO["sem"]:
-        consulta.append((EIT_TIPO, EIT_REMOTO))
-    elif lugar:
-        if lugar not in {p["sem"] for p in f["provincias"]}:
-            return {"ok": False, "error": "Ciudad desconocida."}
-        consulta.append((EIT_CIUDAD, lugar))
-    if not (puesto or cats or lugar):
+    if set(cats) != todas:                                   # todas marcadas = sin filtro de categoría
+        consulta += [(EIT_CATEGORIA, c) for c in cats]       # la web suma los avisos de todas
+    prov = datos.get("provincia") or ""
+    if prov:
+        par = _lugar_empleosit(f, prov, datos.get("ciudad") or "")
+        if not par:
+            return {"ok": False, "error": "Lugar desconocido."}
+        consulta.append(par)
+    if not (puesto or cats or prov):
         return {"ok": False, "error": "Elegí al menos una categoría, un puesto o un lugar."}
     url = EIT_BASE + "?" + urlencode(consulta)
     return {"ok": True, "url": url, "resumen": resumen(url)}
@@ -303,16 +320,29 @@ def _armar_empleosit(f, datos):
 def _desarmar_empleosit(consulta):
     f = filtros("empleosit")
     q = dict(parse_qsl(consulta))
-    if not f or set(q) - {k for k, _ in EIT_FIJOS} - {EIT_PALABRA, EIT_CATEGORIA, EIT_TIPO, EIT_CIUDAD}:
+    if not f or set(q) - {k for k, _ in EIT_FIJOS} - {EIT_PALABRA, EIT_CATEGORIA, EIT_TIPO, EIT_CIUDAD, EIT_PROVINCIA}:
         return None
-    cats = [v for k, v in parse_qsl(consulta) if k == EIT_CATEGORIA]
-    ciudad = q.get(EIT_CIUDAD, "")
-    remoto = q.get(EIT_TIPO) == EIT_REMOTO
-    if not set(cats) <= {c["slug"] for c in f["categorias"]} or (q.get(EIT_TIPO) and not remoto) \
-            or (ciudad and (remoto or ciudad not in {p["sem"] for p in f["provincias"]})):
+    todas = [c["slug"] for c in f["categorias"]]
+    cats = [v for k, v in parse_qsl(consulta) if k == EIT_CATEGORIA] or todas     # sin filtro = todas
+    if not set(cats) <= set(todas) or (q.get(EIT_TIPO) and q.get(EIT_TIPO) != EIT_REMOTO):
         return None
-    return {"categoria": "", "subareas": cats, "provincia": REMOTO["sem"] if remoto else ciudad, "ciudad": "",
-            "puesto": q.get(EIT_PALABRA, "")}
+    prov = ciudad = ""
+    if q.get(EIT_TIPO) == EIT_REMOTO:
+        prov = REMOTO["sem"]
+    elif q.get(EIT_PROVINCIA):
+        prov = q[EIT_PROVINCIA]
+        if prov not in {p["sem"] for p in f["provincias"]}:
+            return None
+    elif q.get(EIT_CIUDAD):
+        c = q[EIT_CIUDAD]
+        dentro = next((p for p in f["provincias"] if c in {x["sem"] for x in p["ciudades"]}), None)
+        if dentro:
+            prov, ciudad = dentro["sem"], c
+        elif c in {p["sem"] for p in f["provincias"]}:
+            prov = c                                           # ciudad suelta
+        else:
+            return None
+    return {"categoria": "", "subareas": cats, "provincia": prov, "ciudad": ciudad, "puesto": q.get(EIT_PALABRA, "")}
 
 
 def _leer_empleosit(consulta):
@@ -322,9 +352,14 @@ def _leer_empleosit(consulta):
     f = filtros("empleosit")
     nombres = {x["slug"]: x["nombre"] for x in f["categorias"]}
     elegidas = [nombres[s] for s in c["subareas"]]
-    cat = ", ".join(elegidas) if len(elegidas) <= 2 else f"{len(elegidas)} categorías"
-    lugar = "Remoto" if c["provincia"] == REMOTO["sem"] else \
-        {p["sem"]: p["nombre"] for p in f["provincias"]}.get(c["provincia"], "")
+    cat = "Todas las categorías" if len(elegidas) == len(nombres) else \
+        ", ".join(elegidas) if len(elegidas) <= 2 else f"{len(elegidas)} categorías"
+    if c["provincia"] == REMOTO["sem"]:
+        lugar = "Remoto"
+    else:
+        p = next((x for x in f["provincias"] if x["sem"] == c["provincia"]), {"nombre": "", "ciudades": []})
+        lugar = next((x["nombre"] for x in p["ciudades"] if x["sem"] == c["ciudad"]), p["nombre"])
+        lugar = lugar.replace("Ciudad Autónoma de Buenos Aires (CABA)", "CABA")
     return c["puesto"], cat, lugar
 
 
