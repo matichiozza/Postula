@@ -76,7 +76,17 @@ class _Contador429(logging.Handler):
             self.frenado = True
 
 
-def buscar(url, maximo=300):
+POR_PAGINA = 10      # avisos por página de la búsqueda pública de LinkedIn (jobspy.linkedin.constant)
+
+
+def buscar_pagina(url, inicio):
+    """UNA página de resultados (10 avisos) desde la posición `inicio`, sin la pausa de JobSpy entre
+    páginas (la pausa la hace quien llama). -> (avisos, frenado). Sirve para ir mostrando los avisos a
+    medida que llegan en vez de esperar a tener todos (JobSpy espera 3-7 s entre página y página)."""
+    return buscar(url, POR_PAGINA, inicio)
+
+
+def buscar(url, maximo=300, inicio=0):
     """Busca con JobSpy (solo Solicitud sencilla). -> (avisos, frenado). Cada aviso:
     {id, titulo, empresa, url, fecha ('dd-mm-aaaa'), ubicacion}. frenado=True si LinkedIn respondió 429."""
     from jobspy import scrape_jobs          # se importa acá: si falta, la app avisa al recorrer
@@ -89,7 +99,7 @@ def buscar(url, maximo=300):
     try:
         df = scrape_jobs(site_name=["linkedin"], search_term=b["palabra"] or None,
                          location=b["lugar"] or "Argentina", is_remote=b["remoto"],
-                         easy_apply=True, results_wanted=maximo, verbose=1)
+                         easy_apply=True, results_wanted=maximo, offset=inicio, verbose=1)
     finally:
         for lg in (log, log_raiz):
             lg.removeHandler(escucha)

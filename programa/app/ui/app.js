@@ -1,7 +1,7 @@
 'use strict';
 // Versión de la app: se muestra abajo a la izquierda del menú. Regla del usuario: CADA cambio a la app,
 // por mínimo que sea, la sube en uno (1.0.0 → 1.0.1 → … → 1.0.9 → 1.1.0). Anotar cada una en CONTEXTO.md.
-const VERSION = '1.3.0';
+const VERSION = '1.3.1';
 /* Interfaz de Postulá. Habla con Python (app.py) por window.pywebview.api y recibe los
    eventos del motor en window.app.evento(tipo, datos). Todo se maneja con el teclado. */
 

@@ -11,12 +11,15 @@ otros motores; hereda de MotorComputrabajo la lista de decisiones, los descartes
 - Auto no está disponible en LinkedIn (para no postular en cadena con tu cuenta).
 - Si LinkedIn pide verificación (checkpoint, captcha, login), se frena y se avisa.
 """
+import random
 import re
+import threading
 import time
 from datetime import datetime
 
 from playwright.sync_api import sync_playwright  # noqa: F401  (lo usa MotorComputrabajo.correr)
 
+import busquedas
 import descartes
 import fechas
 import perfil
@@ -519,10 +522,76 @@ class MotorLinkedIn(MotorComputrabajo):
     def postular_libre(self, a):
         return "preg"                                         # sin Auto en LinkedIn
 
+    # ------------------------------------------------------------------ búsqueda en segundo plano
+    # JobSpy espera 3-7 s entre página y página (10 avisos): con 300 avisos son más de 2 minutos. Para no
+    # hacerte esperar, la búsqueda arranca apenas tocás Empezar (en paralelo con el login y la lectura de
+    # tus postulaciones), de a una página, y los avisos se van sumando a la lista de la búsqueda: el
+    # recorrido los procesa a medida que llegan (recorrido.llegan_mas). JobSpy no usa el navegador: no
+    # toca tu sesión.
+    def _buscar_en_fondo(self, urls):
+        self._lotes = {u: {"avisos": [], "primera": False, "fin": False, "error": None, "ids": set()} for u in urls}
+
+        def dormir(seg):
+            fin = time.time() + seg
+            while time.time() < fin and not self.cancelado:
+                time.sleep(0.2)
+
+        def trabajar():
+            for url in urls:
+                lote = self._lotes[url]
+                resumen = busquedas.resumen(url)
+                try:
+                    for u in busquedas.expandir(self.plataforma, url):
+                        inicio, reintentos = 0, 0
+                        while not self.cancelado and inicio < self.cfg["max_resultados_busqueda"]:
+                            avisos, frenado = li.buscar_pagina(u, inicio)
+                            if frenado and not avisos:
+                                if reintentos < 2:                     # LinkedIn frenó (429): esperar y reintentar
+                                    reintentos += 1
+                                    dormir(30)
+                                    continue
+                                lote["error"] = "frenado"
+                                self.emitir("aviso", {"tipo": "error", "texto":
+                                            f"LinkedIn está limitando las búsquedas: «{resumen}» puede quedar incompleta. Probá de nuevo en unos minutos."})
+                                break
+                            reintentos = 0
+                            for a in avisos:
+                                if a["id"] in lote["ids"]:
+                                    continue
+                                lote["ids"].add(a["id"])
+                                a["busqueda"] = resumen
+                                a["publicado"] = fechas.desde_fecha(a["fecha"]) if a.get("fecha") else ""
+                                a["antiguedad"] = fechas.antiguedad(fecha_hora=a["fecha"] + " 12:00:00") if a.get("fecha") else None
+                                lote["avisos"].append(a)           # la lista que recorre el recorrido
+                            lote["primera"] = True
+                            if len(avisos) < li.POR_PAGINA:
+                                break                               # última página
+                            inicio += li.POR_PAGINA
+                            dormir(random.uniform(3, 7))           # la misma pausa que usa JobSpy
+                except ImportError:
+                    lote["error"] = "jobspy"
+                except Exception as e:
+                    print(f"[linkedin] búsqueda {url}: {e}")
+                    lote["error"] = str(e)
+                lote["primera"] = lote["fin"] = True
+                print(f"[linkedin] búsqueda lista: {resumen} -> {len(lote['avisos'])} avisos ({lote['error'] or 'ok'})")
+                if self.cancelado:
+                    break
+            for lote in self._lotes.values():                       # si se canceló, que nadie espere
+                lote["primera"] = lote["fin"] = True
+
+        threading.Thread(target=trabajar, daemon=True).start()
+
+    def llegan_mas(self, url):
+        lote = getattr(self, "_lotes", {}).get(url)
+        return bool(lote) and not lote["fin"]
+
     # ------------------------------------------------------------------ flujo principal
     def _correr(self):
         self.cfg = self.cargar_config()
         self.historial = li.cargar_json(li.HISTORIAL_FILE, {})
+        if not self.solo_cuenta:
+            self._buscar_en_fondo(busquedas.lista(self.cfg))      # arranca ya, mientras se verifica la sesión
         page = self.ctx.pages[0] if self.ctx.pages else self.ctx.new_page()
         self.ventana(page, mostrar=False)
 
@@ -568,35 +637,25 @@ class MotorLinkedIn(MotorComputrabajo):
         page.bring_to_front()
         self.ventana(page, mostrar=False)
 
-        # 3) búsquedas: JobSpy (sin sesión, solo Solicitud sencilla); todos quedan "Sin revisar"
-        import busquedas
+        # 3) búsquedas: JobSpy (sin sesión, solo Solicitud sencilla; ya están corriendo de fondo); todos
+        #    quedan "Sin revisar"
         urls = busquedas.lista(self.cfg)
         excl = [w.lower() for w in self.cfg["palabras_excluidas_titulo"]]
         cuenta = {"ok": 0, "ya": 0, "preg": 0, "desc": 0, "omit": 0, "rep": 0, "ext": 0, "err": 0, "libre": 0}
         self.emitir("grupos", {"items": []})
 
         def cargar(url, resumen):
-            unidos = {}
-            for u in busquedas.expandir(self.plataforma, url):
-                self.emitir("leyendo", {"pagina": 1, "avisos": len(unidos)})
-                try:
-                    avisos, frenado = li.buscar(u, self.cfg["max_resultados_busqueda"])
-                except ImportError:
-                    self.emitir("aviso", {"tipo": "error", "texto":
-                                "Falta JobSpy (python-jobspy). Reinstalá la app con Setup.exe para que lo instale."})
-                    return []
-                if frenado:
-                    self.emitir("aviso", {"tipo": "error", "texto":
-                                "LinkedIn está limitando las búsquedas: puede faltar algún aviso. Probá de nuevo en unos minutos."})
-                for a in avisos:
-                    unidos.setdefault(a["id"], a)
-                self.atender(time.time() + 2)
-            encontrados = list(unidos.values())
-            for a in encontrados:
-                a["busqueda"] = resumen
-                a["publicado"] = fechas.desde_fecha(a.get("fecha")) if a.get("fecha") else ""
-                a["antiguedad"] = fechas.antiguedad(fecha_hora=a["fecha"] + " 12:00:00") if a.get("fecha") else None
-            return encontrados
+            """Espera la primera página de la búsqueda de fondo y devuelve su lista, que sigue creciendo."""
+            lote = self._lotes.get(url)
+            if lote is None:
+                return []
+            while not lote["primera"]:
+                self.emitir("leyendo", {"pagina": 1, "avisos": len(lote["avisos"])})
+                self.atender(time.time() + 0.5)
+            if lote["error"] == "jobspy":
+                self.emitir("aviso", {"tipo": "error", "texto":
+                            "Falta JobSpy (python-jobspy). Reinstalá la app con Setup.exe para que lo instale."})
+            return lote["avisos"]
 
         def procesar(a):
             h = self.historial.get(a["id"])

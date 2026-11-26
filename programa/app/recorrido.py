@@ -70,7 +70,9 @@ def recorrer(m, urls, cargar, procesar, cuenta):
             m.emitir("progreso", {"hechos": b["pos"], "total": len(b["avisos"]), "busqueda": activa + 1, **cuenta, "ultimo": None})
 
         cambio = None
-        while b["pos"] < len(b["avisos"]):
+        # "llegan_mas": la lista de la búsqueda todavía crece (LinkedIn trae los avisos de a una página,
+        # en segundo plano): se espera a que lleguen en vez de dar la búsqueda por terminada
+        while b["pos"] < len(b["avisos"]) or llegan_mas(m, b):
             m.atender()
             paso_auto(m)                          # con Auto activado, postula mientras se sigue leyendo
             while m.pausado and m.cambio is None:
@@ -80,6 +82,9 @@ def recorrer(m, urls, cargar, procesar, cuenta):
                 if 0 <= pedido < len(m.busq) and pedido != activa and not m.busq[pedido]["fin"]:
                     cambio = pedido
                     break
+                continue
+            if b["pos"] >= len(b["avisos"]):          # todavía no llegó el próximo aviso
+                m.atender(time.time() + 0.5)
                 continue
             a = b["avisos"][b["pos"]]
             b["pos"] += 1
@@ -128,6 +133,12 @@ def recorrer(m, urls, cargar, procesar, cuenta):
             break
         activa = pendientes[0]
     m.emitir("fase1_fin", {**cuenta, "fallo": fallo})
+
+
+def llegan_mas(m, b):
+    """¿La búsqueda b todavía recibe avisos en segundo plano? (Solo LinkedIn; los demás leen todo de una.)"""
+    f = getattr(m, "llegan_mas", None)
+    return bool(f and f(b["url"]))
 
 
 def postulacion(m, a):
