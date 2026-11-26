@@ -1,6 +1,6 @@
 # Postulá: app para postularse a avisos de empleo
 
-Documento para que otra persona u otro chat de IA entienda el proyecto y pueda seguir sin perder nada. **Actualizado el 25-11-2026 (versión 1.3.4).** Si sos un chat nuevo, leé primero **"Cómo trabajar con el usuario"**, **"Cómo funciona hoy"** y **"Pendientes"**. Las secciones por bolsa y el historial de versiones tienen el detalle; **si algo viejo contradice a "Cómo funciona hoy" o a una versión más nueva, vale lo nuevo**.
+Documento para que otra persona u otro chat de IA entienda el proyecto y pueda seguir sin perder nada. **Actualizado el 25-11-2026 (versión 1.3.5).** Si sos un chat nuevo, leé primero **"Cómo trabajar con el usuario"**, **"Cómo funciona hoy"** y **"Pendientes"**. Las secciones por bolsa y el historial de versiones tienen el detalle; **si algo viejo contradice a "Cómo funciona hoy" o a una versión más nueva, vale lo nuevo**.
 
 Repositorio: https://github.com/matichiozza/Postula (público). La app se llamaba "Laburo IA" hasta la 1.2.3.
 
@@ -470,6 +470,8 @@ Pedido del usuario: buscar con su herramienta JobSpy (`python-jobspy` 1.5.0) **s
 - **1.3.3** (25-11-2026): **pantalla de carga** mientras se leen los avisos, en todas las bolsas: diseño **E "Contador gigante"** elegido por el usuario (artefacto https://claude.ai/artifact/KMP2txv4VwPUijvm2jhsSF). `#carga` tapa la pantalla de trabajo desde Empezar: bolsa y búsqueda arriba, la cantidad de avisos en grande (sube con animación, del evento `leyendo`), una barra fina y el paso actual (eventos `estado`). Con el primer `listado` se desvanece (0,6 s) y queda la pantalla de siempre. Se esconde para el login y vuelve después; con "reducir movimiento" no se anima. El usuario pidió sacar la frase "en cuanto termine, empiezo a clasificarlos". Probada en la interfaz con eventos simulados.
 
 - **1.3.4** (25-11-2026): EmpleosIT. (1) Una búsqueda nueva arranca con **todas las categorías marcadas** (pedido del usuario) y el desplegable tiene arriba "Todas las categorías" para marcar o desmarcar todo; con todas marcadas el link no lleva `JobCategory` (equivale) y el resumen dice "Todas las categorías". (2) **La web sí filtra por provincia** (`Location_State[multi_like][]=<n>`; lo mostró el usuario): `actualizar_filtros.py` lee del lateral "refinar" las provincias que tienen avisos (61 Buenos Aires, 65 Córdoba, 80 Santa Fe; 84 = "Remoto" no se usa, remoto sigue por `JobType`) y pone cada ciudad dentro de su provincia; una ciudad cuya provincia no está en el lateral queda suelta. Los números de las provincias sin avisos NO se conocen (probados 59-62, 72, 74, 83, 85: 0 avisos y ningún nombre): no se inventan. Probado contra la web: todas/todo el país 102 avisos, todas/Buenos Aires 96, todas/CABA 89.
+
+- **1.3.5** (25-11-2026): **se quitó la pantalla de carga de la 1.3.3** (pedido del usuario: "dejalo como estaba antes"). `index.html` y `estilo.css` volvieron a como estaban en la 1.3.2 y en `app.js` se sacaron sus funciones y llamadas; lo de EmpleosIT de la 1.3.4 queda.
 
 ## Lecciones técnicas (para no repetir errores)
 
