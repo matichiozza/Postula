@@ -1,6 +1,6 @@
 # Postulá: app para postularse a avisos de empleo
 
-Documento para que otra persona u otro chat de IA entienda el proyecto y pueda seguir sin perder nada. **Actualizado el 25-11-2026 (versión 1.3.2).** Si sos un chat nuevo, leé primero **"Cómo trabajar con el usuario"**, **"Cómo funciona hoy"** y **"Pendientes"**. Las secciones por bolsa y el historial de versiones tienen el detalle; **si algo viejo contradice a "Cómo funciona hoy" o a una versión más nueva, vale lo nuevo**.
+Documento para que otra persona u otro chat de IA entienda el proyecto y pueda seguir sin perder nada. **Actualizado el 25-11-2026 (versión 1.3.3).** Si sos un chat nuevo, leé primero **"Cómo trabajar con el usuario"**, **"Cómo funciona hoy"** y **"Pendientes"**. Las secciones por bolsa y el historial de versiones tienen el detalle; **si algo viejo contradice a "Cómo funciona hoy" o a una versión más nueva, vale lo nuevo**.
 
 Repositorio: https://github.com/matichiozza/Postula (público). La app se llamaba "Laburo IA" hasta la 1.2.3.
 
@@ -466,7 +466,8 @@ Pedido del usuario: buscar con su herramienta JobSpy (`python-jobspy` 1.5.0) **s
 
 - **1.3.1** (25-11-2026): LinkedIn busca en segundo plano y muestra los avisos a medida que llegan (pedido del usuario: tardaba ~2 minutos en mostrar algo). Probado con la sesión real: "programador" en Capital Federal, primer aviso a los 26 s (lo que tarda leer la sesión y las 26 postulaciones), 191 avisos en 145 s, ninguno ya postulado en la lista.
 
-- **1.3.2** (25-11-2026): sin cambios de funcionamiento; solo sube la versión para que el usuario pruebe "Buscar actualizaciones" con otra PC.
+
+- **1.3.3** (25-11-2026): **pantalla de carga** mientras se leen los avisos, en todas las bolsas: diseño **E "Contador gigante"** elegido por el usuario (artefacto https://claude.ai/artifact/KMP2txv4VwPUijvm2jhsSF). `#carga` tapa la pantalla de trabajo desde Empezar: bolsa y búsqueda arriba, la cantidad de avisos en grande (sube con animación, del evento `leyendo`), una barra fina y el paso actual (eventos `estado`). Con el primer `listado` se desvanece (0,6 s) y queda la pantalla de siempre. Se esconde para el login y vuelve después; con "reducir movimiento" no se anima. El usuario pidió sacar la frase "en cuanto termine, empiezo a clasificarlos". Probada en la interfaz con eventos simulados.
 
 ## Lecciones técnicas (para no repetir errores)
 

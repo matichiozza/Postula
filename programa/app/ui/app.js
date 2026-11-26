@@ -1,7 +1,7 @@
 'use strict';
 // Versión de la app: se muestra abajo a la izquierda del menú. Regla del usuario: CADA cambio a la app,
 // por mínimo que sea, la sube en uno (1.0.0 → 1.0.1 → … → 1.0.9 → 1.1.0). Anotar cada una en CONTEXTO.md.
-const VERSION = '1.3.2';
+const VERSION = '1.3.3';
 /* Interfaz de Postulá. Habla con Python (app.py) por window.pywebview.api y recibe los
    eventos del motor en window.app.evento(tipo, datos). Todo se maneja con el teclado. */
 
@@ -1042,6 +1042,40 @@ function prepararDatos() {
   }
 }
 
+// ================================================================== pantalla de carga
+// Diseño "E · Contador gigante" (elegido por el usuario el 25-11-2026): tapa la pantalla de trabajo
+// desde que tocás Empezar hasta que la bolsa termina de leer los avisos de la primera búsqueda
+// (evento "listado"); ahí se desvanece y queda la pantalla de siempre, que clasifica. Todas las bolsas.
+let cargaN = 0, cargaAnim = null;
+function mostrarCarga(p, reiniciar = true) {
+  const c = $('#carga');
+  if (reiniciar) {
+    c.style.setProperty('--carga-c', (p.colores || [])[0] || '#2b6cb0');
+    $('#carga-sup').textContent = p.nombre;
+    $('#carga-inf').textContent = 'Preparando…';
+    cargaN = 0;
+    $('#carga-n').textContent = '0';
+    c.classList.add('sin-numero');
+  }
+  c.classList.add('ver');
+}
+function ocultarCarga(alInstante = false) {
+  const c = $('#carga');
+  if (alInstante) { c.style.transition = 'none'; c.classList.remove('ver'); void c.offsetWidth; c.style.transition = ''; }
+  else c.classList.remove('ver');
+}
+function contarCarga(n) {               // el número sube de a poco hasta n
+  const desde = cargaN, hasta = Math.max(0, n | 0), t0 = performance.now();
+  cargaN = hasta;
+  cancelAnimationFrame(cargaAnim);
+  const paso = t => {
+    const k = Math.min(1, (t - t0) / 500);
+    $('#carga-n').textContent = Math.round(desde + (hasta - desde) * (1 - Math.pow(1 - k, 3))).toLocaleString('es-AR');
+    if (k < 1) cargaAnim = requestAnimationFrame(paso);
+  };
+  cargaAnim = requestAnimationFrame(paso);
+}
+
 async function elegirPlataforma() {
   const p = PLATAFORMAS[platSel];
   if (!p.activa) {
@@ -1091,6 +1125,7 @@ async function elegirPlataforma() {
   $('.recorrido').classList.remove('pausado');
   ponerTitulo('Preparando…', false);
   pintarTodo();
+  mostrarCarga(p);
 }
 
 function volverAlMenu(confirmado = false) {
@@ -1107,6 +1142,7 @@ function volverAlMenu(confirmado = false) {
   E.activo = false;
   const fin = () => {
     E = estadoInicial();
+    ocultarCarga(true);
     $('#velo').classList.remove('ver');
     $('#toasts').innerHTML = '';
     $('#trabajo').classList.remove('activa');
@@ -1895,15 +1931,23 @@ function pintarTodo() {
 
 // ================================================================== eventos del motor
 const handlers = {
-  estado(d) { if (!E.hayTotal) ponerTitulo(d.texto, false); },
+  estado(d) {
+    if (E.hayTotal) return;
+    ponerTitulo(d.texto, false);
+    if (!E.leyendo) $('#carga-inf').textContent = d.texto.replace(/\.\.\.$/, '…');
+  },
 
   login() {
     const s = el('div', 'cargando');
     s.append(el('div', 'spinner'), el('span', null, 'Esperando que inicies sesión…'));
+    ocultarCarga(true);                    // la carga no tapa el aviso de iniciar sesión
     velo(`Iniciá sesión en ${E.plataforma}`,
          'Se abrió una ventana de Edge con la página de login. Cuando entres, la app sigue sola. (Esc para volver al menú)', s, 'login');
   },
-  login_ok() { cerrarVelo(); },
+  login_ok() {
+    cerrarVelo();
+    if (!E.hayTotal) mostrarCarga(PLATAFORMAS.find(x => x.id === E.plataformaId), false);
+  },
 
   usuario(d) {
     // la cuenta con la que entraste: queda como leyenda del logo de la bolsa
@@ -1917,6 +1961,7 @@ const handlers = {
   busqueda(d) {
     E.busqueda = d;
     E.busqActiva = d.indice;
+    $('#carga-sup').textContent = `${E.plataforma} · ${(d.resumen || '').replace(' — ', ' · ')}`;
     if (!E.busqs.length) E.busqs = [{indice: d.indice, resumen: d.resumen, hechos: 0, total: 0, fin: false}];
     pintarBusqueda();
     $('#r-barra').classList.add('indeterminado');
@@ -1947,11 +1992,15 @@ const handlers = {
   leyendo(d) {
     E.leyendo = d;
     ponerTitulo('Leyendo avisos…', false);
+    $('#carga').classList.remove('sin-numero');
+    contarCarga(d.avisos);
+    $('#carga-inf').textContent = `Leyendo la página ${d.pagina}`;
     $('#r-cuenta').textContent = `pág. ${d.pagina} · ${d.avisos}`;
     pintarLista();
   },
 
   listado(d) {
+    ocultarCarga();                        // terminó de leer: se desvanece y empieza a clasificar
     E.hayTotal = true;
     E.leyendo = null;
     $('#r-barra').classList.remove('indeterminado');
@@ -2091,6 +2140,7 @@ const handlers = {
     pintarStats();
   },
   fase1_fin(d) {
+    ocultarCarga();
     E.fallo = !!d.fallo;
     E.terminado = true;
     E.pausado = false;
@@ -2112,6 +2162,7 @@ const handlers = {
 
   fatal(d) {
     if (E.veloTipo === 'cerrando') return;   // ya se está volviendo al menú
+    ocultarCarga(true);
     const pre = el('pre', null, d.texto);
     velo('Ocurrió un error',
          'Apretá Esc para volver al menú y probá de nuevo. El detalle quedó guardado en app/errores.log.', pre, 'fatal');
